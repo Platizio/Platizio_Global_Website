@@ -1251,6 +1251,7 @@ p { color: var(--gray-600); }
   display: grid; place-items: center;
   color: var(--gray-500);
   transition: var(--t-fast);
+  z-index: 10; /* must sit above .modal-header (position:relative) which otherwise captures clicks */
 }
 .modal-close:hover { background: var(--gray-100); color: var(--navy); }
 .modal-close svg { width: 18px; height: 18px; }
