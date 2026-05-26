@@ -175,11 +175,11 @@ p { color: var(--gray-600); }
   .logo-img { height: 76px; margin: -24px 0; }
 }
 
-/* Footer sits on a near-black navy, so the "Global" navy text in the logo
-   would disappear. Invert the whole image to a clean white mark there. */
+/* Footer: show the full-colour logo as a clean badge on the dark background.
+   The white canvas in the PNG acts as a natural badge; no filter needed. */
 .site-footer .logo-img {
-  filter: brightness(0) invert(1);
-  opacity: 0.95;
+  border-radius: 6px;
+  opacity: 1;
 }
 
 .nav-links {
