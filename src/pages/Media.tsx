@@ -80,16 +80,14 @@ export default function Media() {
       <section className="section" id="articles">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Section 1 · Articles</span>
+            <span className="eyebrow">Articles</span>
             <h2>Latest from the Platizio Global blog</h2>
             <p>Quick reads to help you understand global investing — concepts, products and what to watch out for.</p>
           </div>
           <div className="card-grid-3">
             {articles.map(({ href, thumb, tag, title, body }) => (
               <article className="media-card reveal" key={href}>
-                <Link className={`media-thumb ${thumb}`} to={href}>
-                  <h4>{title}</h4>
-                </Link>
+                <Link className={`media-thumb ${thumb}`} to={href} aria-label={title} />
                 <div className="media-body">
                   <span className="media-tag">{tag}</span>
                   <h3>{title}</h3>
@@ -108,7 +106,7 @@ export default function Media() {
       <section className="section" style={{ background: 'var(--gray-50)' }} id="videos">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Section 2 · YouTube</span>
+            <span className="eyebrow">YouTube</span>
             <h2>Watch on the Platizio Global channel</h2>
             <p>Short videos covering the basics — markets, products and what to consider when investing globally.</p>
           </div>

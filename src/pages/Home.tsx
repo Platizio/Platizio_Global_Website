@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { Globe } from '../components/Globe'
-import { useAppContext } from '../context/AppContext'
 import { TRADING_PLATFORM_URL, YOUTUBE_CHANNEL_URL } from '../constants'
 
 const ArrowIcon = () => (
@@ -16,8 +15,6 @@ const PlayIcon = () => (
 )
 
 export default function Home() {
-  const { openContact } = useAppContext()
-
   return (
     <>
       {/* ===== HERO ===== */}
@@ -37,9 +34,9 @@ export default function Home() {
               <Link className="btn btn-light btn-lg" to="/products">Explore Products</Link>
             </div>
             <div className="hero-meta">
-              <div><strong>US Stocks</strong><span>Apple, Microsoft, NVIDIA &amp; more</span></div>
-              <div><strong>US ETFs</strong><span>S&amp;P 500, Nasdaq-100, themes</span></div>
-              <div><strong>USD Exposure</strong><span>Diversify beyond INR</span></div>
+              <div><strong>US Stocks &amp; ETFs</strong><span>Stocks, indices, sectors &amp; themes</span></div>
+              <div><strong>LRS Compliant</strong><span>Under India's regulatory framework</span></div>
+              <div><strong>Education-first</strong><span>Learn before you invest</span></div>
             </div>
           </div>
 
@@ -61,6 +58,39 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ===== TRUST STRIP ===== */}
+      <div className="trust-strip">
+        <div className="container trust-strip-inner">
+          <div className="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span>LRS / FEMA Compliant</span>
+          </div>
+          <div className="trust-divider" aria-hidden="true" />
+          <div className="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span>US Stocks &amp; ETFs</span>
+          </div>
+          <div className="trust-divider" aria-hidden="true" />
+          <div className="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            <span>Education-first Platform</span>
+          </div>
+          <div className="trust-divider" aria-hidden="true" />
+          <div className="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>Built for Indian Investors</span>
+          </div>
+        </div>
+      </div>
 
       {/* ===== PRODUCT STRIP ===== */}
       <div className="product-strip">
@@ -91,6 +121,75 @@ export default function Home() {
           </Link>
         </div>
       </div>
+
+      {/* ===== HOW IT WORKS ===== */}
+      <section className="section" style={{ background: 'var(--gray-50)' }}>
+        <div className="container">
+          <div className="section-header reveal">
+            <span className="eyebrow">How It Works</span>
+            <h2>Start investing in 3 simple steps</h2>
+            <p>
+              From account creation to your first international order — the process is
+              straightforward and fully digital.
+            </p>
+          </div>
+
+          <div className="steps-grid">
+            {[
+              {
+                step: '01',
+                title: 'Open & Verify Your Account',
+                body: 'Create your Platizio Global account on the trading platform and complete KYC — entirely online, from India.',
+                icon: (
+                  <>
+                    <path d="M9 12l2 2 4-4" />
+                    <circle cx="12" cy="12" r="10" />
+                  </>
+                ),
+              },
+              {
+                step: '02',
+                title: 'Fund via LRS',
+                body: "Transfer funds from your Indian bank account through India's Liberalised Remittance Scheme. Your money stays under India's regulatory framework.",
+                icon: (
+                  <>
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </>
+                ),
+              },
+              {
+                step: '03',
+                title: 'Invest in US Stocks & ETFs',
+                body: 'Browse US-listed stocks and ETFs, place your order and start building your international portfolio.',
+                icon: (
+                  <>
+                    <path d="M3 17l6-6 4 4 8-8" />
+                    <path d="M14 7h7v7" />
+                  </>
+                ),
+              },
+            ].map(({ step, title, body, icon }) => (
+              <div className="step-card reveal" key={step}>
+                <div className="step-num">{step}</div>
+                <div className="step-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    {icon}
+                  </svg>
+                </div>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <a className="btn btn-gold btn-lg" href={TRADING_PLATFORM_URL} target="_blank" rel="noopener noreferrer">
+              Get Started <ArrowIcon />
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* ===== WHY INVEST GLOBALLY ===== */}
       <section className="section" id="why">
@@ -162,8 +261,7 @@ export default function Home() {
               { thumb: 't-3', tag: 'Risk & Compliance', title: 'Currency Risk in Global Investing', body: 'How USD-INR movement affects returns for Indian investors holding US assets — explained simply.' },
             ].map(({ thumb, tag, title, body }) => (
               <article className="media-card reveal" key={title}>
-                <a className={`media-thumb ${thumb}`} href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
-                  <h4>{title}</h4>
+                <a className={`media-thumb ${thumb}`} href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer" aria-label={title}>
                   <span className="play-button"><PlayIcon /></span>
                 </a>
                 <div className="media-body">

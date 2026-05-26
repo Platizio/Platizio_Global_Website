@@ -61,7 +61,7 @@ export default function Products() {
       <section className="subsection" id="us-stocks">
         <div className="container">
           <div className="subsection-header reveal">
-            <span className="eyebrow">Section 1 · US Stocks</span>
+            <span className="eyebrow">US Stocks</span>
             <h2>What are US Stocks?</h2>
             <p>US Stocks allow investors to participate in companies listed on US exchanges. These may include businesses from technology, AI, semiconductors, healthcare, consumer, financial services and other global sectors.</p>
           </div>
@@ -72,8 +72,8 @@ export default function Products() {
       <section className="subsection bg-alt">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Section 2</span>
-            <h2>Why US Stocks?</h2>
+            <span className="eyebrow">Why US Stocks?</span>
+            <h2>Five reasons to invest in US-listed equities</h2>
             <p>Five reasons US-listed equities deserve a place in an Indian investor's portfolio.</p>
           </div>
           <div className="feature-grid">
@@ -94,9 +94,9 @@ export default function Products() {
       <section className="subsection">
         <div className="container">
           <div className="subsection-header reveal">
-            <span className="eyebrow">Section 3</span>
-            <h2>Trending US Stocks</h2>
-            <p>A snapshot of widely-watched US-listed companies. Updated regularly by the Platizio Global team — this is not investment advice.</p>
+            <span className="eyebrow">Popular US Stocks</span>
+            <h2>Widely-followed US-listed companies</h2>
+            <p>A snapshot of widely-followed US-listed companies. This is not a recommendation or investment advice.</p>
           </div>
           <div className="trending-list reveal">
             <div className="trending-head">
@@ -123,7 +123,7 @@ export default function Products() {
       <section className="subsection bg-alt" id="us-etfs">
         <div className="container">
           <div className="subsection-header reveal">
-            <span className="eyebrow">Section 4 · US ETFs</span>
+            <span className="eyebrow">US ETFs</span>
             <h2>What are US ETFs?</h2>
             <p>US ETFs help investors gain exposure to a basket of stocks, sectors, indices or themes through a single listed instrument. They are useful for investors who want diversified exposure instead of selecting only individual stocks.</p>
           </div>
@@ -134,8 +134,8 @@ export default function Products() {
       <section className="subsection">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Section 5</span>
-            <h2>Why US ETFs?</h2>
+            <span className="eyebrow">Why US ETFs?</span>
+            <h2>Five reasons ETFs are a popular starting point</h2>
             <p>Five reasons ETFs are a popular starting point for global investing.</p>
           </div>
           <div className="feature-grid">
@@ -156,9 +156,9 @@ export default function Products() {
       <section className="subsection bg-alt">
         <div className="container">
           <div className="subsection-header reveal">
-            <span className="eyebrow">Section 6</span>
-            <h2>Trending US ETFs</h2>
-            <p>A snapshot of widely-watched US ETFs. Updated regularly by the Platizio Global team — this is not investment advice.</p>
+            <span className="eyebrow">Popular US ETFs</span>
+            <h2>Widely-followed US ETFs</h2>
+            <p>A snapshot of widely-followed US ETFs. This is not a recommendation or investment advice.</p>
           </div>
           <div className="trending-list reveal">
             <div className="trending-head">

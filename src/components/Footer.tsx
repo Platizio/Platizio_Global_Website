@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
+import { YOUTUBE_CHANNEL_URL } from '../constants'
 
 export default function Footer() {
   const { openContact } = useAppContext()
@@ -17,7 +18,7 @@ export default function Footer() {
               with education and support built in.
             </p>
             <div className="social" aria-label="Social media">
-              <a href="https://youtube.com" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
+              <a href={YOUTUBE_CHANNEL_URL} aria-label="YouTube" target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M23 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C18.8 4.2 12 4.2 12 4.2s-6.8 0-8.5.5a2.8 2.8 0 0 0-2 2C1 8.4 1 12 1 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a2.8 2.8 0 0 0 2-2C23 15.6 23 12 23 12zM9.7 15.3V8.7l5.7 3.3-5.7 3.3z" />
                 </svg>
@@ -39,7 +40,7 @@ export default function Footer() {
                   <path d="M18.9 3H22l-7.4 8.4L23 21h-6.8l-5.3-6.9L4.7 21H1.6l7.9-9L1 3h6.9l4.8 6.4L18.9 3zm-1.2 16.2h1.7L6.4 4.7H4.6l13.1 14.5z" />
                 </svg>
               </a>
-              <a href="https://wa.me/" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/919999999999" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20.5 3.5A10.4 10.4 0 0 0 12 .5 10.5 10.5 0 0 0 2.9 16.2L1.5 22l5.9-1.5a10.5 10.5 0 0 0 4.6 1.1A10.5 10.5 0 0 0 22.5 11 10.4 10.4 0 0 0 20.5 3.5zM12 19.8a8.7 8.7 0 0 1-4.4-1.2l-.3-.2-3.5.9.9-3.4-.2-.4A8.7 8.7 0 1 1 12 19.8zm4.9-6.5c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1c-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1a7.2 7.2 0 0 1-3.6-3.2c-.3-.5.3-.4.8-1.4.1-.2 0-.3 0-.5l-.9-2c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.6 1.1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.7 3.1.6.5 0 1.6-.7 1.8-1.3.2-.6.2-1.2.2-1.3-.1 0-.2-.1-.5-.2z" />
                 </svg>
@@ -88,7 +89,7 @@ export default function Footer() {
             read all relevant documents and consult their financial or tax advisor before investing.
           </p>
           <div>
-            <p className="copyright">&copy; 2025 Platizio Global. All rights reserved.</p>
+            <p className="copyright">&copy; 2026 Platizio Global. All rights reserved.</p>
             <p className="copyright" style={{ marginTop: '0.5rem' }}>
               <a href="#" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Terms &amp; Conditions</a>
               <a href="#" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Privacy Policy</a>

@@ -57,7 +57,7 @@ export default function About() {
         <div className="container">
           <div className="about-grid">
             <div className="reveal">
-              <span className="eyebrow">Section 1 · About Platizio</span>
+              <span className="eyebrow">About Platizio</span>
               <h2>A platform across asset classes</h2>
               <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
                 Platizio is a financial services platform focused on helping investors explore different investment opportunities across asset classes. Through Platizio Global, the focus is on enabling global investing exposure — mainly through US Stocks and ETFs.
@@ -92,7 +92,7 @@ export default function About() {
               </svg>
             </div>
             <div className="reveal">
-              <span className="eyebrow">Section 2 · About Platizio Global</span>
+              <span className="eyebrow">About Platizio Global</span>
               <h2>Built for investors looking beyond home</h2>
               <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
                 Platizio Global is built for investors who want to diversify beyond domestic markets and explore US-listed stocks and ETFs. The platform focuses on making global investing easier to understand through education, platform support and simple user journeys.
@@ -109,7 +109,7 @@ export default function About() {
       <section className="section">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Section 3</span>
+            <span className="eyebrow">What We Offer</span>
             <h2>Our Product Offerings</h2>
             <p>Four things you get when you choose Platizio Global.</p>
           </div>
@@ -131,8 +131,8 @@ export default function About() {
       <section className="section" style={{ background: 'var(--gray-50)' }}>
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Section 4</span>
-            <h2>Why Platizio Global?</h2>
+            <span className="eyebrow">Why Platizio Global</span>
+            <h2>What sets the experience apart</h2>
             <p>What sets the experience apart.</p>
           </div>
           <ul className="value-list reveal" style={{ maxWidth: 820, margin: '0 auto' }}>
