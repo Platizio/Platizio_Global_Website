@@ -135,7 +135,7 @@ export default function Home() {
           </div>
 
           <div className="steps-grid">
-            {[
+            {([
               {
                 step: '01',
                 title: 'Open & Verify Your Account',
@@ -169,18 +169,31 @@ export default function Home() {
                   </>
                 ),
               },
-            ].map(({ step, title, body, icon }) => (
-              <div className="step-card reveal" key={step}>
-                <div className="step-num">{step}</div>
-                <div className="step-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    {icon}
-                  </svg>
+            ] as const).flatMap(({ step, title, body, icon }, i, arr) => {
+              const card = (
+                <div className="step-card reveal" key={step}>
+                  <div className="step-num">{step}</div>
+                  <div className="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      {icon}
+                    </svg>
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
                 </div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </div>
-            ))}
+              )
+              if (i < arr.length - 1) {
+                return [
+                  card,
+                  <div className="step-arrow" key={`arrow-${i}`} aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
+                  </div>,
+                ]
+              }
+              return [card]
+            })}
           </div>
 
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
