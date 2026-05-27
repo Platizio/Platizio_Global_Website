@@ -161,7 +161,10 @@ p { color: var(--gray-600); }
 }
 
 /* PNG logo — square image with built-in whitespace, so we render it
-   at a larger height and pull the layout box tighter with negative margins. */
+   at a larger height and pull the layout box tighter with negative margins.
+   mix-blend-mode: multiply removes the white canvas on any background:
+   white × light header  → transparent (colours preserved)
+   white × dark footer   → blends away (no white rectangle)            */
 .logo-img {
   display: block;
   height: 88px;
@@ -169,17 +172,11 @@ p { color: var(--gray-600); }
   margin: -28px 0;
   user-select: none;
   -webkit-user-drag: none;
+  mix-blend-mode: multiply;
 }
 .site-footer .logo-img { height: 96px; margin: -32px 0; }
 @media (max-width: 768px) {
   .logo-img { height: 76px; margin: -24px 0; }
-}
-
-/* Footer: show the full-colour logo as a clean badge on the dark background.
-   The white canvas in the PNG acts as a natural badge; no filter needed. */
-.site-footer .logo-img {
-  border-radius: 6px;
-  opacity: 1;
 }
 
 .nav-links {
