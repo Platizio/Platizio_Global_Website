@@ -153,30 +153,35 @@ p { color: var(--gray-600); }
   margin: 0 auto;
 }
 
+/* Logo container: clip to the text zone of the PNG, hiding the
+   built-in white canvas padding top and bottom.
+   height = how tall the visible window is (centred on the image).
+   overflow: hidden does the crop; mix-blend-mode on the img handles
+   any remaining white pixels inside the clip window.                 */
 .logo {
   display: inline-flex;
   align-items: center;
   color: var(--navy);
-  overflow: visible;
+  overflow: hidden;
+  height: 36px;
 }
 
-/* PNG logo — square image with built-in whitespace, so we render it
-   at a larger height and pull the layout box tighter with negative margins.
-   mix-blend-mode: multiply removes the white canvas on any background:
-   white × light header  → transparent (colours preserved)
-   white × dark footer   → blends away (no white rectangle)            */
+/* Render large for sharp text; no negative margins needed —
+   overflow is absorbed by the parent clip.                          */
 .logo-img {
   display: block;
   height: 88px;
   width: auto;
-  margin: -28px 0;
+  flex-shrink: 0;
   user-select: none;
   -webkit-user-drag: none;
   mix-blend-mode: multiply;
 }
-.site-footer .logo-img { height: 96px; margin: -32px 0; }
+.site-footer .logo        { height: 40px; }
+.site-footer .logo-img    { height: 96px; }
 @media (max-width: 768px) {
-  .logo-img { height: 76px; margin: -24px 0; }
+  .logo     { height: 30px; }
+  .logo-img { height: 72px; }
 }
 
 .nav-links {
