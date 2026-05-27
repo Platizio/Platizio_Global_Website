@@ -934,7 +934,7 @@ p {
 .product-strip {
   position: relative;
   z-index: 5;
-  margin-top: -3.5rem;
+  margin-top: 0;
   margin-bottom: 4rem;
 }
 
