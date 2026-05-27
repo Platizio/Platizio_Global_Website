@@ -1011,6 +1011,15 @@ p {
   transform: translateX(4px);
 }
 
+.product-card:focus {
+  outline: none;
+}
+
+.product-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
 /* =========================================================
    Feature cards (Why Invest Globally / Why US Stocks etc.)
    ========================================================= */
