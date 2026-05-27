@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { TRADING_PLATFORM_URL } from '../constants'
-import LogoWordmark from './LogoWordmark'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -29,7 +28,7 @@ export default function Header() {
     <header className="site-header" style={{ boxShadow: scrolled ? 'var(--shadow-sm)' : 'none' }}>
       <nav className="nav" aria-label="Primary">
         <Link to="/" className="logo" aria-label="Platizio Global home">
-          <LogoWordmark />
+          <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" />
         </Link>
 
         <ul className={`nav-links${menuOpen ? ' is-open' : ''}`} role="menubar">

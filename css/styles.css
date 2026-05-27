@@ -153,71 +153,38 @@ p { color: var(--gray-600); }
   margin: 0 auto;
 }
 
-/* ── Logo container ────────────────────────────────────────────────
-   Text-based wordmark — no PNG, no white box, blends into any bg.  */
+/* ── Logo ───────────────────────────────────────────────────────────
+   Logo_V2.png has a transparent background, so it blends cleanly on
+   any surface. Negative margins trim the built-in canvas whitespace
+   so the nav height stays compact.                                   */
 .logo {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+  overflow: visible;
+}
+
+.logo-img {
+  display: block;
+  height: 88px;
+  width: auto;
+  margin: -28px 0;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
-.logo-wordmark {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0;
-  white-space: nowrap;
-  line-height: 1;
+/* Footer: invert to all-white silhouette for the dark navy background.
+   Works correctly on a transparent PNG — transparent areas stay
+   transparent, coloured text becomes clean white.                    */
+.site-footer .logo-img {
+  height: 96px;
+  margin: -32px 0;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
 }
-
-/* "Platizio" — serif display, brand orange */
-.logo-platizio {
-  font-family: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
-  font-size: 1.55rem;
-  font-weight: 600;
-  color: var(--gold);          /* #B94B12 */
-  letter-spacing: -0.01em;
-}
-
-/* "|" separator */
-.logo-divider {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.55rem;
-  font-weight: 400;
-  color: var(--gold);
-  margin: 0 0.28rem;
-  opacity: 0.7;
-  line-height: 1;
-}
-
-/* "Global" — Inter, navy on light / white on dark */
-.logo-scope {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font);
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: var(--navy);
-  letter-spacing: 0.015em;
-}
-
-/* inline globe SVG that replaces the "o" */
-.logo-globe {
-  width: 1em;
-  height: 1em;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0 1px -1px;
-  color: inherit;
-}
-
-/* Footer overrides — light colours on dark navy background */
-.site-footer .logo-scope { color: rgba(255, 255, 255, 0.88); }
 
 @media (max-width: 768px) {
-  .logo-platizio { font-size: 1.3rem; }
-  .logo-divider  { font-size: 1.3rem; }
-  .logo-scope    { font-size: 0.9rem; }
+  .logo-img { height: 72px; margin: -22px 0; }
 }
 
 .nav-links {
