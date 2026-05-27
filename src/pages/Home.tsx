@@ -59,39 +59,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== TRUST STRIP ===== */}
-      <div className="trust-strip">
-        <div className="container trust-strip-inner">
-          <div className="trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            <span>LRS / FEMA Compliant</span>
-          </div>
-          <div className="trust-divider" aria-hidden="true" />
-          <div className="trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-            </svg>
-            <span>US Stocks &amp; ETFs</span>
-          </div>
-          <div className="trust-divider" aria-hidden="true" />
-          <div className="trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            </svg>
-            <span>Education-first Platform</span>
-          </div>
-          <div className="trust-divider" aria-hidden="true" />
-          <div className="trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <span>Built for Indian Investors</span>
-          </div>
-        </div>
-      </div>
-
       {/* ===== PRODUCT STRIP ===== */}
       <div className="product-strip">
         <div className="container">
