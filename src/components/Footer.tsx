@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { YOUTUBE_CHANNEL_URL } from '../constants'
+import LogoWordmark from './LogoWordmark'
 
 export default function Footer() {
   const { openContact } = useAppContext()
@@ -11,7 +12,7 @@ export default function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <div className="logo">
-              <img src="/logo.png" alt="Platizio Global" className="logo-img" />
+              <LogoWordmark />
             </div>
             <p>
               Platizio Global makes international investing simple — explore US Stocks and ETFs
