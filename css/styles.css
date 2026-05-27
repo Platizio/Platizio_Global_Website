@@ -166,9 +166,9 @@ p { color: var(--gray-600); }
 
 .logo-img {
   display: block;
-  height: 88px;
+  height: 112px;
   width: auto;
-  margin: -28px 0;
+  margin: -34px 0;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -177,14 +177,14 @@ p { color: var(--gray-600); }
    Works correctly on a transparent PNG — transparent areas stay
    transparent, coloured text becomes clean white.                    */
 .site-footer .logo-img {
-  height: 96px;
-  margin: -32px 0;
+  height: 122px;
+  margin: -38px 0;
   filter: brightness(0) invert(1);
   opacity: 0.92;
 }
 
 @media (max-width: 768px) {
-  .logo-img { height: 72px; margin: -22px 0; }
+  .logo-img { height: 90px; margin: -27px 0; }
 }
 
 .nav-links {
