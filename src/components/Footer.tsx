@@ -23,19 +23,14 @@ export default function Footer() {
                   <path d="M23 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C18.8 4.2 12 4.2 12 4.2s-6.8 0-8.5.5a2.8 2.8 0 0 0-2 2C1 8.4 1 12 1 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a2.8 2.8 0 0 0 2-2C23 15.6 23 12 23 12zM9.7 15.3V8.7l5.7 3.3-5.7 3.3z" />
                 </svg>
               </a>
-              <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/platizioglobal/" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="5" />
                   <circle cx="12" cy="12" r="4" />
                   <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
                 </svg>
               </a>
-              <a href="https://linkedin.com" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.4 3H3.6A.6.6 0 0 0 3 3.6v16.8a.6.6 0 0 0 .6.6h16.8a.6.6 0 0 0 .6-.6V3.6a.6.6 0 0 0-.6-.6zM8.3 18.3H5.5V9.7h2.8v8.6zM6.9 8.5a1.6 1.6 0 1 1 0-3.3 1.6 1.6 0 0 1 0 3.3zm11.5 9.8h-2.8v-4.2c0-1 0-2.3-1.4-2.3s-1.6 1.1-1.6 2.2v4.3h-2.8V9.7h2.7v1.2c.4-.7 1.3-1.4 2.6-1.4 2.8 0 3.3 1.8 3.3 4.2v4.6z" />
-                </svg>
-              </a>
-              <a href="https://x.com" aria-label="X" target="_blank" rel="noopener noreferrer">
+              <a href="https://x.com/platizioglobal" aria-label="X" target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.9 3H22l-7.4 8.4L23 21h-6.8l-5.3-6.9L4.7 21H1.6l7.9-9L1 3h6.9l4.8 6.4L18.9 3zm-1.2 16.2h1.7L6.4 4.7H4.6l13.1 14.5z" />
                 </svg>
@@ -76,7 +71,7 @@ export default function Footer() {
             <ul>
               <li><a href="#" onClick={(e) => { e.preventDefault(); openContact() }}>Contact Us</a></li>
               <li><Link to="/faqs">Help</Link></li>
-              <li><a href="#" onClick={(e) => { e.preventDefault(); openContact() }}>Grievance</a></li>
+              <li><a href="mailto:grievances@platizio.com">Grievance</a></li>
             </ul>
           </div>
         </div>
@@ -87,8 +82,7 @@ export default function Footer() {
             <p className="copyright" style={{ marginTop: '0.5rem' }}>
               <Link to="/terms" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Terms &amp; Conditions</Link>
               <Link to="/privacy" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Privacy Policy</Link>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Risk Disclosure</a>
-              <Link to="/disclaimer" style={{ color: 'rgba(255,255,255,0.55)' }}>Disclaimer</Link>
+              <Link to="/disclaimer" style={{ color: 'rgba(255,255,255,0.55)' }}>Risk Disclosure &amp; Disclaimer</Link>
             </p>
           </div>
         </div>
