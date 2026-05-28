@@ -91,8 +91,8 @@ export default function Footer() {
           <div>
             <p className="copyright">&copy; 2026 Platizio Global. All rights reserved.</p>
             <p className="copyright" style={{ marginTop: '0.5rem' }}>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Terms &amp; Conditions</a>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Privacy Policy</a>
+              <Link to="/terms" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Terms &amp; Conditions</Link>
+              <Link to="/privacy" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Privacy Policy</Link>
               <a href="#" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Risk Disclosure</a>
               <a href="#" style={{ color: 'rgba(255,255,255,0.55)' }}>Disclaimer</a>
             </p>
