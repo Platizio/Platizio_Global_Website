@@ -95,22 +95,25 @@ export default function Media() {
             <p>Concepts, products and practical insights — written for Indian investors exploring international markets.</p>
           </div>
 
-          {/* Coming Soon tile */}
-          <div className="coming-soon-tile reveal">
-            <div className="coming-soon-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 20h9"/>
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-              </svg>
-            </div>
-            <span className="coming-soon-badge">Coming Soon</span>
-            <h3>Articles are on their way</h3>
-            <p>
-              We're working on in-depth articles covering US stocks, ETFs, global investing concepts,
-              LRS guidance and more — written specifically for Indian investors.
-              Check back soon.
-            </p>
+          <div className="card-grid-3" style={{ justifyItems: 'center' }}>
+            <article className="media-card reveal">
+              <Link
+                className="media-thumb t-1"
+                to="/articles/why-international-investing-matters-2026"
+                aria-label="Why International Investing Will Matter More Than Ever by 2026"
+              />
+              <div className="media-body">
+                <span className="media-tag">International</span>
+                <h3>Why International Investing Will Matter More Than Ever by 2026</h3>
+                <p>As we move into 2026, the case for global diversification is stronger than ever — here's why Indian investors should take notice.</p>
+                <Link className="media-link" to="/articles/why-international-investing-matters-2026">
+                  Read Article <ArrowIcon />
+                </Link>
+              </div>
+            </article>
           </div>
+
+          <p className="articles-more-note reveal">More articles are on the way — check back soon.</p>
         </div>
       </section>
 

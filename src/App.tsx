@@ -12,6 +12,7 @@ import FAQs from './pages/FAQs'
 import CurrencyRisk from './pages/articles/CurrencyRisk'
 import StocksVsEtfs from './pages/articles/StocksVsEtfs'
 import WhyIndianInvestors from './pages/articles/WhyIndianInvestors'
+import WhyInternationalInvesting2026 from './pages/articles/WhyInternationalInvesting2026'
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import Disclaimer from './pages/Disclaimer'
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="/media" element={<Media />} />
           <Route path="/about" element={<About />} />
           <Route path="/faqs" element={<FAQs />} />
+          <Route path="/articles/why-international-investing-matters-2026" element={<WhyInternationalInvesting2026 />} />
           <Route path="/articles/currency-risk" element={<CurrencyRisk />} />
           <Route path="/articles/stocks-vs-etfs" element={<StocksVsEtfs />} />
           <Route path="/articles/why-indian-investors-global" element={<WhyIndianInvestors />} />
