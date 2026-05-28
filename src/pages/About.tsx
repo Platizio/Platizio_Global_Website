@@ -7,6 +7,12 @@ const ArrowIcon = () => (
   </svg>
 )
 
+const CheckIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16, flexShrink: 0, color: 'var(--gold)' }}>
+    <path d="M20 6L9 17l-5-5" />
+  </svg>
+)
+
 const offerings = [
   {
     icon: <><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/></>,
@@ -30,14 +36,6 @@ const offerings = [
   },
 ]
 
-const whyPoints = [
-  { title: 'India-focused global investing platform', body: 'Built for Indian investors exploring international markets — designed with local context in mind.' },
-  { title: 'US Stocks and ETFs focus', body: 'A clear product focus instead of confusing users with too many offerings.' },
-  { title: 'Education-first approach', body: 'Articles, videos, FAQs and explainers — built so you can learn before you invest.' },
-  { title: 'Trading platform CTA', body: 'A direct user journey from learning to investing — no detours, no confusion.' },
-  { title: 'Contact support', body: 'An easy way to ask questions before starting — via Contact Us, WhatsApp or email.' },
-]
-
 export default function About() {
   return (
     <>
@@ -47,23 +45,43 @@ export default function About() {
           <div className="breadcrumb">
             <Link to="/">Home</Link><span>/</span><span>About Us</span>
           </div>
-          <h1>Building a simpler path to global investing</h1>
-          <p>Platizio is a financial services platform; Platizio Global is our dedicated section helping Indian investors explore US Stocks and ETFs.</p>
+          <h1>About Platizio Global</h1>
+          <p>Your trusted partner in building resilient, future-ready portfolios</p>
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginTop: '1.5rem' }}>
+            <span className="compliance-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              SEBI Compliant
+            </span>
+            <span className="compliance-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              </svg>
+              AMFI Registered
+            </span>
+          </div>
         </div>
       </section>
 
-      {/* ===== ABOUT PLATIZIO ===== */}
+      {/* ===== WHAT IS PLATIZIO ===== */}
       <section className="section">
         <div className="container">
           <div className="about-grid">
             <div className="reveal">
-              <span className="eyebrow">About Platizio</span>
-              <h2>A platform across asset classes</h2>
+              <span className="eyebrow">What is Platizio?</span>
+              <h2>A platform built for every investor</h2>
               <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
-                Platizio is a financial services platform focused on helping investors explore different investment opportunities across asset classes. Through Platizio Global, the focus is on enabling global investing exposure — mainly through US Stocks and ETFs.
+                Platizio Services LLP is a licensed and certified distributor of <strong>Mutual Funds</strong> and <strong>Specialised Investment Funds (SIFs)</strong>, helping investors access advanced strategies through a transparent, regulated framework.
               </p>
               <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
-                We aim to make every step — from learning the basics to placing your first international order — feel approachable.
+                We combine research-backed insights with personalized guidance to make institutional-grade investing accessible to every investor.
+              </p>
+              <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
+                Through <strong>Platizio Global</strong>, we extend that same commitment — enabling Indian investors to explore US Stocks and ETFs with education, support, and a simple onboarding flow.
+              </p>
+              <p style={{ marginTop: '1.25rem', fontSize: '0.92rem', color: 'var(--gray-500)', fontWeight: 500 }}>
+                Platizio Services LLP · Financial Products Distribution Platform
               </p>
             </div>
             <div className="about-art reveal" aria-hidden="true">
@@ -78,42 +96,79 @@ export default function About() {
         </div>
       </section>
 
-      {/* ===== ABOUT PLATIZIO GLOBAL ===== */}
+      {/* ===== OUR FOUNDATION ===== */}
       <section className="section" style={{ background: 'var(--gray-50)' }}>
         <div className="container">
-          <div className="about-grid">
-            <div className="about-art reveal" aria-hidden="true" style={{ order: -1 }}>
-              <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <rect x="15" y="35" width="14" height="50" rx="2" />
-                <rect x="35" y="20" width="14" height="65" rx="2" />
-                <rect x="55" y="45" width="14" height="40" rx="2" />
-                <rect x="75" y="28" width="14" height="57" rx="2" />
-                <path d="M10 20l20-8 20 12 20-15 20 8" style={{ opacity: 0.5 }} />
-              </svg>
+          <div className="section-header reveal">
+            <span className="eyebrow">Our Foundation</span>
+            <h2>Built on principles that guide every decision and interaction</h2>
+          </div>
+          <div className="mvv-grid">
+            <div className="mvv-card reveal">
+              <div className="mvv-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </div>
+              <h3>Our Mission</h3>
+              <p>To help investors make informed, risk-aware investment decisions through transparent, research-driven solutions across modern and traditional asset classes.</p>
             </div>
-            <div className="reveal">
-              <span className="eyebrow">About Platizio Global</span>
-              <h2>Built for investors looking beyond home</h2>
-              <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
-                Platizio Global is built for investors who want to diversify beyond domestic markets and explore US-listed stocks and ETFs. The platform focuses on making global investing easier to understand through education, platform support and simple user journeys.
-              </p>
-              <p style={{ marginTop: '1rem', fontSize: '1.05rem' }}>
-                We help investors move from curiosity to confident first investment — backed by educational content and easy access to support.
-              </p>
+            <div className="mvv-card reveal">
+              <div className="mvv-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+              </div>
+              <h3>Our Vision</h3>
+              <p>To be a trusted investment platform enabling investors to build resilient, future-ready portfolios across market cycles.</p>
+            </div>
+            <div className="mvv-card reveal">
+              <div className="mvv-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </div>
+              <h3>Our Values</h3>
+              <p>Integrity, clarity, and trust guide every interaction. We focus on suitability, transparency, and long-term outcomes while maintaining disciplined risk management.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===== PRODUCT OFFERINGS ===== */}
+      {/* ===== DIRECTOR / LEADERSHIP ===== */}
       <section className="section">
         <div className="container">
-          <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
+          <div className="section-header reveal">
+            <span className="eyebrow">Leadership</span>
+            <h2>Experienced leadership committed to your financial success</h2>
+          </div>
+          <div className="leader-card reveal">
+            <div className="leader-photo-wrap">
+              <img src="/sir.png" alt="Vividh — Director, Platizio Global" className="leader-photo" />
+            </div>
+            <div className="leader-info">
+              <h3>Vividh</h3>
+              <p className="leader-designation">Director, Platizio Global</p>
+              <p className="leader-credential">Certified Financial Planner (CFP®)</p>
+              <ul className="leader-points">
+                <li><CheckIcon />Over 25 years of experience across financial services and International Business</li>
+                <li><CheckIcon />Deep understanding of Indian financial markets (Equities / Bonds / Commodities)</li>
+                <li><CheckIcon />Active interest in Equity Derivatives and Algorithmic Trading</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== WHAT WE OFFER ===== */}
+      <section className="section" style={{ background: 'var(--gray-50)' }}>
+        <div className="container">
+          <div className="section-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
             <span className="eyebrow">What We Offer</span>
             <h2>Our Product Offerings</h2>
-            <p>Four things you get when you choose Platizio Global.</p>
+            <p>What you get when you choose Platizio Global.</p>
           </div>
-          <div className="feature-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }}>
             {offerings.map(({ icon, title, body }) => (
               <article className="feature-card reveal" key={title}>
                 <div className="feature-icon">
@@ -127,30 +182,39 @@ export default function About() {
         </div>
       </section>
 
-      {/* ===== WHY PLATIZIO GLOBAL ===== */}
-      <section className="section" style={{ background: 'var(--gray-50)' }}>
+      {/* ===== REGULATORY COMPLIANCE ===== */}
+      <section className="section">
         <div className="container">
-          <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Why Platizio Global</span>
-            <h2>What sets the experience apart</h2>
-            <p>What sets the experience apart.</p>
+          <div className="section-header reveal">
+            <span className="eyebrow">Regulatory Compliance</span>
+            <h2>Operating under strict regulatory frameworks</h2>
+            <p>We operate under strict regulatory frameworks to ensure the highest standards of investor protection.</p>
           </div>
-          <ul className="value-list reveal" style={{ maxWidth: 820, margin: '0 auto' }}>
-            {whyPoints.map(({ title, body }, i) => (
-              <li key={title}>
-                <span className="v-num">{i + 1}</span>
-                <div>
-                  <strong>{title}</strong>
-                  <p>{body}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div className="reg-grid">
+            <div className="reg-card reveal">
+              <div className="reg-logo amfi-logo" aria-label="AMFI">AMFI</div>
+              <div>
+                <h3>AMFI Registered</h3>
+                <p>
+                  Platizio Services LLP is registered with the <strong>Association of Mutual Funds in India (AMFI)</strong>, ensuring adherence to the highest standards of ethical mutual fund distribution.
+                </p>
+              </div>
+            </div>
+            <div className="reg-card reveal">
+              <div className="reg-logo sebi-logo" aria-label="SEBI">SEBI</div>
+              <div>
+                <h3>SEBI Compliant</h3>
+                <p>
+                  We operate under the regulatory framework of the <strong>Securities and Exchange Board of India (SEBI)</strong>, maintaining full transparency and investor protection across all offerings, including Specialized Investment Funds (SIFs).
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ===== CLOSING CTA ===== */}
-      <section className="section">
+      <section className="section" style={{ background: 'var(--gray-50)' }}>
         <div className="container">
           <div className="cta-band reveal">
             <h2>Start Investing in US Stocks and ETFs</h2>
