@@ -14,6 +14,7 @@ import StocksVsEtfs from './pages/articles/StocksVsEtfs'
 import WhyIndianInvestors from './pages/articles/WhyIndianInvestors'
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import Disclaimer from './pages/Disclaimer'
 
 // Handles scroll-to-top / hash-scroll on route changes,
 // and re-wires the IntersectionObserver reveal animation
@@ -86,6 +87,7 @@ export default function App() {
           <Route path="/articles/why-indian-investors-global" element={<WhyIndianInvestors />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
         </Route>
       </Routes>
     </AppProvider>
