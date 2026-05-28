@@ -77,7 +77,7 @@ export default function Home() {
           <Link to="/products#us-etfs" className="product-card">
             <div className="product-card-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18" />
+                <path d="M2 22h20M6 22V12M10 22V6M14 22V16M18 22V10" />
               </svg>
             </div>
             <div className="product-card-body">
@@ -120,8 +120,8 @@ export default function Home() {
                 body: "Transfer funds from your Indian bank account through India's Liberalised Remittance Scheme. Your money stays under India's regulatory framework.",
                 icon: (
                   <>
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    <line x1="12" y1="2" x2="12" y2="22" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </>
                 ),
               },
