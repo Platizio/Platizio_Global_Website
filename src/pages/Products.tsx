@@ -8,19 +8,19 @@ const ArrowIcon = () => (
 )
 
 const stockFeatures = [
-  { icon: <><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21V12h6v9"/></>, title: 'Global Companies', body: "Many of the world's largest companies — across software, hardware, healthcare and consumer brands — are listed in the US." },
-  { icon: <><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></>, title: 'Sector Depth', body: 'Strong exposure to technology, AI, semiconductors, biotech and global consumer brands you cannot easily access at home.' },
-  { icon: <><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></>, title: 'Portfolio Diversification', body: 'Adds international market exposure that helps reduce concentration risk in a single economy.' },
-  { icon: <><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>, title: 'USD Exposure', body: 'Provides dollar-linked investment exposure as part of an overall currency-aware portfolio.' },
-  { icon: <><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></>, title: 'Long-Term Themes', body: 'Useful for investors looking at global innovation themes such as AI, cloud, semiconductors and clean energy.' },
+  { icon: <><path d="M3 21h18" /><path d="M5 21V7l7-4 7 4v14" /><path d="M9 21V12h6v9" /></>, title: 'Global Companies', body: "Many of the world's largest companies — across software, hardware, healthcare and consumer brands — are listed in the US." },
+  { icon: <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>, title: 'Sector Depth', body: 'Strong exposure to technology, AI, semiconductors, biotech and global consumer brands you cannot easily access at home.' },
+  { icon: <><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10" /></>, title: 'Portfolio Diversification', body: 'Adds international market exposure that helps reduce concentration risk in a single economy.' },
+  { icon: <><path d="M12 1v22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>, title: 'USD Exposure', body: 'Provides dollar-linked investment exposure as part of an overall currency-aware portfolio.' },
+  { icon: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>, title: 'Long-Term Themes', body: 'Useful for investors looking at global innovation themes such as AI, cloud, semiconductors and clean energy.' },
 ]
 
 const etfFeatures = [
-  { icon: <><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 3v18"/></>, title: 'Diversified Exposure', body: 'Invest in a basket of securities through one instrument — multiple companies in a single trade.' },
-  { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></>, title: 'Simple for Beginners', body: 'Easier than selecting multiple individual stocks — start with a broad index ETF and build from there.' },
-  { icon: <><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"/><path d="M3 12h18"/></>, title: 'Index Exposure', body: 'Invest in broad US market indices like the S&P 500 or Nasdaq-100 with a single ticker.' },
-  { icon: <><path d="M2 22h20"/><path d="M5 22V10"/><path d="M11 22V4"/><path d="M17 22v-9"/></>, title: 'Sector Exposure', body: 'Explore sectors like technology, healthcare, energy and financials through sector-specific ETFs.' },
-  { icon: <><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.7.7 1 1.5 1 2.3v1h6v-1c0-.8.3-1.6 1-2.3A7 7 0 0 0 12 2z"/></>, title: 'Thematic Exposure', body: 'Explore themes like AI, semiconductors, clean energy and dividend investing through theme-based ETFs.' },
+  { icon: <><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M3 9h18M9 3v18" /></>, title: 'Diversified Exposure', body: 'Invest in a basket of securities through one instrument — multiple companies in a single trade.' },
+  { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, title: 'Simple for Beginners', body: 'Easier than selecting multiple individual stocks — start with a broad index ETF and build from there.' },
+  { icon: <><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z" /><path d="M3 12h18" /></>, title: 'Index Exposure', body: 'Invest in broad US market indices like the S&P 500 or Nasdaq-100 with a single ticker.' },
+  { icon: <><path d="M2 22h20" /><path d="M5 22V10" /><path d="M11 22V4" /><path d="M17 22v-9" /></>, title: 'Sector Exposure', body: 'Explore sectors like technology, healthcare, energy and financials through sector-specific ETFs.' },
+  { icon: <><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7c.7.7 1 1.5 1 2.3v1h6v-1c0-.8.3-1.6 1-2.3A7 7 0 0 0 12 2z" /></>, title: 'Thematic Exposure', body: 'Explore themes like AI, semiconductors, clean energy and dividend investing through theme-based ETFs.' },
 ]
 
 const trendingStocks = [
@@ -100,7 +100,7 @@ export default function Products() {
           </div>
           <div className="trending-list reveal">
             <div className="trending-head">
-              <span>Ticker</span><span>Company</span><span>Sector</span><span>Description</span>
+              <span>Ticker</span><span>Company</span><span>Sector</span><span>Offerings</span>
             </div>
             {trendingStocks.map(({ ticker, name, sector, desc }) => (
               <div className="trending-row" key={ticker}>
@@ -162,7 +162,7 @@ export default function Products() {
           </div>
           <div className="trending-list reveal">
             <div className="trending-head">
-              <span>Ticker</span><span>ETF</span><span>Category</span><span>Description</span>
+              <span>Ticker</span><span>ETF</span><span>Category</span><span>Offerings</span>
             </div>
             {trendingEtfs.map(({ ticker, name, category, desc }) => (
               <div className="trending-row" key={ticker}>
