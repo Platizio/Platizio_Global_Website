@@ -24,19 +24,19 @@ const etfFeatures = [
 ]
 
 const trendingStocks = [
-  { ticker: 'AAPL', name: 'Apple', sector: 'Technology', desc: 'Consumer devices and services.' },
-  { ticker: 'MSFT', name: 'Microsoft', sector: 'Technology', desc: 'Cloud, software and AI.' },
-  { ticker: 'NVDA', name: 'NVIDIA', sector: 'Semiconductors', desc: 'AI chips and data centre demand.' },
-  { ticker: 'TSLA', name: 'Tesla', sector: 'Electric Vehicles', desc: 'EVs, batteries and clean mobility.' },
-  { ticker: 'AMZN', name: 'Amazon', sector: 'Consumer / Cloud', desc: 'E-commerce and cloud infrastructure.' },
+  { ticker: 'AAPL', exchange: 'NASDAQ',   name: 'Apple',     sector: 'Technology',      desc: 'Consumer devices and services.' },
+  { ticker: 'MSFT', exchange: 'NASDAQ',   name: 'Microsoft', sector: 'Technology',      desc: 'Cloud, software and AI.' },
+  { ticker: 'NVDA', exchange: 'NASDAQ',   name: 'NVIDIA',    sector: 'Semiconductors',  desc: 'AI chips and data centre demand.' },
+  { ticker: 'TSLA', exchange: 'NASDAQ',   name: 'Tesla',     sector: 'Electric Vehicles', desc: 'EVs, batteries and clean mobility.' },
+  { ticker: 'AMZN', exchange: 'NASDAQ',   name: 'Amazon',    sector: 'Consumer / Cloud', desc: 'E-commerce and cloud infrastructure.' },
 ]
 
 const trendingEtfs = [
-  { ticker: 'SPY', name: 'SPDR S&P 500', category: 'S&P 500 ETF', desc: 'Broad exposure to large US companies.' },
-  { ticker: 'QQQ', name: 'Invesco QQQ', category: 'Nasdaq-100 ETF', desc: 'Technology-heavy US index exposure.' },
-  { ticker: 'VOO', name: 'Vanguard S&P 500', category: 'S&P 500 ETF', desc: 'Low-cost broad US equity exposure.' },
-  { ticker: 'SOXX', name: 'iShares Semiconductor', category: 'Semiconductor ETF', desc: 'Exposure to semiconductor companies.' },
-  { ticker: 'XLK', name: 'Technology Select', category: 'Technology ETF', desc: 'Exposure to the US technology sector.' },
+  { ticker: 'SPY',  exchange: 'NYSEARCA', name: 'SPDR S&P 500',        category: 'S&P 500 ETF',      desc: 'Broad exposure to large US companies.' },
+  { ticker: 'QQQ',  exchange: 'NASDAQ',   name: 'Invesco QQQ',         category: 'Nasdaq-100 ETF',   desc: 'Technology-heavy US index exposure.' },
+  { ticker: 'VOO',  exchange: 'NYSEARCA', name: 'Vanguard S&P 500',    category: 'S&P 500 ETF',      desc: 'Low-cost broad US equity exposure.' },
+  { ticker: 'SOXX', exchange: 'NASDAQ',   name: 'iShares Semiconductor', category: 'Semiconductor ETF', desc: 'Exposure to semiconductor companies.' },
+  { ticker: 'XLK',  exchange: 'NYSEARCA', name: 'Technology Select',   category: 'Technology ETF',   desc: 'Exposure to the US technology sector.' },
 ]
 
 export default function Products() {
@@ -102,9 +102,12 @@ export default function Products() {
             <div className="trending-head">
               <span>Ticker</span><span>Company</span><span>Sector</span><span>Offerings</span>
             </div>
-            {trendingStocks.map(({ ticker, name, sector, desc }) => (
+            {trendingStocks.map(({ ticker, exchange, name, sector, desc }) => (
               <div className="trending-row" key={ticker}>
-                <span className="ticker-badge">{ticker}</span>
+                <span className="ticker-badge">
+                  <span className="ticker-exchange">{exchange}</span>
+                  <span className="ticker-symbol">{ticker}</span>
+                </span>
                 <strong>{name}</strong>
                 <span className="sector-chip">{sector}</span>
                 <p>{desc}</p>
@@ -162,11 +165,14 @@ export default function Products() {
           </div>
           <div className="trending-list reveal">
             <div className="trending-head">
-              <span>Ticker</span><span>ETF</span><span>Category</span><span>Offerings</span>
+              <span>Ticker</span><span>ETF</span><span>Category</span><span>Exposure</span>
             </div>
-            {trendingEtfs.map(({ ticker, name, category, desc }) => (
+            {trendingEtfs.map(({ ticker, exchange, name, category, desc }) => (
               <div className="trending-row" key={ticker}>
-                <span className="ticker-badge">{ticker}</span>
+                <span className="ticker-badge">
+                  <span className="ticker-exchange">{exchange}</span>
+                  <span className="ticker-symbol">{ticker}</span>
+                </span>
                 <strong>{name}</strong>
                 <span className="sector-chip">{category}</span>
                 <p>{desc}</p>
