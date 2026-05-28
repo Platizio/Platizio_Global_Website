@@ -84,13 +84,8 @@ export default function About() {
                 Platizio Services LLP · Financial Products Distribution Platform
               </p>
             </div>
-            <div className="about-art reveal" aria-hidden="true">
-              <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="50" cy="50" r="40" />
-                <path d="M10 50h80" />
-                <path d="M50 10a55 55 0 0 1 18 40 55 55 0 0 1-18 40 55 55 0 0 1-18-40 55 55 0 0 1 18-40z" />
-                <circle cx="50" cy="50" r="6" fill="currentColor" />
-              </svg>
+            <div className="about-art reveal">
+              <img src="/Logo_V2.png" alt="Platizio Global" className="about-logo-img" />
             </div>
           </div>
         </div>
