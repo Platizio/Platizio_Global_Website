@@ -39,7 +39,7 @@ export default function Header() {
           </li>
           <li className="has-dropdown">
             <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-              Products
+              Products <span className="dropdown-chevron" aria-hidden="true" />
             </NavLink>
             <ul className="dropdown" role="menu">
               <li>

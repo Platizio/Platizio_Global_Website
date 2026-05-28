@@ -277,8 +277,7 @@ p {
   position: relative;
 }
 
-.has-dropdown>a::after {
-  content: '';
+.dropdown-chevron {
   display: inline-block;
   width: 8px;
   height: 8px;
@@ -288,9 +287,10 @@ p {
   margin-left: 6px;
   opacity: 0.6;
   transition: var(--t-fast);
+  vertical-align: middle;
 }
 
-.has-dropdown:hover>a::after {
+.has-dropdown:hover .dropdown-chevron {
   transform: rotate(225deg) translateY(2px);
   opacity: 1;
 }
