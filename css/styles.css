@@ -2424,6 +2424,79 @@ p {
 }
 
 /* =========================================================
+   YouTube Row — video card + channel circle (Media page)
+   ========================================================= */
+
+.yt-row {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  justify-content: center;
+}
+
+.yt-video-card {
+  flex: 0 0 420px;
+  max-width: 420px;
+}
+
+/* Circular YouTube channel redirect */
+.yt-channel-circle {
+  flex-shrink: 0;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: #FF0000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(255, 0, 0, 0.32);
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+
+.yt-channel-circle:hover {
+  transform: scale(1.06);
+  box-shadow: 0 14px 40px rgba(255, 0, 0, 0.42);
+}
+
+.yt-circle-icon svg {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
+.yt-circle-handle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: 0.02em;
+}
+
+.yt-circle-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 768px) {
+  .yt-row {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .yt-video-card {
+    flex: unset;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* =========================================================
    Coming Soon Tile (Media / Articles)
    ========================================================= */
 

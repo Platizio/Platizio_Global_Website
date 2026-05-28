@@ -13,26 +13,8 @@ const PlayIcon = () => (
   </svg>
 )
 
-const videos = [
-  {
-    thumb: 't-4',
-    tag: 'Getting Started',
-    title: 'How to Start Investing in US Stocks from India',
-    body: 'Walkthrough of onboarding, funding the account and your first US-stock order.',
-  },
-  {
-    thumb: 't-5',
-    tag: 'ETFs',
-    title: 'US ETFs Explained: SPY, QQQ, VOO & More',
-    body: 'Understand the most-watched US ETFs and how they differ from picking individual stocks.',
-  },
-  {
-    thumb: 't-6',
-    tag: 'Risk & Compliance',
-    title: 'Currency Risk in Global Investing',
-    body: 'How USD-INR movement affects returns for Indian investors holding US assets.',
-  },
-]
+const VIDEO_URL = 'https://youtube.com/shorts/_WJBopr3x9I'
+const VIDEO_THUMB = 'https://img.youtube.com/vi/_WJBopr3x9I/hqdefault.jpg'
 
 export default function Media() {
   return (
@@ -58,25 +40,48 @@ export default function Media() {
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
             <span className="eyebrow">YouTube</span>
             <h2>Watch on the Platizio Global channel</h2>
-            <p>Short videos covering the basics — markets, products and what to consider when investing globally.</p>
+            <p>Short videos covering global investing basics — markets, products and what to consider before you invest.</p>
           </div>
-          <div className="card-grid-3">
-            {videos.map(({ thumb, tag, title, body }) => (
-              <article className="media-card reveal" key={title}>
-                <a className={`media-thumb ${thumb}`} href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
-                  <h4>{title}</h4>
-                  <span className="play-button"><PlayIcon /></span>
+
+          <div className="yt-row reveal">
+            {/* Single live video */}
+            <article className="media-card yt-video-card">
+              <a
+                className="media-thumb"
+                href={VIDEO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Watch on YouTube"
+                style={{ backgroundImage: `url(${VIDEO_THUMB})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+              >
+                <span className="play-button"><PlayIcon /></span>
+              </a>
+              <div className="media-body">
+                <span className="media-tag">Latest</span>
+                <h3>Getting Started with Platizio Global</h3>
+                <p>A quick introduction to how Platizio Global works — explore US Stocks and ETFs from India with a simple onboarding flow.</p>
+                <a className="media-link" href={VIDEO_URL} target="_blank" rel="noopener noreferrer">
+                  Watch on YouTube <ArrowIcon />
                 </a>
-                <div className="media-body">
-                  <span className="media-tag">{tag}</span>
-                  <h3>{title}</h3>
-                  <p>{body}</p>
-                  <a className="media-link" href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
-                    Watch on YouTube <ArrowIcon />
-                  </a>
-                </div>
-              </article>
-            ))}
+              </div>
+            </article>
+
+            {/* Circular channel redirect */}
+            <a
+              className="yt-channel-circle"
+              href={YOUTUBE_CHANNEL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit Platizio Global on YouTube"
+            >
+              <span className="yt-circle-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C18.8 4.2 12 4.2 12 4.2s-6.8 0-8.5.5a2.8 2.8 0 0 0-2 2C1 8.4 1 12 1 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a2.8 2.8 0 0 0 2-2C23 15.6 23 12 23 12zM9.7 15.3V8.7l5.7 3.3-5.7 3.3z" />
+                </svg>
+              </span>
+              <span className="yt-circle-handle">@platizioglobal</span>
+              <span className="yt-circle-label">Visit Channel</span>
+            </a>
           </div>
         </div>
       </section>
