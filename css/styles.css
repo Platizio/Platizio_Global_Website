@@ -1803,8 +1803,6 @@ p {
   width: 72%;
   height: auto;
   position: relative;
-  filter: brightness(0) invert(1);
-  opacity: 0.92;
   user-select: none;
   -webkit-user-drag: none;
 }
