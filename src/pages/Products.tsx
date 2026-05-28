@@ -104,9 +104,8 @@ export default function Products() {
             </div>
             {trendingStocks.map(({ ticker, exchange, name, sector, desc }) => (
               <div className="trending-row" key={ticker}>
-                <span className="ticker-badge">
-                  <span className="ticker-exchange">{exchange}</span>
-                  <span className="ticker-symbol">{ticker}</span>
+                <span className="ticker-label">
+                  <span className="ticker-exch">{exchange}:</span> {ticker}
                 </span>
                 <strong>{name}</strong>
                 <span className="sector-chip">{sector}</span>
@@ -169,9 +168,8 @@ export default function Products() {
             </div>
             {trendingEtfs.map(({ ticker, exchange, name, category, desc }) => (
               <div className="trending-row" key={ticker}>
-                <span className="ticker-badge">
-                  <span className="ticker-exchange">{exchange}</span>
-                  <span className="ticker-symbol">{ticker}</span>
+                <span className="ticker-label">
+                  <span className="ticker-exch">{exchange}:</span> {ticker}
                 </span>
                 <strong>{name}</strong>
                 <span className="sector-chip">{category}</span>
