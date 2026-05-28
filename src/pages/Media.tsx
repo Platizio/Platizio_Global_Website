@@ -13,30 +13,6 @@ const PlayIcon = () => (
   </svg>
 )
 
-const articles = [
-  {
-    href: '/articles/why-indian-investors-global',
-    thumb: 't-1',
-    tag: 'Strategy',
-    title: 'Why Indian Investors Should Consider Global Investing',
-    body: 'A simple look at why diversifying beyond domestic markets matters and where US-listed equities fit in.',
-  },
-  {
-    href: '/articles/stocks-vs-etfs',
-    thumb: 't-2',
-    tag: 'Beginners',
-    title: 'US Stocks vs ETFs: Which is Better for Beginners?',
-    body: 'Should you start with single stocks or a diversified ETF? A practical comparison for first-time global investors.',
-  },
-  {
-    href: '/articles/currency-risk',
-    thumb: 't-3',
-    tag: 'Risk & Compliance',
-    title: 'Currency Risk in Global Investing Explained Simply',
-    body: 'How USD-INR movement impacts the rupee value of your US investments — explained with examples.',
-  },
-]
-
 const videos = [
   {
     thumb: 't-4',
@@ -67,43 +43,17 @@ export default function Media() {
           <div className="breadcrumb">
             <Link to="/">Home</Link><span>/</span><span>Media</span>
           </div>
-          <h1>Articles &amp; Videos</h1>
-          <p>Stay informed on US Stocks, US ETFs and global investing — quick reads and short videos from the Platizio Global team.</p>
+          <h1>Videos &amp; Articles</h1>
+          <p>Stay informed on US Stocks, US ETFs and global investing — short videos and in-depth reads from the Platizio Global team.</p>
           <div style={{ marginTop: '1.75rem', display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="#articles" className="btn btn-gold">Articles</a>
-            <a href="#videos" className="btn btn-light">YouTube Videos</a>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ARTICLES ===== */}
-      <section className="section" id="articles">
-        <div className="container">
-          <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
-            <span className="eyebrow">Articles</span>
-            <h2>Latest from the Platizio Global blog</h2>
-            <p>Quick reads to help you understand global investing — concepts, products and what to watch out for.</p>
-          </div>
-          <div className="card-grid-3">
-            {articles.map(({ href, thumb, tag, title, body }) => (
-              <article className="media-card reveal" key={href}>
-                <Link className={`media-thumb ${thumb}`} to={href} aria-label={title} />
-                <div className="media-body">
-                  <span className="media-tag">{tag}</span>
-                  <h3>{title}</h3>
-                  <p>{body}</p>
-                  <Link className="media-link" to={href}>
-                    Read More <ArrowIcon />
-                  </Link>
-                </div>
-              </article>
-            ))}
+            <a href="#videos" className="btn btn-gold">YouTube Videos</a>
+            <a href="#articles" className="btn btn-light">Articles</a>
           </div>
         </div>
       </section>
 
       {/* ===== YOUTUBE VIDEOS ===== */}
-      <section className="section" style={{ background: 'var(--gray-50)' }} id="videos">
+      <section className="section" id="videos">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
             <span className="eyebrow">YouTube</span>
@@ -127,6 +77,34 @@ export default function Media() {
                 </div>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== ARTICLES ===== */}
+      <section className="section" style={{ background: 'var(--gray-50)' }} id="articles">
+        <div className="container">
+          <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
+            <span className="eyebrow">Articles</span>
+            <h2>In-depth reads on global investing</h2>
+            <p>Concepts, products and practical insights — written for Indian investors exploring international markets.</p>
+          </div>
+
+          {/* Coming Soon tile */}
+          <div className="coming-soon-tile reveal">
+            <div className="coming-soon-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </div>
+            <span className="coming-soon-badge">Coming Soon</span>
+            <h3>Articles are on their way</h3>
+            <p>
+              We're working on in-depth articles covering US stocks, ETFs, global investing concepts,
+              LRS guidance and more — written specifically for Indian investors.
+              Check back soon.
+            </p>
           </div>
         </div>
       </section>
