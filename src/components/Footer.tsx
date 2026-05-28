@@ -74,6 +74,29 @@ export default function Footer() {
               <li><a href="mailto:grievances@platizio.com">Grievance</a></li>
             </ul>
           </div>
+          <div className="footer-col">
+            <h5>Contact Us On</h5>
+            <ul className="footer-contact-list">
+              <li>
+                <span className="footer-contact-label">Mobile</span>
+                <a href="tel:+919289837100">+91 92898 37100</a>
+              </li>
+              <li>
+                <span className="footer-contact-label">Email</span>
+                <a href="mailto:supportglobal@platizio.com">supportglobal@platizio.com</a>
+              </li>
+              <li>
+                <span className="footer-contact-label">Address</span>
+                <address>
+                  Noida (Delhi NCR)<br />
+                  Unit No. 415, Tower-B,<br />
+                  KLJ Noida One,<br />
+                  Plot #B-8, Sector-62, Noida<br />
+                  UP 201309, India
+                </address>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="footer-bottom">

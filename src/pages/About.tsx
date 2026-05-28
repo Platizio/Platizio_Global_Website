@@ -85,7 +85,7 @@ export default function About() {
               </p>
             </div>
             <div className="about-art reveal">
-              <img src="/Logo_V2.png" alt="Platizio Global" className="about-logo-img" />
+              <img src="/platizio-logo.png" alt="Platizio Global" className="about-logo-img" />
             </div>
           </div>
         </div>

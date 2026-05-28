@@ -1999,8 +1999,8 @@ p {
 
 .footer-top {
   display: grid;
-  grid-template-columns: 1.4fr repeat(4, 1fr);
-  gap: 2.5rem;
+  grid-template-columns: 1.4fr repeat(5, 1fr);
+  gap: 2rem;
   padding-bottom: 3rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -2071,6 +2071,31 @@ p {
 
 .footer-col a:hover {
   color: var(--gold);
+}
+
+.footer-contact-list {
+  gap: 0.9rem !important;
+}
+
+.footer-contact-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.footer-contact-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.footer-contact-list address {
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.88rem;
+  line-height: 1.65;
 }
 
 .footer-bottom {
