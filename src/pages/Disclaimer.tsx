@@ -50,9 +50,9 @@ export default function Disclaimer() {
       <section className="page-hero">
         <div className="container">
           <div className="breadcrumb">
-            <Link to="/">Home</Link><span>/</span><span>Disclaimer</span>
+            <Link to="/">Home</Link><span>/</span><span>Risk Disclosure &amp; Disclaimer</span>
           </div>
-          <h1>Disclaimer</h1>
+          <h1>Risk Disclosure &amp; Disclaimer</h1>
           <p>Important information about the nature of this platform and the risks of international investing</p>
           <div style={{ marginTop: '0.6rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.55)' }}>
             Effective Date: 11 May 2026
