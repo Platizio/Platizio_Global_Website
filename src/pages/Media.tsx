@@ -98,9 +98,10 @@ export default function Media() {
           <div className="card-grid-3" style={{ justifyItems: 'center' }}>
             <article className="media-card reveal">
               <Link
-                className="media-thumb t-1"
+                className="media-thumb"
                 to="/articles/why-international-investing-matters-2026"
                 aria-label="Why International Investing Will Matter More Than Ever by 2026"
+                style={{ backgroundImage: 'url(/article-1-logo.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
               />
               <div className="media-body">
                 <span className="media-tag">International</span>

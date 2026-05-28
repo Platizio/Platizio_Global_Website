@@ -13,9 +13,10 @@ export default function WhyInternationalInvesting2026() {
       <p className="article-meta">International · January 2026 · 7 min read</p>
       <h1>Why International Investing Will Matter More Than Ever by 2026</h1>
 
-      <div className="article-hero media-thumb t-1" style={{ aspectRatio: 'auto' }}>
-        <h4 style={{ fontSize: '1.4rem' }}>Understanding why diversification beyond borders is becoming a portfolio necessity</h4>
-      </div>
+      <div
+        className="article-hero media-thumb"
+        style={{ backgroundImage: 'url(/article-1-logo.png)', backgroundSize: 'cover', backgroundPosition: 'center', aspectRatio: 'auto' }}
+      />
 
       <div className="article-body">
 
