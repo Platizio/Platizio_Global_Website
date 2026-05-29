@@ -35,7 +35,7 @@ export default function Home() {
             </div>
             <div className="hero-meta">
               <div><strong>US Stocks &amp; ETFs</strong><span>Stocks, indices, sectors &amp; themes</span></div>
-              <div><strong>LRS Compliant</strong><span>Under India's regulatory framework</span></div>
+              <div><strong>IFSCA Regulated</strong><span>Under India's regulatory framework</span></div>
               <div><strong>Education-first</strong><span>Learn before you invest</span></div>
             </div>
           </div>
@@ -186,27 +186,27 @@ export default function Home() {
           <div className="feature-grid">
             {[
               {
-                icon: <><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></>,
+                icon: <><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></>,
                 title: 'Global Diversification',
                 body: 'Reduce dependence on one country or market by adding exposure across regions and economies.',
               },
               {
-                icon: <><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/></>,
+                icon: <><path d="M3 21V9l9-6 9 6v12" /><path d="M9 21V12h6v9" /></>,
                 title: 'US Market Exposure',
                 body: 'Invest in some of the world\'s largest listed companies across technology, healthcare and beyond.',
               },
               {
-                icon: <><path d="M21 12a9 9 0 1 1-9-9"/><path d="M12 3v9l6-3"/></>,
+                icon: <><path d="M21 12a9 9 0 1 1-9-9" /><path d="M12 3v9l6-3" /></>,
                 title: 'ETF-Based Investing',
                 body: 'Use ETFs to invest across indices, sectors and themes — through a single, listed instrument.',
               },
               {
-                icon: <><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>,
+                icon: <><path d="M12 1v22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>,
                 title: 'Currency Exposure',
                 body: 'Add USD-linked exposure to your portfolio and balance your overall currency mix.',
               },
               {
-                icon: <><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.7.7 1 1.5 1 2.3v1h6v-1c0-.8.3-1.6 1-2.3A7 7 0 0 0 12 2z"/></>,
+                icon: <><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7c.7.7 1 1.5 1 2.3v1h6v-1c0-.8.3-1.6 1-2.3A7 7 0 0 0 12 2z" /></>,
                 title: 'Innovation Themes',
                 body: 'Explore AI, technology, semiconductors, healthcare and global consumer brands in one place.',
               },
