@@ -532,7 +532,7 @@ export default function FAQs() {
       <section className="section">
         <div className="container" style={{ maxWidth: 880 }}>
           {sections.map(({ id, num, title, note, items }) => (
-            <div className={`faq-section reveal${openSectionId === id ? ' section-open' : ''}`} id={id} key={id}>
+            <div className={`faq-section${openSectionId === id ? ' section-open' : ''}`} id={id} key={id}>
 
               {/* Section header — click to expand */}
               <button className="faq-section-header" onClick={() => toggleSection(id)} aria-expanded={openSectionId === id}>
@@ -567,7 +567,6 @@ export default function FAQs() {
 
           {/* Important Disclaimer */}
           <div
-            className="reveal"
             style={{
               marginTop: '2rem',
               padding: '1.5rem 2rem',
@@ -584,7 +583,6 @@ export default function FAQs() {
 
           {/* Still have questions? */}
           <div
-            className="reveal"
             style={{
               marginTop: '2rem',
               padding: '2.25rem',
