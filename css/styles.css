@@ -204,7 +204,8 @@ p {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  overflow: visible;
+  overflow: hidden;
+  align-self: stretch;
 }
 
 .logo-img {
