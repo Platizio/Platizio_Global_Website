@@ -2137,6 +2137,20 @@ p {
   margin-bottom: 1.5rem;
 }
 
+.article-hero-img {
+  border-radius: var(--radius-lg);
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.article-hero-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-lg);
+}
+
 .article-hero {
   height: 280px;
   border-radius: var(--radius-lg);
