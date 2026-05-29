@@ -1672,26 +1672,114 @@ p {
    FAQ
    ========================================================= */
 .faq-section {
-  margin-bottom: 3rem;
+  margin-bottom: 0.75rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 
-.faq-section h2 {
+.faq-section.section-open {
+  border-color: var(--navy);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Section header button ── */
+.faq-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  background: var(--white);
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--navy);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+
+.faq-section-header:hover {
+  background: var(--gray-50);
+}
+
+.faq-section.section-open .faq-section-header {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.faq-section-label {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
 }
 
-.faq-section h2 .num {
+.faq-section-label .num {
   display: inline-grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  background: var(--navy);
-  color: var(--gold);
+  width: 34px;
+  height: 34px;
+  background: var(--gray-100);
+  color: var(--navy);
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
+  flex-shrink: 0;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+
+.faq-section.section-open .faq-section-label .num {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--gold);
+}
+
+.faq-section-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.faq-section-chevron {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: grid;
+  place-items: center;
+  transition: background var(--t-fast), transform var(--t);
+  color: var(--navy);
+}
+
+.faq-section.section-open .faq-section-chevron {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--white);
+  transform: rotate(180deg);
+}
+
+.faq-section-chevron svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Collapsible section body ── */
+.faq-section-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.45s ease;
+  border-top: 0px solid var(--gray-200);
+}
+
+.faq-section.section-open .faq-section-body {
+  max-height: 4000px;
+  transition: max-height 0.6s ease;
+  border-top: 1px solid var(--gray-200);
+}
+
+.faq-section-inner {
+  padding: 1.5rem;
+  background: var(--gray-50);
 }
 
 .faq-list {

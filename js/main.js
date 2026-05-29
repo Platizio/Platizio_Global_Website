@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNav();
   initMobileMenu();
   initContactModal();
+  initFaqSections();
   initFaqAccordion();
   initScrollReveal();
   initTradingLinks();
@@ -110,6 +111,28 @@ function initContactModal() {
 
     if (formBody) formBody.style.display = 'none';
     if (success) success.style.display = 'block';
+  });
+}
+
+// ---------- FAQ section-level accordion ----------
+function initFaqSections() {
+  document.querySelectorAll('.faq-section-header').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const section = btn.closest('.faq-section');
+      if (!section) return;
+      const isOpen = section.classList.contains('section-open');
+      // Close all other sections
+      document.querySelectorAll('.faq-section.section-open').forEach((el) => {
+        el.classList.remove('section-open');
+        el.querySelector('.faq-section-header')?.setAttribute('aria-expanded', 'false');
+        // Close any open question inside it
+        el.querySelectorAll('.faq-item.open').forEach((item) => item.classList.remove('open'));
+      });
+      if (!isOpen) {
+        section.classList.add('section-open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
   });
 }
 

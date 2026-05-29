@@ -497,11 +497,23 @@ const PlusIcon = () => (
   </svg>
 )
 
+const ChevronIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+)
+
 export default function FAQs() {
-  const [openId, setOpenId] = useState<string | null>(null)
+  const [openSectionId, setOpenSectionId] = useState<string | null>(null)
+  const [openItemId, setOpenItemId] = useState<string | null>(null)
   const { openContact } = useAppContext()
 
-  const toggle = (id: string) => setOpenId((prev) => (prev === id ? null : id))
+  const toggleSection = (id: string) => {
+    setOpenSectionId((prev) => (prev === id ? null : id))
+    setOpenItemId(null) // close any open question when switching sections
+  }
+
+  const toggleItem = (id: string) => setOpenItemId((prev) => (prev === id ? null : id))
 
   return (
     <>
@@ -520,21 +532,35 @@ export default function FAQs() {
       <section className="section">
         <div className="container" style={{ maxWidth: 880 }}>
           {sections.map(({ id, num, title, note, items }) => (
-            <div className="faq-section reveal" id={id} key={id}>
-              <h2><span className="num">{num}</span>{title}</h2>
-              {note && note}
-              <div className="faq-list">
-                {items.map(({ id: itemId, q, a }) => (
-                  <div className={`faq-item${openId === itemId ? ' open' : ''}`} key={itemId}>
-                    <button className="faq-q" onClick={() => toggle(itemId)}>
-                      {q}
-                      <span className="ico"><PlusIcon /></span>
-                    </button>
-                    <div className="faq-a">
-                      <div>{a}</div>
-                    </div>
+            <div className={`faq-section reveal${openSectionId === id ? ' section-open' : ''}`} id={id} key={id}>
+
+              {/* Section header — click to expand */}
+              <button className="faq-section-header" onClick={() => toggleSection(id)} aria-expanded={openSectionId === id}>
+                <span className="faq-section-label">
+                  <span className="num">{num}</span>
+                  <span className="faq-section-title">{title}</span>
+                </span>
+                <span className="faq-section-chevron" aria-hidden="true"><ChevronIcon /></span>
+              </button>
+
+              {/* Collapsible body */}
+              <div className="faq-section-body">
+                <div className="faq-section-inner">
+                  {note && note}
+                  <div className="faq-list">
+                    {items.map(({ id: itemId, q, a }) => (
+                      <div className={`faq-item${openItemId === itemId ? ' open' : ''}`} key={itemId}>
+                        <button className="faq-q" onClick={() => toggleItem(itemId)}>
+                          {q}
+                          <span className="ico"><PlusIcon /></span>
+                        </button>
+                        <div className="faq-a">
+                          <div>{a}</div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           ))}
