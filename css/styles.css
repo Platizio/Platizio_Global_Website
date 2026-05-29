@@ -1697,7 +1697,7 @@ p {
   text-align: left;
   cursor: pointer;
   color: var(--navy);
-  transition: background var(--t-fast), color var(--t-fast);
+  transition: background var(--t-fast);
 }
 
 .faq-section-header:hover {
@@ -1726,7 +1726,7 @@ p {
   font-size: 0.9rem;
   font-weight: 700;
   flex-shrink: 0;
-  transition: background var(--t-fast), color var(--t-fast);
+  transition: background var(--t-fast);
 }
 
 .faq-section.section-open .faq-section-label .num {
