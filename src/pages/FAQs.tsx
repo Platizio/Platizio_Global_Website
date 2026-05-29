@@ -475,7 +475,7 @@ const sections: FaqSection[] = [
       {
         id: 'sp-1',
         q: 'How do I contact Platizio support?',
-        a: <span>You can reach us by email at <a href="mailto:supportglobal@platizio.com">supportglobal@platizio.com</a> or call / WhatsApp at <a href="tel:+919289837100">+91 92898 37100</a>. We will respond within 24 hours on business days and your query shall be resolved within 15 days.</span>,
+        a: <span>You can reach us by email at <a href="mailto:supportglobal@platizio.com">supportglobal@platizio.com</a> or call / WhatsApp at <a href="tel:+919289837100">+91 92898 37100</a>. We will respond within 24 hours on business days and your query shall be resolved within 1-5 days.</span>,
       },
       {
         id: 'sp-2',
@@ -577,7 +577,7 @@ export default function FAQs() {
           >
             <p style={{ fontWeight: 600, marginBottom: '0.5rem', color: 'var(--navy)' }}>Important Disclaimer</p>
             <p style={{ fontSize: '0.875rem', color: 'var(--gray-500)', fontStyle: 'italic', margin: 0 }}>
-              Investing in securities involves market risk, including the possible loss of capital. The value of investments can go up as well as down. The information in these FAQs is provided for general guidance only and does not constitute investment, legal, or tax advice. Tax treatment depends on your individual circumstances and may change. Please read all product terms and consult a qualified financial or tax advisor before investing. Platizio Services LLP facilitates access to US markets through its US brokerage partner; investments are executed and held within the regulated US brokerage system.
+              Investing in securities involves market risk, including the possible loss of capital. The value of investments can go up as well as down. The information in these FAQs is provided for general guidance only and does not constitute investment, legal, or tax advice. Tax treatment depends on your individual circumstances and may change. Please read all product terms and consult a qualified financial or tax advisor before investing. Platizio Services LLP facilitates access to US markets through its US brokerage partner; investments are executed and held with ViewTrade IFSC at GIFT City.
             </p>
           </div>
 
