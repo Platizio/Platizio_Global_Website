@@ -2,8 +2,7 @@
 // Platizio Global — Shared interactions
 // =========================================================
 
-// Trading platform URL — replace with the real Platizio Global trading URL once live.
-const TRADING_PLATFORM_URL = 'https://app.platizio.com/global';
+const TRADING_PLATFORM_URL = 'https://trade.clientbridge.in/login?platizioglobal';
 const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@platizioglobal';
 
 document.addEventListener('DOMContentLoaded', () => {
