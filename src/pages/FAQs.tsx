@@ -584,7 +584,11 @@ export default function FAQs() {
                   <div className="faq-list">
                     {items.map(({ id: itemId, q, a }) => (
                       <div className={`faq-item${openItemId === itemId ? ' open' : ''}`} key={itemId}>
-                        <button className="faq-q" onClick={() => toggleItem(itemId)}>
+                        <button
+                          className="faq-q"
+                          onClick={() => toggleItem(itemId)}
+                          aria-expanded={openItemId === itemId}
+                        >
                           {q}
                           <span className="ico"><PlusIcon /></span>
                         </button>

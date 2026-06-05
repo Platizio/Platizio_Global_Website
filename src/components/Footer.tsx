@@ -103,12 +103,19 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
+          <p className="disclaimer">
+            <strong style={{ color: 'rgba(255,255,255,0.85)' }}>Disclaimer:</strong>{' '}
+            Investments in US Stocks and ETFs are subject to market risk, currency risk, and
+            tax implications. Past performance is not indicative of future results. Platizio
+            Global does not guarantee returns. Please read all relevant documents and consult
+            a qualified financial or tax advisor before investing.
+          </p>
           <div>
-            <p className="copyright">&copy; 2026 Platizio Global. All rights reserved.</p>
+            <p className="copyright">&copy; {new Date().getFullYear()} Platizio Global. All rights reserved.</p>
             <p className="copyright" style={{ marginTop: '0.5rem' }}>
-              <Link to="/terms" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Terms &amp; Conditions</Link>
-              <Link to="/privacy" style={{ color: 'rgba(255,255,255,0.55)', marginRight: '0.85rem' }}>Privacy Policy</Link>
-              <Link to="/disclaimer" style={{ color: 'rgba(255,255,255,0.55)' }}>Risk Disclosure &amp; Disclaimer</Link>
+              <Link to="/terms" className="footer-legal-link">Terms &amp; Conditions</Link>
+              <Link to="/privacy" className="footer-legal-link">Privacy Policy</Link>
+              <Link to="/disclaimer" className="footer-legal-link">Risk Disclosure &amp; Disclaimer</Link>
             </p>
           </div>
         </div>

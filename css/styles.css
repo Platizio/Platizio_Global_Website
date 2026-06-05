@@ -2220,14 +2220,27 @@ p {
 
 .disclaimer {
   max-width: 760px;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.82rem;
   line-height: 1.6;
 }
 
 .copyright {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.72);
   font-size: 0.82rem;
+}
+
+.footer-legal-link {
+  color: rgba(255, 255, 255, 0.75);
+  margin-right: 0.85rem;
+  font-size: 0.82rem;
+  transition: var(--t-fast);
+}
+.footer-legal-link:hover {
+  color: var(--gold);
+}
+.footer-legal-link:last-child {
+  margin-right: 0;
 }
 
 /* =========================================================
@@ -2498,6 +2511,7 @@ p {
     margin-top: 6px;
   }
 
+  /* Products dropdown: collapsed by default on mobile, toggled by .products-open class */
   .dropdown {
     position: static;
     opacity: 1;
@@ -2505,8 +2519,16 @@ p {
     transform: none;
     box-shadow: none;
     border: 0;
-    padding: 0 0 0 1rem;
+    padding: 0;
     max-width: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .has-dropdown.products-open .dropdown {
+    max-height: 300px;
+    padding: 0 0 0 1rem;
   }
 
   /* Hide non-essential nav buttons on tiny screens; keep CTA */

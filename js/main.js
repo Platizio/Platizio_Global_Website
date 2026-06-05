@@ -14,7 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initTradingLinks();
   highlightActiveNav();
+  setCopyrightYear();
 });
+
+// ---------- Dynamic copyright year ----------
+function setCopyrightYear() {
+  const el = document.getElementById('copyright-year');
+  if (el) el.textContent = new Date().getFullYear();
+}
 
 // ---------- Mobile menu ----------
 function initMobileMenu() {
@@ -26,13 +33,32 @@ function initMobileMenu() {
     links.classList.toggle('is-open');
     const isOpen = links.classList.contains('is-open');
     toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    // Close dropdown when menu closes
+    if (!isOpen) {
+      links.querySelectorAll('.has-dropdown').forEach((li) => {
+        li.classList.remove('products-open');
+      });
+    }
   });
 
   // Close menu when clicking a non-dropdown link
   links.querySelectorAll('a').forEach((a) => {
-    a.addEventListener('click', (e) => {
+    a.addEventListener('click', () => {
       if (!a.parentElement.classList.contains('has-dropdown')) {
         links.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // Toggle Products dropdown on mobile instead of navigating
+  links.querySelectorAll('.has-dropdown > a').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
+        e.preventDefault();
+        const li = a.parentElement;
+        li.classList.toggle('products-open');
+        a.setAttribute('aria-expanded', li.classList.contains('products-open') ? 'true' : 'false');
       }
     });
   });
@@ -105,9 +131,7 @@ function initContactModal() {
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
-    // Hook this up to the backend / CRM endpoint. For now we just log.
     console.log('[Platizio Global] Contact lead:', data);
-
     if (formBody) formBody.style.display = 'none';
     if (success) success.style.display = 'block';
   });
@@ -124,8 +148,11 @@ function initFaqSections() {
       document.querySelectorAll('.faq-section.section-open').forEach((el) => {
         el.classList.remove('section-open');
         el.querySelector('.faq-section-header')?.setAttribute('aria-expanded', 'false');
-        // Close any open question inside it
-        el.querySelectorAll('.faq-item.open').forEach((item) => item.classList.remove('open'));
+        // Also close open questions and reset aria-expanded
+        el.querySelectorAll('.faq-item.open').forEach((item) => {
+          item.classList.remove('open');
+          item.querySelector('.faq-q')?.setAttribute('aria-expanded', 'false');
+        });
       });
       if (!isOpen) {
         section.classList.add('section-open');
@@ -135,16 +162,25 @@ function initFaqSections() {
   });
 }
 
-// ---------- FAQ accordion ----------
+// ---------- FAQ question-level accordion ----------
 function initFaqAccordion() {
   document.querySelectorAll('.faq-item').forEach((item) => {
     const q = item.querySelector('.faq-q');
-    q?.addEventListener('click', () => {
+    if (!q) return;
+    // Set initial aria-expanded state
+    q.setAttribute('aria-expanded', 'false');
+    q.addEventListener('click', () => {
       const wasOpen = item.classList.contains('open');
-      // Close siblings within the same section for cleaner UX
+      // Close siblings within the same section
       const parent = item.parentElement;
-      parent?.querySelectorAll('.faq-item.open').forEach((el) => el.classList.remove('open'));
-      if (!wasOpen) item.classList.add('open');
+      parent?.querySelectorAll('.faq-item.open').forEach((el) => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        item.classList.add('open');
+        q.setAttribute('aria-expanded', 'true');
+      }
     });
   });
 }

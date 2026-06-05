@@ -5,6 +5,7 @@ import { TRADING_PLATFORM_URL } from '../constants'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [productsOpen, setProductsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { openContact } = useAppContext()
   const location = useLocation()
@@ -17,9 +18,10 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close mobile menu on navigation
+  // Close mobile menu and dropdown on navigation
   useEffect(() => {
     setMenuOpen(false)
+    setProductsOpen(false)
   }, [location.pathname])
 
   const isMediaActive = location.pathname === '/media' || location.pathname.startsWith('/articles')
@@ -40,8 +42,16 @@ export default function Header() {
               Home
             </NavLink>
           </li>
-          <li className="has-dropdown">
-            <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+          <li className={`has-dropdown${productsOpen ? ' products-open' : ''}`}>
+            <NavLink
+              to="/products"
+              className={({ isActive }) => (isActive ? 'active' : undefined)}
+              onClick={(e) => {
+                // On mobile, toggle the dropdown instead of navigating immediately
+                if (menuOpen) { e.preventDefault(); setProductsOpen((v) => !v) }
+              }}
+              aria-expanded={productsOpen}
+            >
               Products <span className="dropdown-chevron" aria-hidden="true" />
             </NavLink>
             <ul className="dropdown" role="menu">
