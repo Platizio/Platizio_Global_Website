@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Globe } from '../components/Globe'
 import { TRADING_PLATFORM_URL, YOUTUBE_CHANNEL_URL } from '../constants'
+import SEO from '../components/SEO'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -17,6 +18,11 @@ const PlayIcon = () => (
 export default function Home() {
   return (
     <>
+      <SEO
+        title="Invest in US Stocks &amp; ETFs from India"
+        description="Platizio Global lets Indian investors invest in US Stocks and ETFs under the RBI's Liberalised Remittance Scheme (LRS). IFSCA-regulated. Open your account today."
+        canonical="/"
+      />
       {/* ===== HERO ===== */}
       <section className="hero">
         <div className="container hero-grid">

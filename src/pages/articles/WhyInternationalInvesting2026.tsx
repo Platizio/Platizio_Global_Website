@@ -1,8 +1,17 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../../constants'
+import SEO from '../../components/SEO'
 
 export default function WhyInternationalInvesting2026() {
   return (
+    <>
+      <SEO
+        title="Why International Investing Will Matter More Than Ever by 2026"
+        description="For Indian investors, international investing is no longer optional. Discover why US Stocks and ETFs are becoming essential for portfolio resilience in 2026 and beyond."
+        canonical="/articles/why-international-investing-matters-2026"
+        ogType="article"
+        article={{ publishedTime: '2026-01-01T00:00:00Z', author: 'Platizio Global' }}
+      />
     <article className="article">
       <div className="breadcrumb" style={{ color: 'var(--gray-500)', marginBottom: '1rem' }}>
         <Link to="/" style={{ color: 'var(--gold-deep)' }}>Home</Link><span>/</span>
@@ -148,5 +157,6 @@ export default function WhyInternationalInvesting2026() {
 
       </div>
     </article>
+    </>
   )
 }

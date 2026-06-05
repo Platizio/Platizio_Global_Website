@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
+import SEO from '../components/SEO'
 
 interface FaqItem {
   id: string
@@ -517,6 +518,11 @@ export default function FAQs() {
 
   return (
     <>
+      <SEO
+        title="FAQs — US Stocks &amp; ETF Investing Questions Answered"
+        description="Find answers to common questions about investing in US Stocks and ETFs from India via Platizio Global — covering account opening, LRS, taxation, safety, and more."
+        canonical="/faqs"
+      />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">

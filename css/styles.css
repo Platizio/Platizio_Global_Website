@@ -555,6 +555,27 @@ p {
   white-space: nowrap;
 }
 
+/* ── Skip-to-content ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background: var(--navy);
+  color: var(--white);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  z-index: 9999;
+  transition: top 0.2s ease;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
 /* Hero visual: globe */
 .hero-visual {
   position: relative;
@@ -1844,7 +1865,7 @@ p {
 }
 
 .faq-item.open .faq-a {
-  max-height: 400px;
+  max-height: 1800px;
 }
 
 .faq-a div {
@@ -2154,6 +2175,7 @@ p {
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.92rem;
   transition: var(--t-fast);
+  overflow-wrap: break-word;
 }
 
 .footer-col a:hover {
@@ -2437,6 +2459,11 @@ p {
 }
 
 @media (max-width: 768px) {
+  /* Hero floating badges overflow the clipped hero container on mobile — hide them */
+  .hero-badge {
+    display: none;
+  }
+
   .menu-toggle {
     display: grid;
   }
@@ -2534,6 +2561,35 @@ p {
   .nav-actions .btn-pulse {
     padding: 0.55rem 0.85rem;
     font-size: 0.85rem;
+  }
+}
+
+/* ── Very small phones (≤ 400px) ────────────────────────────────────────────
+   Hero-meta uses white-space: nowrap in a 3-column grid which overflows inside
+   the hero's overflow:hidden at 320px. Switch to a vertical flex list where
+   each stat is a label + value on one row.                                   */
+@media (max-width: 400px) {
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .hero-meta > div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .hero-meta div strong,
+  .hero-meta div span {
+    white-space: normal;
+  }
+
+  .hero-meta div strong::after {
+    content: ' —';
+    font-weight: 400;
+    opacity: 0.6;
   }
 }
 

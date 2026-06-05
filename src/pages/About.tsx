@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
+import SEO from '../components/SEO'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -39,6 +40,11 @@ const offerings = [
 export default function About() {
   return (
     <>
+      <SEO
+        title="About Us — IFSCA-Regulated Global Investing Platform"
+        description="Learn about Platizio Global — an IFSCA-regulated platform that helps Indian investors access US Stocks and ETFs through the RBI's Liberalised Remittance Scheme (LRS)."
+        canonical="/about"
+      />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">
