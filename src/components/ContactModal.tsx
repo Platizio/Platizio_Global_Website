@@ -17,10 +17,15 @@ const EMPTY_FORM: FormState = {
   message: '',
 }
 
+const WEB3FORMS_KEY = '256f7a96-c82a-41c5-b3eb-3c2395f68665'
+const WEB3FORMS_URL = 'https://api.web3forms.com/submit'
+
 export default function ContactModal() {
   const { isContactOpen, contactInterest, closeContact } = useAppContext()
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const nameInputRef = useRef<HTMLInputElement>(null)
 
   // Pre-select interest when modal opens
@@ -28,6 +33,7 @@ export default function ContactModal() {
     if (isContactOpen) {
       setForm((f) => ({ ...f, interest: contactInterest || '' }))
       setSubmitted(false)
+      setSubmitError('')
       setTimeout(() => nameInputRef.current?.focus(), 200)
     }
   }, [isContactOpen, contactInterest])
@@ -38,6 +44,7 @@ export default function ContactModal() {
       const t = setTimeout(() => {
         setForm(EMPTY_FORM)
         setSubmitted(false)
+        setSubmitError('')
       }, 300)
       return () => clearTimeout(t)
     }
@@ -59,10 +66,33 @@ export default function ContactModal() {
     setForm((f) => ({ ...f, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('[Platizio Global] Contact lead:', form)
-    setSubmitted(true)
+    setIsSubmitting(true)
+    setSubmitError('')
+
+    const formData = new FormData(e.currentTarget)
+    formData.append('access_key', WEB3FORMS_KEY)
+    formData.append('subject', `New Enquiry from ${form.fullName} — Platizio Global`)
+    formData.append('from_name', 'Platizio Global Website')
+
+    try {
+      const response = await fetch(WEB3FORMS_URL, {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setSubmitted(true)
+      } else {
+        setSubmitError(data.message || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setSubmitError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -148,8 +178,20 @@ export default function ContactModal() {
                   onChange={handleChange}
                 />
               </div>
-              <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', justifyContent: 'center' }}>
-                Submit Enquiry
+
+              {submitError && (
+                <p style={{ color: '#B94B12', fontSize: '0.9rem', marginBottom: '0.75rem', textAlign: 'center' }}>
+                  {submitError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className="btn btn-gold btn-lg"
+                style={{ width: '100%', justifyContent: 'center' }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending…' : 'Submit Enquiry'}
               </button>
             </form>
           </div>
