@@ -11,7 +11,10 @@ export default function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <div className="logo">
-              <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" />
+              <picture>
+                <source srcSet="/Logo_V2.webp" type="image/webp" />
+                <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" />
+              </picture>
             </div>
             <p>
               Platizio Global makes international investing simple — explore US Stocks and ETFs

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { useAppContext } from '../context/AppContext'
 import SEO from '../components/SEO'
+import { TRADING_PLATFORM_URL } from '../constants'
 
 interface FaqItem {
   id: string
@@ -504,6 +506,29 @@ const ChevronIcon = () => (
   </svg>
 )
 
+// FAQPage JSON-LD schema — plain-text Q&A pairs for Google rich results
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'Can I, as an Indian resident, legally invest in US stocks?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Indian residents can invest in the US stock market under the RBI\'s Liberalised Remittance Scheme (LRS), which permits remittances of up to USD 250,000 per individual per financial year for permitted purposes including overseas equity investment.' } },
+    { '@type': 'Question', name: 'Who can open an account with Platizio?', acceptedAnswer: { '@type': 'Answer', text: 'Any Indian resident individual with a valid PAN and the documents needed to complete KYC can open an account. Accounts are opened in your name with ViewTrade IFSC, introduced and managed by Platizio.' } },
+    { '@type': 'Question', name: 'Can NRIs invest through Platizio?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. NRIs may invest where supported, subject to the rules of their country of residence and our broker partner\'s onboarding requirements. Contact supportglobal@platizio.com to confirm eligibility.' } },
+    { '@type': 'Question', name: 'What documents are required to complete KYC?', acceptedAnswer: { '@type': 'Answer', text: 'You will generally need a PAN card, proof of identity, proof of address (Aadhaar or equivalent), and your basic financial and bank details.' } },
+    { '@type': 'Question', name: 'How long does it take to get my account approved?', acceptedAnswer: { '@type': 'Answer', text: 'Account approval typically takes 1–3 business days after all KYC documents have been successfully submitted.' } },
+    { '@type': 'Question', name: 'Are there any charges for opening an account?', acceptedAnswer: { '@type': 'Answer', text: 'Account opening is free. Applicable transaction costs and exchange rates apply when you fund, trade or withdraw.' } },
+    { '@type': 'Question', name: 'Where are my securities held?', acceptedAnswer: { '@type': 'Answer', text: 'Your US-listed securities are held in a segregated account in your name at ViewTrade Securities Inc. (US), which uses Apex Clearing Corporation as its custodian at the DTC.' } },
+    { '@type': 'Question', name: 'Is there SIPC insurance on my account?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Accounts at ViewTrade Securities Inc. (US) are protected by SIPC up to USD 500,000 (including up to USD 250,000 for cash claims).' } },
+    { '@type': 'Question', name: 'How do I fund my Platizio account?', acceptedAnswer: { '@type': 'Answer', text: 'You fund your account by remitting INR from your Indian bank account to ViewTrade IFSC\'s designated bank account at GIFT City under LRS. Your bank converts INR to USD and processes the transfer.' } },
+    { '@type': 'Question', name: 'Is TCS applicable on my LRS remittance?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. TCS at 20% applies on LRS remittances for overseas investment exceeding ₹10 lakh in a financial year. TCS is creditable against your final income tax liability.' } },
+    { '@type': 'Question', name: 'Can I buy fractional shares?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Platizio supports fractional share investing, allowing you to invest a specific dollar amount in a stock or ETF without needing to buy a full share.' } },
+    { '@type': 'Question', name: 'How are capital gains from US stocks taxed in India?', acceptedAnswer: { '@type': 'Answer', text: 'Gains from US shares held over 24 months are taxed as LTCG at 12.5% without indexation. Gains from shares held 24 months or less are STCG taxed at your applicable income tax slab rate.' } },
+    { '@type': 'Question', name: 'Do I need to pay US capital gains tax?', acceptedAnswer: { '@type': 'Answer', text: 'No. Under the India-US DTAA, capital gains on US-listed shares by Indian tax residents are taxable only in India, not in the US.' } },
+    { '@type': 'Question', name: 'How do I withdraw funds from my account?', acceptedAnswer: { '@type': 'Answer', text: 'Log in to the platform, navigate to Withdraw, enter the amount, and confirm. Funds are sent to your registered Indian bank account. Only settled cash can be withdrawn.' } },
+    { '@type': 'Question', name: 'How do I contact Platizio support?', acceptedAnswer: { '@type': 'Answer', text: 'Email: supportglobal@platizio.com | Phone / WhatsApp: +91 92898 37100. Available Monday to Friday, 9 AM – 6 PM IST.' } },
+  ],
+}
+
 export default function FAQs() {
   const [openSectionId, setOpenSectionId] = useState<string | null>(null)
   const [openItemId, setOpenItemId] = useState<string | null>(null)
@@ -523,6 +548,9 @@ export default function FAQs() {
         description="Find answers to common questions about investing in US Stocks and ETFs from India via Platizio Global — covering account opening, LRS, taxation, safety, and more."
         canonical="/faqs"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </Helmet>
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">
@@ -607,6 +635,25 @@ export default function FAQs() {
               </svg>
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* ===== START INVESTING CTA ===== */}
+      <section className="cta-band reveal">
+        <div className="container" style={{ textAlign: 'center' }}>
+          <h2>Ready to Start Investing?</h2>
+          <p>Open your Platizio Global account and explore US Stocks and ETFs today.</p>
+          <a
+            className="btn btn-gold btn-lg"
+            href={TRADING_PLATFORM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Start Investing
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </section>
     </>

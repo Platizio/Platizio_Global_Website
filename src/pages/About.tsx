@@ -91,7 +91,10 @@ export default function About() {
               </p>
             </div>
             <div className="about-art reveal">
-              <img src="/platizio-logo.png" alt="Platizio Global" className="about-logo-img" />
+              <picture>
+                <source srcSet="/platizio-logo.webp" type="image/webp" />
+                <img src="/platizio-logo.png" alt="Platizio Global" className="about-logo-img" />
+              </picture>
             </div>
           </div>
         </div>
@@ -145,7 +148,10 @@ export default function About() {
           </div>
           <div className="leader-card reveal">
             <div className="leader-photo-wrap">
-              <img src="/sir.png" alt="Vividh — Director, Platizio Global" className="leader-photo" />
+              <picture>
+                <source srcSet="/sir.webp" type="image/webp" />
+                <img src="/sir.png" alt="Vividh — Director, Platizio Global" className="leader-photo" />
+              </picture>
             </div>
             <div className="leader-info">
               <h3>Vividh</h3>

@@ -349,8 +349,8 @@ p {
 
 .menu-toggle {
   display: none;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   align-items: center;
   justify-content: center;
@@ -369,6 +369,7 @@ p {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
+  min-height: 44px;
   border-radius: var(--radius-full);
   font-weight: 600;
   font-size: 0.95rem;
@@ -2014,8 +2015,8 @@ p {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -2134,8 +2135,8 @@ p {
 }
 
 .social a {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   display: grid;
@@ -2561,6 +2562,7 @@ p {
   .nav-actions .btn-pulse {
     padding: 0.55rem 0.85rem;
     font-size: 0.85rem;
+    min-height: 44px;
   }
 }
 

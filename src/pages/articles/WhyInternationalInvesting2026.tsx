@@ -23,7 +23,10 @@ export default function WhyInternationalInvesting2026() {
       <h1>Why International Investing Will Matter More Than Ever by 2026</h1>
 
       <div className="article-hero-img">
-        <img src="/article-1-logo.png" alt="Why International Investing Will Matter More Than Ever by 2026" />
+        <picture>
+          <source srcSet="/article-1-logo.webp" type="image/webp" />
+          <img src="/article-1-logo.png" alt="Why International Investing Will Matter More Than Ever by 2026" />
+        </picture>
       </div>
 
       <div className="article-body">

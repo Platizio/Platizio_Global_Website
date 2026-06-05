@@ -28,7 +28,10 @@ export default function Header() {
     <header className="site-header" style={{ boxShadow: scrolled ? 'var(--shadow-sm)' : 'none' }}>
       <nav className="nav" aria-label="Primary">
         <Link to="/" className="logo" aria-label="Platizio Global home">
-          <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" />
+          <picture>
+            <source srcSet="/Logo_V2.webp" type="image/webp" />
+            <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" />
+          </picture>
         </Link>
 
         <ul className={`nav-links${menuOpen ? ' is-open' : ''}`} role="menubar">
