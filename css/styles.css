@@ -364,10 +364,15 @@ p {
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  align-items: center;
-  justify-content: center;
+  place-items: center;
   background: var(--navy);
   color: var(--white);
+}
+
+.menu-toggle svg {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 .menu-toggle:hover {
@@ -1923,8 +1928,18 @@ p {
   position: relative;
 }
 
-.about-logo-img {
+/* Picture wrapper must be a centered block so the logo sits in the middle
+   of the .about-art panel (an inline <picture> otherwise left-aligns). */
+.about-art picture {
+  display: block;
   width: 72%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.about-logo-img {
+  display: block;
+  width: 100%;
   height: auto;
   position: relative;
   user-select: none;
@@ -2508,7 +2523,9 @@ p {
     border-bottom: 1px solid var(--gray-200);
     box-shadow: var(--shadow-md);
     gap: 0.25rem;
-    transform: translateY(-110%);
+    /* Translate fully off-screen: own height + the 72px top offset + shadow buffer.
+       Height-independent so a taller menu (with CTAs) can never peek at the top. */
+    transform: translateY(calc(-100% - 120px));
     transition: transform var(--t);
     /* Closed menu can't intercept taps even if a sub-pixel peeks on-screen */
     pointer-events: none;
