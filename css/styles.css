@@ -2499,6 +2499,7 @@ p {
     top: 72px;
     left: 0;
     right: 0;
+    z-index: 200;
     flex-direction: column;
     align-items: stretch;
     background: var(--white);
@@ -2508,10 +2509,13 @@ p {
     gap: 0.25rem;
     transform: translateY(-110%);
     transition: transform var(--t);
+    /* Closed menu can't intercept taps even if a sub-pixel peeks on-screen */
+    pointer-events: none;
   }
 
   .nav-links.is-open {
     transform: translateY(0);
+    pointer-events: auto;
   }
 
   .nav-links a {
