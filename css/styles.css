@@ -366,11 +366,12 @@ p {
   border-radius: 8px;
   align-items: center;
   justify-content: center;
-  color: var(--navy);
+  background: var(--navy);
+  color: var(--white);
 }
 
 .menu-toggle:hover {
-  background: var(--gray-100);
+  background: var(--navy-deep);
 }
 
 /* =========================================================
