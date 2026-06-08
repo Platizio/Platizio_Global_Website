@@ -87,6 +87,28 @@ export default function Header() {
               FAQs
             </NavLink>
           </li>
+
+          {/* Mobile-only CTAs inside the slide-out menu */}
+          <li className="nav-cta-mobile">
+            <button
+              className="btn btn-pulse"
+              onClick={() => { openContact(); setMenuOpen(false) }}
+            >
+              Contact Us
+            </button>
+            <a
+              className="btn btn-primary"
+              href={TRADING_PLATFORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+            >
+              Start Investing
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </a>
+          </li>
         </ul>
 
         <div className="nav-actions">

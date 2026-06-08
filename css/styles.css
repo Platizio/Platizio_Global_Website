@@ -206,6 +206,18 @@ p {
   text-decoration: none;
   overflow: hidden;
   align-self: stretch;
+  flex-shrink: 0;
+}
+
+/* Picture wrapper must not collapse the logo in the flex nav */
+.logo picture {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Mobile-only CTA block inside the slide-out menu (hidden on desktop) */
+.nav-cta-mobile {
+  display: none;
 }
 
 .logo-img {
@@ -2531,9 +2543,25 @@ p {
     padding: 0 0 0 1rem;
   }
 
-  /* Hide non-essential nav buttons on tiny screens; keep CTA */
-  .nav-actions .btn-ghost {
+  /* On mobile the top bar shows only logo + hamburger.
+     The CTAs move into the slide-out menu (.nav-cta-mobile). */
+  .nav-actions .btn-pulse,
+  .nav-actions .btn-primary {
     display: none;
+  }
+
+  .nav-cta-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.85rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .nav-cta-mobile .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .section {
