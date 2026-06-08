@@ -6,6 +6,7 @@ import { TRADING_PLATFORM_URL } from '../constants'
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
+  const [resourcesOpen, setResourcesOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { openContact } = useAppContext()
   const location = useLocation()
@@ -18,13 +19,15 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close mobile menu and dropdown on navigation
+  // Close mobile menu and dropdowns on navigation
   useEffect(() => {
     setMenuOpen(false)
     setProductsOpen(false)
+    setResourcesOpen(false)
   }, [location.pathname])
 
   const isMediaActive = location.pathname === '/media' || location.pathname.startsWith('/articles')
+  const isResourcesActive = location.pathname === '/faqs' || location.pathname === '/user-guide'
 
   return (
     <header className="site-header" style={{ boxShadow: scrolled ? 'var(--shadow-sm)' : 'none' }}>
@@ -82,10 +85,30 @@ export default function Header() {
               About Us
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/faqs" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-              FAQs
-            </NavLink>
+          <li className={`has-dropdown${resourcesOpen ? ' products-open' : ''}`}>
+            <button
+              type="button"
+              className={`nav-trigger${isResourcesActive ? ' active' : ''}`}
+              onClick={() => setResourcesOpen((v) => !v)}
+              aria-expanded={resourcesOpen}
+              aria-haspopup="true"
+            >
+              Resources <span className="dropdown-chevron" aria-hidden="true" />
+            </button>
+            <ul className="dropdown" role="menu">
+              <li>
+                <Link to="/faqs" onClick={() => { setMenuOpen(false); setResourcesOpen(false) }}>
+                  <strong>FAQ</strong>
+                  <span>Common questions on investing, funding &amp; taxes</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/user-guide" onClick={() => { setMenuOpen(false); setResourcesOpen(false) }}>
+                  <strong>User Guide</strong>
+                  <span>Step-by-step guide to start investing</span>
+                </Link>
+              </li>
+            </ul>
           </li>
 
           {/* Mobile-only CTAs inside the slide-out menu */}
