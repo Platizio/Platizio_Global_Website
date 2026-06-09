@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO'
 
 export default function PrivacyPolicy() {
   return (
     <>
+      <SEO
+        title="Privacy Policy"
+        description="How Platizio Global collects, uses, and protects your personal data for its international investing offering — US Stocks and ETFs for Indian investors."
+        canonical="/privacy"
+      />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">

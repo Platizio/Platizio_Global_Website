@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO'
 
 export default function TermsAndConditions() {
   return (
     <>
+      <SEO
+        title="Terms & Conditions"
+        description="Terms & Conditions for Platizio Global's international investing offering — US Stocks and ETFs for Indian investors via ViewTrade IFSC."
+        canonical="/terms"
+      />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">

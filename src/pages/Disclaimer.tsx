@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO'
 
 const points = [
   {
@@ -46,6 +47,11 @@ const points = [
 export default function Disclaimer() {
   return (
     <>
+      <SEO
+        title="Risk Disclosure & Disclaimer"
+        description="Risk disclosure and disclaimer for Platizio Global. Investing in US Stocks and ETFs involves market risk; this is not investment advice. Read before investing."
+        canonical="/disclaimer"
+      />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">

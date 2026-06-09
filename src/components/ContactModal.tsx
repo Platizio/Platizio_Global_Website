@@ -20,9 +20,12 @@ export default function ContactModal() {
   const [sending, setSending]     = useState(false)
   const [error, setError]         = useState('')
   const nameRef = useRef<HTMLInputElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
+  const lastFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (isContactOpen) {
+      lastFocusedRef.current = document.activeElement as HTMLElement
       setForm((f) => ({ ...f, interest: contactInterest || '' }))
       setSubmitted(false)
       setError('')
@@ -32,15 +35,30 @@ export default function ContactModal() {
 
   useEffect(() => {
     if (!isContactOpen) {
+      // Restore focus to the element that opened the modal
+      lastFocusedRef.current?.focus?.()
       const t = setTimeout(() => { setForm(EMPTY); setSubmitted(false); setError('') }, 300)
       return () => clearTimeout(t)
     }
   }, [isContactOpen])
 
+  // Close on Escape and trap focus within the dialog (accessibility)
   useEffect(() => {
-    const fn = (e: KeyboardEvent) => { if (e.key === 'Escape' && isContactOpen) closeContact() }
-    document.addEventListener('keydown', fn)
-    return () => document.removeEventListener('keydown', fn)
+    if (!isContactOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { closeContact(); return }
+      if (e.key === 'Tab' && modalRef.current) {
+        const f = modalRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (!f.length) return
+        const first = f[0], last = f[f.length - 1]
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
   }, [isContactOpen, closeContact])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -77,7 +95,7 @@ export default function ContactModal() {
       aria-labelledby="contactTitle"
       onClick={(e) => { if (e.target === e.currentTarget) closeContact() }}
     >
-      <div className="modal">
+      <div className="modal" ref={modalRef}>
         <button className="modal-close" aria-label="Close" onClick={closeContact}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 6L6 18M6 6l12 12" />
@@ -118,7 +136,7 @@ export default function ContactModal() {
                 <label htmlFor="message">Message / Query</label>
                 <textarea id="message" name="message" placeholder="Tell us how we can help (optional)" value={form.message} onChange={handleChange} />
               </div>
-              {error && <p style={{ color: '#B94B12', fontSize: '0.9rem', marginBottom: '0.75rem', textAlign: 'center' }}>{error}</p>}
+              {error && <p role="alert" style={{ color: '#B94B12', fontSize: '0.9rem', marginBottom: '0.75rem', textAlign: 'center' }}>{error}</p>}
               <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', justifyContent: 'center' }} disabled={sending}>
                 {sending ? 'Sending…' : 'Submit Enquiry'}
               </button>
