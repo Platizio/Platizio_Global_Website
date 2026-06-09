@@ -1983,6 +1983,25 @@ p {
   -webkit-user-drag: none;
 }
 
+/* "What We Offer" cards — responsive grid (4 → 2 → 1) */
+.about-offerings-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .about-offerings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .about-offerings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .value-list {
   list-style: none;
   display: flex;
@@ -2531,10 +2550,6 @@ p {
     grid-column: auto;
   }
 
-  /* About page offerings inline grid responsive override */
-  .about-offerings-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
 }
 
 @media (max-width: 768px) {
@@ -2880,6 +2895,68 @@ p {
   .guide-step-head h2 {
     font-size: 1.2rem;
   }
+}
+
+/* =========================================================
+   404 / Not Found page
+   ========================================================= */
+.notfound {
+  min-height: 62vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.notfound-code {
+  display: block;
+  font-size: clamp(4.5rem, 14vw, 9rem);
+  font-weight: 800;
+  line-height: 1;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.notfound h1 {
+  margin: 0.5rem 0 1rem;
+}
+
+.notfound p {
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  color: var(--gray-600);
+}
+
+.notfound-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.notfound-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 0.92rem;
+}
+
+.notfound-links span {
+  color: var(--gray-500);
+}
+
+.notfound-links a {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.notfound-links a:hover {
+  color: var(--gold);
 }
 
 /* Scroll reveal */

@@ -14,6 +14,7 @@ import WhyInternationalInvesting2026 from './pages/articles/WhyInternationalInve
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import Disclaimer from './pages/Disclaimer'
+import NotFound from './pages/NotFound'
 
 // Handles scroll-to-top / hash-scroll on route changes,
 // and re-wires the IntersectionObserver reveal animation
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </AppProvider>

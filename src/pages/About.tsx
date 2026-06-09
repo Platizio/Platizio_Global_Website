@@ -175,7 +175,7 @@ export default function About() {
             <h2>Our Product Offerings</h2>
             <p>What you get when you choose Platizio Global.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }}>
+          <div className="about-offerings-grid">
             {offerings.map(({ icon, title, body }) => (
               <article className="feature-card reveal" key={title}>
                 <div className="feature-icon">

@@ -10,6 +10,7 @@ interface SEOProps {
   canonical: string
   ogImage?: string
   ogType?: 'website' | 'article'
+  noindex?: boolean
   article?: {
     publishedTime: string
     author: string
@@ -22,6 +23,7 @@ export default function SEO({
   canonical,
   ogImage = DEFAULT_OG_IMAGE,
   ogType = 'website',
+  noindex = false,
   article,
 }: SEOProps) {
   const fullTitle = `${title} | ${SITE_NAME}`
@@ -33,6 +35,7 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
+      {noindex && <meta name="robots" content="noindex, follow" />}
 
       {/* Open Graph */}
       <meta property="og:type" content={ogType} />
