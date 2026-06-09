@@ -1,6 +1,23 @@
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { TRADING_PLATFORM_URL } from '../../constants'
 import SEO from '../../components/SEO'
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Why International Investing Will Matter More Than Ever by 2026',
+  image: 'https://platizioglobal.com/article-1-logo.png',
+  datePublished: '2026-01-01',
+  dateModified: '2026-01-01',
+  author: { '@type': 'Organization', name: 'Platizio Global', url: 'https://platizioglobal.com' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Platizio Global',
+    logo: { '@type': 'ImageObject', url: 'https://platizioglobal.com/logo.png' },
+  },
+  mainEntityOfPage: 'https://platizioglobal.com/articles/why-international-investing-matters-2026',
+}
 
 export default function WhyInternationalInvesting2026() {
   return (
@@ -12,6 +29,9 @@ export default function WhyInternationalInvesting2026() {
         ogType="article"
         article={{ publishedTime: '2026-01-01T00:00:00Z', author: 'Platizio Global' }}
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+      </Helmet>
     <article className="article">
       <div className="breadcrumb" style={{ color: 'var(--gray-500)', marginBottom: '1rem' }}>
         <Link to="/" style={{ color: 'var(--gold-deep)' }}>Home</Link><span>/</span>

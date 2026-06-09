@@ -68,11 +68,29 @@ export default function ContactModal() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (sending) return // guard against double-submit
+
+    // Client-side validation (noValidate is set, so we validate here for custom, accessible messages)
+    const name = form.fullName.trim()
+    const email = form.email.trim()
+    const phoneDigits = form.phone.replace(/\D/g, '')
+    const focusField = (id: string) => (document.getElementById(id) as HTMLElement | null)?.focus()
+
+    if (name.length < 2) {
+      setError('Please enter your full name.'); focusField('fullName'); return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.'); focusField('email'); return
+    }
+    if (phoneDigits.length < 8) {
+      setError('Please enter a valid contact number (at least 8 digits).'); focusField('phone'); return
+    }
+
     setSending(true)
     setError('')
     const fd = new FormData(e.currentTarget)
     fd.append('access_key', KEY)
-    fd.append('subject',    `New Enquiry from ${form.fullName} — Platizio Global`)
+    fd.append('subject',    `New Enquiry from ${name} — Platizio Global`)
     fd.append('from_name',  'Platizio Global Website')
     try {
       const res  = await fetch(EP, { method: 'POST', body: fd })

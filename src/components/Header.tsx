@@ -39,7 +39,7 @@ export default function Header() {
           </picture>
         </Link>
 
-        <ul className={`nav-links${menuOpen ? ' is-open' : ''}`} role="menubar">
+        <ul className={`nav-links${menuOpen ? ' is-open' : ''}`}>
           <li>
             <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : undefined)} end>
               Home
@@ -57,7 +57,7 @@ export default function Header() {
             >
               Products <span className="dropdown-chevron" aria-hidden="true" />
             </NavLink>
-            <ul className="dropdown" role="menu">
+            <ul className="dropdown">
               <li>
                 <Link to="/products#us-stocks" onClick={() => setMenuOpen(false)}>
                   <strong>US Stocks</strong>
@@ -95,7 +95,7 @@ export default function Header() {
             >
               Resources <span className="dropdown-chevron" aria-hidden="true" />
             </button>
-            <ul className="dropdown" role="menu">
+            <ul className="dropdown">
               <li>
                 <Link to="/faqs" onClick={() => { setMenuOpen(false); setResourcesOpen(false) }}>
                   <strong>FAQ</strong>

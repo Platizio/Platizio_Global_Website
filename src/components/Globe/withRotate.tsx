@@ -15,6 +15,12 @@ export function withRotate<P extends HTMLAttributes<HTMLDivElement>>(
 ): ComponentType<P> {
   const WithRotate = forwardRef<HTMLDivElement, P>((props, ref) => {
     useEffect(() => {
+      // Respect users who prefer reduced motion — keep the globe static
+      if (typeof window !== 'undefined' &&
+          window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+        return
+      }
+
       let rafId: number
 
       const tick = () => {
