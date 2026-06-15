@@ -23,42 +23,62 @@ const steps: Step[] = [
     title: 'Create your account',
     body: (
       <>
-        <p>Head to the Platizio Global platform and sign up with a few basic details:</p>
+        <h3>Before you begin</h3>
+        <p>Keep these ready for a smooth sign-up:</p>
         <ul>
-          <li>First and last name (as on your PAN)</li>
-          <li>Email address and mobile number</li>
-          <li>Residency type (Resident Indian)</li>
-          <li>A secure password</li>
+          <li>A valid, active email address and your Indian mobile number (+91)</li>
+          <li>PAN card and Aadhaar card (used for identity &amp; address verification)</li>
+          <li>Your basic investment and financial background details</li>
         </ul>
-        <p>Accept the Terms &amp; Privacy Policy and select <strong>Create Account</strong>. You&apos;ll then be taken to the login screen.</p>
+        <h3>Sign up</h3>
+        <ol>
+          <li>On the Platizio Global registration page, click <strong>Sign Up</strong>.</li>
+          <li>Enter your <strong>First Name</strong> and <strong>Last Name</strong> exactly as they appear on your PAN card.</li>
+          <li>Select residency type <strong>Resident Indian</strong>, choose country code <strong>+91</strong>, and enter your active mobile number.</li>
+          <li>Provide a valid email address you can access — your OTP is sent here.</li>
+          <li>Create a strong password (uppercase, lowercase, a number, and a special character) and re-enter it to confirm.</li>
+          <li>Tick the box to accept the Terms of Service and Privacy Policy, then click <strong>Create Now</strong>.</li>
+        </ol>
       </>
     ),
   },
   {
     id: 'log-in',
     num: 2,
-    title: 'Log in & verify',
+    title: 'Verify your email',
     body: (
       <>
-        <p>Log in with your registered email and password. For your security, a one-time password (OTP) is sent to your email — enter it to verify it&apos;s really you.</p>
-        <p>Once verified, you&apos;ll move straight into onboarding.</p>
-        <p className="guide-note"><strong>Forgot your password?</strong> Choose &ldquo;Forgot Password&rdquo;, enter the OTP sent to your email, and set a new one.</p>
+        <p>After clicking <strong>Create Now</strong>, you&apos;ll reach the OTP screen. Enter the <strong>one-time password (OTP)</strong> sent to your registered email address and click <strong>Continue</strong>.</p>
+        <p className="guide-note"><strong>Tips:</strong> use your legal name exactly as on your PAN, keep your email active (it&apos;s used for OTPs and updates), choose a unique password, and never share your credentials or OTP with anyone — including Platizio Global staff.</p>
+        <p>Returning later? Just log in with your registered email and password. Forgot it? Use <strong>Forgot Password</strong>, enter the email OTP, and set a new one.</p>
       </>
     ),
   },
   {
     id: 'complete-kyc',
     num: 3,
-    title: 'Complete your KYC',
+    title: 'Complete your KYC & onboarding',
     body: (
       <>
-        <p>Indian residents can complete KYC in one of two ways:</p>
+        <h3>DigiLocker KYC (recommended)</h3>
+        <p>DigiLocker gives the smoothest experience — your details are fetched automatically. Click <strong>Yes</strong>, enter the mobile number linked to DigiLocker, verify the OTP, then give <strong>consent</strong> for your <strong>PAN</strong> and <strong>Aadhaar</strong> and click <strong>Allow</strong>. (No DigiLocker account? You can create one, or complete the details manually.)</p>
+        <h3>Personal &amp; address details</h3>
+        <p>Most fields are pre-filled from DigiLocker; a few (such as gender and date of birth) may need to be entered manually. Your Aadhaar address is set as your permanent address — if your current or mailing address is different, choose <strong>No</strong> and add it (pincode, country, state, city, and address lines).</p>
+        <h3>Investment profile</h3>
+        <p>Choose from the dropdowns: <strong>Investment Objective</strong>, <strong>Investment Experience</strong>, <strong>Risk Tolerance</strong>, <strong>Annual Income</strong>, and <strong>Occupation</strong>. These ensure the products shown are suitable for you and meet regulatory requirements.</p>
+        <h3>Background details &amp; signature</h3>
+        <p>Answer the short Yes/No background questions, then provide your signature — either upload it or simply type your name in the signature box.</p>
+        <h3>Tax declarations</h3>
         <ul>
-          <li><strong>DigiLocker (fastest):</strong> Give consent, log in to DigiLocker, and allow access to your Aadhaar and PAN. Your personal and address details are fetched and pre-filled automatically.</li>
-          <li><strong>Manual:</strong> Enter your personal, address, and identity details and upload the required documents yourself.</li>
+          <li><strong>Tax treaty (DTAA):</strong> Indian residents select <strong>No</strong> to &ldquo;Are you a U.S. citizen?&rdquo; and certify Indian tax residency. US dividends are normally withheld at 25% — you can claim the reduced rate under the India–U.S. DTAA (recommended).</li>
+          <li><strong>FATCA/CRS:</strong> confirm your country of tax residence is India. If not, you&apos;ll add your country of residence and Tax Identification Number (TIN).</li>
         </ul>
-        <p>You&apos;ll also answer a short investment profile — investment objective, experience, risk tolerance, annual income, and occupation — which helps ensure the products you see are suitable for you.</p>
-        <p>Submit your application for review. Most accounts are approved within <strong>1–3 business days</strong>, and you&apos;ll receive a welcome email once you&apos;re live. Your account is opened in your name with ViewTrade IFSC at GIFT City.</p>
+        <h3>Nomination</h3>
+        <p>Optionally add a nominee who will receive the assets in your account in the event of your death. We recommend adding one — make sure the details are correct.</p>
+        <h3>Agreements &amp; declarations</h3>
+        <p>Click <strong>Download All Documents</strong>, review them, then tick the confirmation checkbox. These include the Trade Handling Disclosure, Global Market Investing Risk Disclosures, Crypto / Restricted Product Disclosure, Grievance Redressal Policy, AML/KYC Policy, Referrer Disclaimer, the FATCA/CRS Declaration, <strong>Form W-8BEN</strong>, and the <strong>ViewTrade IFSC Customer Account Agreement</strong>.</p>
+        <h3>Submit</h3>
+        <p>Click <strong>Submit</strong>. Accounts are usually opened <strong>instantly</strong> after verification; if your application can&apos;t be auto-verified, it may take up to <strong>2 business days</strong>. You&apos;ll receive a confirmation email with your application reference number — keep it for your records.</p>
       </>
     ),
   },
@@ -68,12 +88,24 @@ const steps: Step[] = [
     title: 'Fund your account (via LRS)',
     body: (
       <>
-        <p>Add money to start investing — all remittances are made under the RBI&apos;s <strong>Liberalised Remittance Scheme (LRS)</strong>, which allows up to USD 250,000 per individual per financial year.</p>
+        <p>To invest, first add money to your US investing account. Funds are remitted from your Indian bank account to the Platizio Global IFSC account under the RBI&apos;s <strong>Liberalised Remittance Scheme (LRS)</strong> — up to USD 250,000 per person per financial year. You can remit from any Indian bank that permits LRS, including by submitting <strong>Form A2</strong> (purpose code <strong>S0001</strong>).</p>
+        <h3>Add a bank account</h3>
+        <p>Log in, click <strong>Add Funds</strong>, then <strong>Bank Details → Add New Bank</strong>. Enter your <strong>bank account number</strong> and <strong>IFSC code</strong> (your name is auto-filled from your profile) and click <strong>Add</strong>. You can link up to <strong>three</strong> bank accounts for deposits and withdrawals.</p>
+        <h3>Deposit funds</h3>
+        <ol>
+          <li>Click <strong>Deposit Funds</strong>, select your linked bank, and enter your <strong>PAN</strong> and the <strong>amount in INR</strong>, then click <strong>Continue</strong>.</li>
+          <li>Review the summary — receivable amount, applicable charges, estimated bank FX rate, and the USD you&apos;ll receive.</li>
+          <li>Tick the box confirming the funds are self-funded, then click <strong>Proceed</strong>.</li>
+          <li>You&apos;re taken to your bank&apos;s remittance journey — authenticate as usual (net-banking login, MPIN/OTP, etc.). Once processed, the amount appears as <strong>Buying Power</strong>.</li>
+        </ol>
+        <h3>Which banks are supported</h3>
         <ul>
-          <li><strong>Link your bank:</strong> Add up to three Indian bank accounts. Each is confirmed with a small penny-drop verification.</li>
-          <li><strong>Deposit:</strong> Remit INR either through an <strong>integrated net-banking</strong> flow with supported banks (a quick online journey) or via a <strong>manual outward remittance</strong> following your bank&apos;s process. Your bank converts INR to USD.</li>
+          <li><strong>Integrated online flow:</strong> HDFC Bank, ICICI Bank, and Axis Bank — start and complete funding directly from the platform.</li>
+          <li><strong>Kotak Mahindra Bank:</strong> supported via Kotak net banking.</li>
+          <li><strong>Other banks:</strong> use your bank&apos;s outward-remittance process — Form A2 (purpose code S0001) via your Relationship Manager or branch.</li>
         </ul>
-        <p>Funds typically reflect as buying power on a <strong>T+1</strong> basis. Note that TCS at 20% applies on LRS remittances for overseas investment above ₹10 lakh in a financial year — this is collected by your bank and is creditable against your income tax.</p>
+        <p className="guide-note"><strong>Important:</strong> transfer only from your own bank account (third-party transfers aren&apos;t allowed), the account name must match your government ID, and mention your <strong>Platizio Global trading account number</strong> in the bank&apos;s &ldquo;Further Credit To&rdquo; / &ldquo;Additional Information&rdquo; field so the funds are credited correctly.</p>
+        <p>To check your balance, open the <strong>profile menu</strong> (top-right) to see your <strong>Buying Power</strong> — the amount available to invest in US stocks and ETFs.</p>
       </>
     ),
   },

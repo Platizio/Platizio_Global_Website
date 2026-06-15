@@ -2857,21 +2857,39 @@ p {
   margin-bottom: 0.85rem;
 }
 
-.guide-step-body ul {
+.guide-step-body ul,
+.guide-step-body ol {
   margin: 0 0 0.85rem;
-  padding-left: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  padding-left: 1.4rem;
+}
+
+.guide-step-body ul {
+  list-style: disc;
+}
+
+.guide-step-body ol {
+  list-style: decimal;
 }
 
 .guide-step-body li {
+  margin-bottom: 0.45rem;
   padding-left: 0.2rem;
 }
 
 .guide-step-body strong {
   color: var(--navy);
   font-weight: 600;
+}
+
+.guide-step-body h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 1.6rem 0 0.6rem;
+}
+
+.guide-step-body h3:first-child {
+  margin-top: 0;
 }
 
 .guide-note {
