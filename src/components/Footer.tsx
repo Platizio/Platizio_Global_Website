@@ -81,7 +81,7 @@ export default function Footer() {
             <h5>Contact Us On</h5>
             <ul className="footer-contact-list">
               <li>
-                <span className="footer-contact-label">Mobile</span>
+                <span className="footer-contact-label">Call / WhatsApp</span>
                 <a href="tel:+919289837100">+91 92898 37100</a>
               </li>
               <li>
