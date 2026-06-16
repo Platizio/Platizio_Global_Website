@@ -144,33 +144,55 @@ export default function About() {
           <div className="section-header reveal">
             <span className="eyebrow">Regulatory Compliance</span>
             <h2>Operating under strict regulatory frameworks</h2>
-            <p>We operate under strict regulatory frameworks to ensure the highest standards of investor protection.</p>
           </div>
-          <div className="reg-grid">
-            <div className="reg-card reveal">
-              <div className="reg-logo amfi-logo" aria-label="AMFI">AMFI</div>
-              <div>
-                <h3>AMFI Registered</h3>
-                <p>
-                  Platizio Services LLP is registered with the <strong>Association of Mutual Funds in India (AMFI)</strong>, ensuring adherence to the highest standards of ethical mutual fund distribution.
-                </p>
-              </div>
+          <div className="reg-statement reveal">
+            <div className="reg-statement-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
             </div>
-            <div className="reg-card reveal">
-              <div className="reg-logo sebi-logo" aria-label="SEBI">SEBI</div>
-              <div>
-                <h3>SEBI Compliant</h3>
-                <p>
-                  We operate under the regulatory framework of the <strong>Securities and Exchange Board of India (SEBI)</strong>, maintaining full transparency and investor protection across all offerings, including Specialized Investment Funds (SIFs).
-                </p>
+            <h3>IFSCA &amp; GIFT City Framework</h3>
+            <p>
+              Your international investments are routed through the GIFT City framework under the strict regulatory oversight of the IFSCA, ensuring the highest global standards of compliance and investor protection.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== PARTNERSHIP ===== */}
+      <section className="section" style={{ background: 'var(--gray-50)' }}>
+        <div className="container">
+          <div className="section-header reveal">
+            <h2>Partnership</h2>
+          </div>
+          <div className="partner-grid">
+            <article className="partner-card reveal">
+              <div className="partner-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
               </div>
-            </div>
+              <h3>Transparent global infrastructure optimized for absolute reliability</h3>
+            </article>
+            <article className="partner-card reveal">
+              <div className="partner-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
+              <h3>Global Execution via ViewTrade</h3>
+              <p>
+                To provide seamless access to US Stocks and ETFs, we have partnered with ViewTrade, a globally recognized leader in B2B financial technology and brokerage solutions. This strategic partnership powers our platform with institutional-grade trade routing, reliable execution, and secure asset custody.
+              </p>
+            </article>
           </div>
         </div>
       </section>
 
       {/* ===== CLOSING CTA ===== */}
-      <section className="section" style={{ background: 'var(--gray-50)' }}>
+      <section className="section">
         <div className="container">
           <div className="cta-band reveal">
             <h2>Start Investing in US Stocks and ETFs</h2>

@@ -277,13 +277,13 @@ p {
   list-style: none;
 }
 
-.nav-links a {
+.nav-links a:not(.btn) {
   position: relative;
   display: inline-block;
-  padding: 0.6rem 0.9rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 8px;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   color: var(--gray-700);
   transition: var(--t-fast);
 }
@@ -313,11 +313,11 @@ p {
 .nav-links .nav-trigger {
   position: relative;
   display: inline-block;
-  padding: 0.6rem 0.9rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 8px;
   font-family: inherit;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   color: var(--gray-700);
   background: none;
   border: none;
@@ -1575,6 +1575,45 @@ p {
 /* =========================================================
    About page — Regulatory Compliance grid
    ========================================================= */
+/* IFSCA & GIFT City statement (Regulatory Compliance) */
+.reg-statement {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2.5rem 2.25rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+}
+
+.reg-statement-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 1.1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--navy);
+  color: var(--gold);
+}
+
+.reg-statement-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.reg-statement h3 {
+  font-size: 1.25rem;
+  color: var(--navy);
+  margin-bottom: 0.6rem;
+}
+
+.reg-statement p {
+  color: var(--gray-600);
+  line-height: 1.75;
+  margin: 0;
+}
+
 .reg-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1635,6 +1674,202 @@ p {
   line-height: 1.65;
   color: var(--gray-600);
   margin: 0;
+}
+
+/* =========================================================
+   About page — Partnership
+   ========================================================= */
+.partner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.partner-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--t), transform var(--t);
+}
+
+.partner-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.partner-card-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 1.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--navy);
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.partner-card-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.partner-card h3 {
+  font-size: 1.2rem;
+  color: var(--navy);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.partner-card p {
+  color: var(--gray-600);
+  line-height: 1.75;
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .partner-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   Pricing page
+   ========================================================= */
+.pricing-h2 span {
+  color: var(--gold);
+}
+
+.pricing-table {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.pricing-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 1.5rem;
+  padding: 1.15rem 1.75rem;
+  align-items: center;
+}
+
+.pricing-head {
+  background: var(--navy);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+}
+
+.pricing-head span {
+  color: var(--white);
+}
+
+.pricing-body .pricing-row {
+  border-top: 1px solid var(--gray-100);
+}
+
+.pricing-body .pricing-row:nth-child(even) {
+  background: var(--gray-50);
+}
+
+.pricing-row .charge-head {
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 1rem;
+}
+
+.pricing-row .charge-val {
+  color: var(--gray-700);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+/* Taxation & TCS cards */
+.tax-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.tax-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--t), transform var(--t);
+}
+
+.tax-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.tax-card h3 {
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 1rem;
+}
+
+.tax-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tax-card li {
+  position: relative;
+  padding-left: 1.3rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.tax-card li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+@media (max-width: 860px) {
+  .tax-grid {
+    grid-template-columns: 1fr;
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 600px) {
+  .pricing-head {
+    display: none;
+  }
+
+  .pricing-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+    padding: 1rem 1.25rem;
+  }
 }
 
 /* =========================================================

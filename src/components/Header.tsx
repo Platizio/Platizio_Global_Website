@@ -73,6 +73,11 @@ export default function Header() {
             </ul>
           </li>
           <li>
+            <NavLink to="/pricing" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+              Pricing
+            </NavLink>
+          </li>
+          <li>
             <NavLink
               to="/media"
               className={() => (isMediaActive ? 'active' : undefined)}

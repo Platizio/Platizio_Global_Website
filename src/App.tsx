@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import ContactModal from './components/ContactModal'
 import Home from './pages/Home'
 import Products from './pages/Products'
+import Pricing from './pages/Pricing'
 import Media from './pages/Media'
 import About from './pages/About'
 import FAQs from './pages/FAQs'
@@ -82,6 +83,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="/media" element={<Media />} />
           <Route path="/about" element={<About />} />
           <Route path="/faqs" element={<FAQs />} />
