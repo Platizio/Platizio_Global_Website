@@ -9,10 +9,10 @@ const ArrowIcon = () => (
 )
 
 const stockFeatures = [
-  { icon: <><path d="M3 21h18" /><path d="M5 21V7l7-4 7 4v14" /><path d="M9 21V12h6v9" /></>, title: 'Global Companies', body: "Many of the world's largest companies — across software, hardware, healthcare and consumer brands — are listed in the US." },
+  { icon: <><path d="M3 21h18" /><path d="M5 21V7l7-4 7 4v14" /><path d="M9 21V12h6v9" /></>, title: 'Global Companies', body: "Many of the world's largest companies, across software, hardware, healthcare and consumer brands, are listed in the US." },
   { icon: <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>, title: 'Sector Depth', body: 'Strong exposure to technology, AI, semiconductors, biotech and global consumer brands you cannot easily access at home.' },
-  { icon: <><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10" /></>, title: 'Portfolio Diversification', body: 'Adds international market exposure that helps reduce concentration risk in a single economy.' },
-  { icon: <><path d="M12 1v22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>, title: 'USD Exposure', body: 'Provides dollar-linked investment exposure as part of an overall currency-aware portfolio.' },
+  { icon: <><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10" /></>, title: 'Portfolio Diversification', body: 'Adds international market exposure to reduce concentration risk in a single economy.' },
+  { icon: <><path d="M12 1v22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>, title: 'USD Exposure', body: 'Gain dollar-linked investment exposure, diversify your currency risk and build a resilient global zportfolio.' },
   { icon: <><path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" /></>, title: 'Long-Term Themes', body: 'Useful for investors looking at global innovation themes such as AI, cloud, semiconductors and clean energy.' },
 ]
 
@@ -25,19 +25,19 @@ const etfFeatures = [
 ]
 
 const trendingStocks = [
-  { ticker: 'AAPL', exchange: 'NASDAQ',   name: 'Apple',     sector: 'Technology',      desc: 'Consumer devices and services.' },
-  { ticker: 'MSFT', exchange: 'NASDAQ',   name: 'Microsoft', sector: 'Technology',      desc: 'Cloud, software and AI.' },
-  { ticker: 'NVDA', exchange: 'NASDAQ',   name: 'NVIDIA',    sector: 'Semiconductors',  desc: 'AI chips and data centre demand.' },
-  { ticker: 'TSLA', exchange: 'NASDAQ',   name: 'Tesla',     sector: 'Electric Vehicles', desc: 'EVs, batteries and clean mobility.' },
-  { ticker: 'AMZN', exchange: 'NASDAQ',   name: 'Amazon',    sector: 'Consumer / Cloud', desc: 'E-commerce and cloud infrastructure.' },
+  { ticker: 'AAPL', exchange: 'NASDAQ', name: 'Apple', sector: 'Technology', desc: 'Consumer devices and services.' },
+  { ticker: 'MSFT', exchange: 'NASDAQ', name: 'Microsoft', sector: 'Technology', desc: 'Cloud, software and AI.' },
+  { ticker: 'NVDA', exchange: 'NASDAQ', name: 'NVIDIA', sector: 'Semiconductors', desc: 'AI chips and data centre demand.' },
+  { ticker: 'TSLA', exchange: 'NASDAQ', name: 'Tesla', sector: 'Electric Vehicles', desc: 'EVs, batteries and clean mobility.' },
+  { ticker: 'AMZN', exchange: 'NASDAQ', name: 'Amazon', sector: 'Consumer / Cloud', desc: 'E-commerce and cloud infrastructure.' },
 ]
 
 const trendingEtfs = [
-  { ticker: 'SPY',  exchange: 'NYSEARCA', name: 'SPDR S&P 500',        category: 'S&P 500 ETF',      desc: 'Broad exposure to large US companies.' },
-  { ticker: 'QQQ',  exchange: 'NASDAQ',   name: 'Invesco QQQ',         category: 'Nasdaq-100 ETF',   desc: 'Technology-heavy US index exposure.' },
-  { ticker: 'VOO',  exchange: 'NYSEARCA', name: 'Vanguard S&P 500',    category: 'S&P 500 ETF',      desc: 'Low-cost broad US equity exposure.' },
-  { ticker: 'SOXX', exchange: 'NASDAQ',   name: 'iShares Semiconductor', category: 'Semiconductor ETF', desc: 'Exposure to semiconductor companies.' },
-  { ticker: 'XLK',  exchange: 'NYSEARCA', name: 'Technology Select',   category: 'Technology ETF',   desc: 'Exposure to the US technology sector.' },
+  { ticker: 'SPY', exchange: 'NYSEARCA', name: 'SPDR S&P 500', category: 'S&P 500 ETF', desc: 'Broad exposure to large US companies.' },
+  { ticker: 'QQQ', exchange: 'NASDAQ', name: 'Invesco QQQ', category: 'Nasdaq-100 ETF', desc: 'Technology-heavy US index exposure.' },
+  { ticker: 'VOO', exchange: 'NYSEARCA', name: 'Vanguard S&P 500', category: 'S&P 500 ETF', desc: 'Low-cost broad US equity exposure.' },
+  { ticker: 'SOXX', exchange: 'NASDAQ', name: 'iShares Semiconductor', category: 'Semiconductor ETF', desc: 'Exposure to semiconductor companies.' },
+  { ticker: 'XLK', exchange: 'NYSEARCA', name: 'Technology Select', category: 'Technology ETF', desc: 'Exposure to the US technology sector.' },
 ]
 
 export default function Products() {
@@ -69,7 +69,7 @@ export default function Products() {
           <div className="subsection-header reveal">
             <span className="eyebrow">US Stocks</span>
             <h2>What are US Stocks?</h2>
-            <p>US Stocks allow investors to participate in companies listed on US exchanges. These may include businesses from technology, AI, semiconductors, healthcare, consumer, financial services and other global sectors.</p>
+            <p>US stocks are shares of ownership in the companies that are listed on stock exchanges in the United States. These may include businesses from technology, AI, semiconductors, healthcare, consumer, financial services and other global sectors.</p>
           </div>
         </div>
       </section>

@@ -80,13 +80,7 @@ export default function Media() {
               rel="noopener noreferrer"
               aria-label="Visit Platizio Global on YouTube"
             >
-              <span className="yt-circle-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C18.8 4.2 12 4.2 12 4.2s-6.8 0-8.5.5a2.8 2.8 0 0 0-2 2C1 8.4 1 12 1 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a2.8 2.8 0 0 0 2-2C23 15.6 23 12 23 12zM9.7 15.3V8.7l5.7 3.3-5.7 3.3z" />
-                </svg>
-              </span>
-              <span className="yt-circle-handle">@platizioglobal</span>
-              <span className="yt-circle-label">Visit Channel</span>
+              <img src="/app favicon 1.png" alt="Platizio Global" />
             </a>
           </div>
         </div>

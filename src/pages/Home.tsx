@@ -27,11 +27,12 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-grid">
           <div className="hero-text">
-            <span className="eyebrow on-dark">Global investing, simplified</span>
+            <span className="eyebrow on-dark">Fully Guided International Wealth Creation</span>
             <h1>Invest Globally with <span>Platizio</span></h1>
             <p>
-              Explore US Stocks and ETFs through Platizio Global and build international exposure
-              from India — with education, support, and a simple onboarding flow.
+              Diversify your portfolio across premier US Stocks and ETFs with Platizio Global. From initial
+              onboarding to long-term portfolio creation, we provide end-to-end guidance tailored to your
+              specific investment goals.
             </p>
             <div className="hero-ctas">
               <a className="btn btn-gold btn-lg" href={TRADING_PLATFORM_URL} target="_blank" rel="noopener noreferrer">
@@ -41,8 +42,8 @@ export default function Home() {
             </div>
             <div className="hero-meta">
               <div><strong>US Stocks &amp; ETFs</strong><span>Stocks, indices, sectors &amp; themes</span></div>
-              <div><strong>IFSCA Regulated</strong><span>Under India's regulatory framework</span></div>
-              <div><strong>Education-first</strong><span>Learn before you invest</span></div>
+              <div><strong>IFSCA Regulated</strong><span>Gift City Based</span></div>
+              <div><strong>Dedicated Guidance</strong><span>From Onboarding to Execution</span></div>
             </div>
           </div>
 
@@ -76,7 +77,7 @@ export default function Home() {
             </div>
             <div className="product-card-body">
               <h3>US Stocks</h3>
-              <p>Invest in leading US-listed companies — Explore US Stocks</p>
+              <p>Invest in US-listed companies</p>
             </div>
             <span className="arrow"><ArrowIcon /></span>
           </Link>
@@ -102,8 +103,7 @@ export default function Home() {
             <span className="eyebrow">How It Works</span>
             <h2>Start investing in 3 simple steps</h2>
             <p>
-              From account creation to your first international order — the process is
-              straightforward and fully digital.
+              From account creation to your first international order.
             </p>
           </div>
 
@@ -111,8 +111,8 @@ export default function Home() {
             {([
               {
                 step: '01',
-                title: 'Open & Verify Your Account',
-                body: 'Create your Platizio Global account on the trading platform and complete KYC — entirely online, from India.',
+                title: 'Open Your Account',
+                body: 'Create your Platizio Global account on the trading platform and complete KYC entirely online.',
                 icon: (
                   <>
                     <path d="M9 12l2 2 4-4" />
@@ -123,7 +123,7 @@ export default function Home() {
               {
                 step: '02',
                 title: 'Fund via LRS',
-                body: "Transfer funds from your Indian bank account through India's Liberalised Remittance Scheme. Your money stays under India's regulatory framework.",
+                body: "Transfer funds from your Indian bank account through India's Liberalised Remittance Scheme. Your money stays under GIFT City's regulatory framework.",
                 icon: (
                   <>
                     <line x1="12" y1="2" x2="12" y2="22" />
@@ -184,7 +184,7 @@ export default function Home() {
             <span className="eyebrow">Why invest globally?</span>
             <h2>Reasons Indian investors are looking abroad</h2>
             <p>
-              International investing helps you reduce single-market dependence and participate in
+              International investing helps you reduce single-market dependence and invest in
               some of the world's largest companies and innovation themes.
             </p>
           </div>
@@ -271,13 +271,7 @@ export default function Home() {
               rel="noopener noreferrer"
               aria-label="Visit Platizio Global on YouTube"
             >
-              <span className="yt-circle-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C18.8 4.2 12 4.2 12 4.2s-6.8 0-8.5.5a2.8 2.8 0 0 0-2 2C1 8.4 1 12 1 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a2.8 2.8 0 0 0 2-2C23 15.6 23 12 23 12zM9.7 15.3V8.7l5.7 3.3-5.7 3.3z" />
-                </svg>
-              </span>
-              <span className="yt-circle-handle">@platizioglobal</span>
-              <span className="yt-circle-label">Visit Channel</span>
+              <img src="/app favicon 1.png" alt="Platizio Global" />
             </a>
           </div>
         </div>
