@@ -51,7 +51,7 @@ export default function Home() {
             <div className="orbit" aria-hidden="true" />
             <Globe />
             <div className="hero-badge top" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="green" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 17l6-6 4 4 8-8" /><path d="M14 7h7v7" />
               </svg>
               US Market access
