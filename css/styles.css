@@ -3195,6 +3195,75 @@ p {
   }
 }
 
+/* User Guide — downloadable PDF resources */
+.guide-pdf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 820px;
+  margin: 2.5rem auto 0;
+}
+
+.guide-pdf-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--t), transform var(--t);
+}
+
+.guide-pdf-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.guide-pdf-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--navy);
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.guide-pdf-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.guide-pdf-card h3 {
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+
+.guide-pdf-card p {
+  color: var(--gray-600);
+  line-height: 1.65;
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+}
+
+.guide-pdf-card .btn {
+  margin-top: auto;
+}
+
+@media (max-width: 760px) {
+  .guide-pdf-grid {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+  }
+}
+
 /* =========================================================
    404 / Not Found page
    ========================================================= */
