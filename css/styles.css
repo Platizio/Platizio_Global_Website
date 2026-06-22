@@ -1511,6 +1511,279 @@ p {
 }
 
 /* =========================================================
+   About page — Team Carousel (Meet the Team)
+   ========================================================= */
+.team-carousel {
+  position: relative;
+  --interval: 4500ms;
+}
+
+.team-carousel .tc-stage {
+  position: relative;
+  height: clamp(360px, 30vw + 220px, 480px);
+  perspective: 1500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.team-carousel .tc-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.team-carousel .tc-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(232px, 24vw, 300px);
+  aspect-ratio: 3 / 4;
+  margin-left: calc(clamp(232px, 24vw, 300px) / -2);
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--navy), var(--gold));
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transform-origin: center center;
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.7s ease, filter 0.7s ease;
+  will-change: transform, opacity;
+}
+
+.team-carousel .tc-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.team-carousel .tc-mono {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 3.4rem;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.02em;
+}
+
+.team-carousel .tc-grain {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.18;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 0.5px, transparent 0.6px);
+  background-size: 4px 4px;
+  pointer-events: none;
+}
+
+.team-carousel .tc-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  background: linear-gradient(to top, rgba(20, 9, 3, 0.86) 0%, rgba(20, 9, 3, 0.55) 38%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.team-carousel .tc-caption {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 15px;
+  text-align: right;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease 0.05s, transform 0.5s ease 0.05s;
+}
+
+.team-carousel .tc-bar {
+  display: inline-block;
+  width: 30px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--gold);
+  margin-bottom: 0.55rem;
+}
+
+.team-carousel .tc-name {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.32rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.team-carousel .tc-role {
+  color: #f0c8ad;
+  font-weight: 500;
+  font-size: 0.82rem;
+  margin: 0.2rem 0 0;
+}
+
+.team-carousel .tc-card.is-active .tc-scrim {
+  opacity: 1;
+}
+
+.team-carousel .tc-card.is-active .tc-caption {
+  opacity: 1;
+  transform: none;
+}
+
+.team-carousel .tc-card.is-active {
+  box-shadow: var(--shadow-lg);
+}
+
+.team-carousel .tc-card:not(.is-active) {
+  filter: saturate(0.7) brightness(0.92);
+}
+
+.team-carousel .tc-card:not(.is-active):hover {
+  filter: none;
+}
+
+.team-carousel .tc-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  color: var(--gold);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  z-index: 6;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.team-carousel .tc-arrow:hover {
+  background: var(--gold);
+  color: #fff;
+}
+
+.team-carousel .tc-arrow:active {
+  transform: translateY(-50%) scale(0.94);
+}
+
+.team-carousel .tc-arrow.prev {
+  left: max(8px, 2vw);
+}
+
+.team-carousel .tc-arrow.next {
+  right: max(8px, 2vw);
+}
+
+.team-carousel .tc-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.team-carousel .tc-dots {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 34px;
+}
+
+.team-carousel .tc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  padding: 0;
+  border: 0;
+  background: rgba(185, 75, 18, 0.28);
+  cursor: pointer;
+  transition: width 0.35s ease, background 0.35s ease;
+}
+
+.team-carousel .tc-dot.is-active {
+  width: 26px;
+  background: var(--gold);
+}
+
+.team-carousel .tc-progress {
+  margin: 22px auto 0;
+  width: 120px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(185, 75, 18, 0.15);
+  overflow: hidden;
+}
+
+.team-carousel .tc-progress > i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--gold);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.team-carousel.is-playing .tc-progress > i {
+  animation: tcFill var(--interval, 4500ms) linear forwards;
+}
+
+@keyframes tcFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  .team-carousel .tc-arrow {
+    width: 42px;
+    height: 42px;
+  }
+
+  .team-carousel .tc-name {
+    font-size: 1.15rem;
+  }
+
+  .team-carousel .tc-progress {
+    width: 90px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-carousel .tc-card {
+    transition: none;
+  }
+
+  .team-carousel.is-playing .tc-progress > i {
+    animation: none;
+    transform: scaleX(0);
+  }
+}
+
+/* =========================================================
    Closing CTA (call-to-action band)
    ========================================================= */
 .cta-band {

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
 import SEO from '../components/SEO'
+import TeamCarousel from '../components/TeamCarousel'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -112,6 +113,18 @@ export default function About() {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ===== MEET THE TEAM ===== */}
+      <section className="section">
+        <div className="container">
+          <div className="section-header reveal">
+            <span className="eyebrow">Meet the Team</span>
+            <h2>The People Behind Platizio</h2>
+            <p>The research, advisory, and operations team building resilient, future-ready portfolios.</p>
+          </div>
+          <TeamCarousel />
         </div>
       </section>
 
