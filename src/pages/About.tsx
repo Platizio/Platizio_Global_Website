@@ -104,12 +104,11 @@ export default function About() {
             </div>
             <div className="leader-info">
               <h3>Vividh</h3>
-              <p className="leader-designation">Director, Platizio Global</p>
-              <p className="leader-credential">Certified Financial Planner (CFP®)</p>
+              <p className="leader-designation">Founder & CEO, Platizio Global</p>
+              <p className="leader-credential">MBA, Certified Financial Planner (CFP®)</p>
               <ul className="leader-points">
-                <li><CheckIcon />Over 25 years of experience across financial services and International Business</li>
-                <li><CheckIcon />Deep understanding of Indian financial markets (Equities / Bonds / Commodities)</li>
-                <li><CheckIcon />Active interest in Equity Derivatives and Algorithmic Trading</li>
+                <li><CheckIcon />Over 30 years of experience across financial services and International Business</li>
+                <li><CheckIcon />Deep understanding of Global financial markets (Equities / Bonds / Commodities)</li>
               </ul>
             </div>
           </div>
