@@ -104,7 +104,7 @@ export default function About() {
               </picture>
             </div>
             <div className="leader-info">
-              <h3>Vividh</h3>
+              <h3>Vividh Chaturvedi</h3>
               <p className="leader-designation">Founder & CEO, Platizio Global</p>
               <p className="leader-credential">MBA, Certified Financial Planner (CFP®)</p>
               <ul className="leader-points">
