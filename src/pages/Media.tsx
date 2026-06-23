@@ -95,19 +95,53 @@ export default function Media() {
             <p>Concepts, products and practical insights — written for Indian investors exploring international markets.</p>
           </div>
 
-          <div className="card-grid-3" style={{ justifyItems: 'center' }}>
+          <div className="card-grid-3">
             <article className="media-card reveal">
               <Link
                 className="media-thumb"
                 to="/articles/why-international-investing-matters-2026"
                 aria-label="Why International Investing Will Matter More Than Ever by 2026"
-                style={{ backgroundImage: 'url(/article-1-logo.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                style={{ backgroundImage: 'url(/article-1-logo.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}
               />
               <div className="media-body">
                 <span className="media-tag">International</span>
                 <h3>Why International Investing Will Matter More Than Ever by 2026</h3>
                 <p>As we move into 2026, the case for global diversification is stronger than ever — here's why Indian investors should take notice.</p>
                 <Link className="media-link" to="/articles/why-international-investing-matters-2026">
+                  Read Article <ArrowIcon />
+                </Link>
+              </div>
+            </article>
+
+            <article className="media-card reveal">
+              <Link
+                className="media-thumb"
+                to="/articles/lrs-explained"
+                aria-label="LRS Explained: How Indian Residents Can Invest Overseas"
+                style={{ backgroundImage: 'url(/article-2-logo.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+              />
+              <div className="media-body">
+                <span className="media-tag">LRS &amp; Compliance</span>
+                <h3>LRS Explained: How Indian Residents Can Invest Overseas</h3>
+                <p>The Liberalised Remittance Scheme is the gateway to overseas investing — how the USD 250,000 limit, TCS, and foreign-asset reporting actually work.</p>
+                <Link className="media-link" to="/articles/lrs-explained">
+                  Read Article <ArrowIcon />
+                </Link>
+              </div>
+            </article>
+
+            <article className="media-card reveal">
+              <Link
+                className="media-thumb"
+                to="/articles/currency-risk-explained"
+                aria-label="Currency Risk Explained: Why the Rupee-Dollar Movement Matters"
+                style={{ backgroundImage: 'url(/article-3-logo.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+              />
+              <div className="media-body">
+                <span className="media-tag">Currency</span>
+                <h3>Currency Risk Explained: Why the Rupee-Dollar Movement Matters</h3>
+                <p>When you invest abroad, returns ride on two things — the asset and the rupee. See how INR-USD moves can lift or trim your gains.</p>
+                <Link className="media-link" to="/articles/currency-risk-explained">
                   Read Article <ArrowIcon />
                 </Link>
               </div>

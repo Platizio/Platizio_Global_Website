@@ -2529,6 +2529,41 @@ p {
   color: var(--gray-600);
 }
 
+.article-body ol {
+  margin: 0 0 1.1rem 1.25rem;
+}
+
+.article-table-wrap {
+  margin: 1.75rem 0;
+  overflow-x: auto;
+}
+
+.article-body table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid var(--gray-200);
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-body thead th {
+  background: var(--navy);
+  color: var(--white);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.article-body tbody tr:nth-child(even) {
+  background: var(--gray-50);
+}
+
 /* =========================================================
    Responsive
    ========================================================= */

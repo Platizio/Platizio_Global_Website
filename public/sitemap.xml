@@ -50,6 +50,18 @@
   </url>
 
   <url>
+    <loc>https://platizioglobal.com/articles/lrs-explained</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/currency-risk-explained</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://platizioglobal.com/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
