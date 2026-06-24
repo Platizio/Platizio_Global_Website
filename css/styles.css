@@ -842,6 +842,23 @@ p {
 /* =========================================================
    Floating Product Box (Home)
    ========================================================= */
+/* Home — "What is Platizio?" promo video */
+.promo-video {
+  max-width: 920px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--navy);
+  line-height: 0;
+}
+
+.promo-video video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .product-strip {
   position: relative;
   z-index: 5;

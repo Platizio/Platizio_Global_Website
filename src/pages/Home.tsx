@@ -66,35 +66,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== PRODUCT STRIP ===== */}
-      <div className="product-strip">
+      {/* ===== WHAT IS PLATIZIO (PROMO VIDEO) ===== */}
+      <section className="section">
         <div className="container">
-          <Link to="/products#us-stocks" className="product-card">
-            <div className="product-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 3v18h18" /><path d="M7 14l4-4 4 4 6-6" />
-              </svg>
-            </div>
-            <div className="product-card-body">
-              <h3>US Stocks</h3>
-              <p>Invest in US-listed companies</p>
-            </div>
-            <span className="arrow"><ArrowIcon /></span>
-          </Link>
-          <Link to="/products#us-etfs" className="product-card">
-            <div className="product-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 22h20M6 22V12M10 22V6M14 22V16M18 22V10" />
-              </svg>
-            </div>
-            <div className="product-card-body">
-              <h3>US ETFs</h3>
-              <p>Diversified baskets across indices, sectors &amp; themes</p>
-            </div>
-            <span className="arrow"><ArrowIcon /></span>
-          </Link>
+          <div className="section-header reveal">
+            <span className="eyebrow">Watch</span>
+            <h2>What is Platizio Global?</h2>
+          </div>
+          <div className="promo-video reveal">
+            <video
+              src="/platizio-promo.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              preload="metadata"
+              aria-label="What is Platizio Global — promo video"
+            />
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* ===== HOW IT WORKS ===== */}
       <section className="section" style={{ background: 'var(--gray-50)' }}>
