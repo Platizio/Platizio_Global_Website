@@ -44,6 +44,12 @@
   </url>
 
   <url>
+    <loc>https://platizioglobal.com/articles</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://platizioglobal.com/articles/why-international-investing-matters-2026</loc>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
@@ -57,6 +63,42 @@
 
   <url>
     <loc>https://platizioglobal.com/articles/currency-risk-explained</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/global-taxes</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/rsu-taxation</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/feeder-vs-combo-funds</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/gift-city</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/global-investment-allocation</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://platizioglobal.com/articles/routes-for-international-investing</loc>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>

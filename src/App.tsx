@@ -11,9 +11,8 @@ import Media from './pages/Media'
 import About from './pages/About'
 import FAQs from './pages/FAQs'
 import UserGuide from './pages/UserGuide'
-import WhyInternationalInvesting2026 from './pages/articles/WhyInternationalInvesting2026'
-import LRSExplained from './pages/articles/LRSExplained'
-import CurrencyRiskExplained from './pages/articles/CurrencyRiskExplained'
+import Articles from './pages/Articles'
+import ArticlePage from './components/ArticlePage'
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import Disclaimer from './pages/Disclaimer'
@@ -90,9 +89,8 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/user-guide" element={<UserGuide />} />
-          <Route path="/articles/why-international-investing-matters-2026" element={<WhyInternationalInvesting2026 />} />
-          <Route path="/articles/lrs-explained" element={<LRSExplained />} />
-          <Route path="/articles/currency-risk-explained" element={<CurrencyRiskExplained />} />
+          <Route path="/articles" element={<Articles />} />
+          <Route path="/articles/:slug" element={<ArticlePage />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/disclaimer" element={<Disclaimer />} />

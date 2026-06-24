@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL, YOUTUBE_CHANNEL_URL } from '../constants'
 import SEO from '../components/SEO'
+import ArticlesCarousel from '../components/ArticlesCarousel'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
@@ -14,8 +15,12 @@ const PlayIcon = () => (
   </svg>
 )
 
-const VIDEO_URL = 'https://youtube.com/shorts/_WJBopr3x9I'
-const VIDEO_THUMB = 'https://img.youtube.com/vi/_WJBopr3x9I/hqdefault.jpg'
+const VIDEOS = [
+  { id: '_WJBopr3x9I', title: 'Getting Started with Platizio Global', url: 'https://youtube.com/shorts/_WJBopr3x9I' },
+  { id: '71MGWFpYOcI', title: 'Why Indian Investors Need Global Investing', url: 'https://youtu.be/71MGWFpYOcI' },
+  { id: 'OGTdv3ZSXoY', title: 'Currency Risk in Global Investing, Explained in a Minute', url: 'https://youtube.com/shorts/OGTdv3ZSXoY' },
+  { id: '_xUeqs5hhvg', title: 'Global Diversification Explained Easily', url: 'https://youtube.com/shorts/_xUeqs5hhvg' },
+]
 
 export default function Media() {
   return (
@@ -49,38 +54,33 @@ export default function Media() {
             <p>Short videos covering global investing basics — markets, products and what to consider before you invest.</p>
           </div>
 
-          <div className="yt-row reveal">
-            {/* Single live video */}
-            <article className="media-card yt-video-card">
+          <div className="yt-grid reveal">
+            {VIDEOS.map((v) => (
               <a
-                className="media-thumb"
-                href={VIDEO_URL}
+                key={v.id}
+                className="yt-card"
+                href={v.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Watch on YouTube"
-                style={{ backgroundImage: `url(${VIDEO_THUMB})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                aria-label={`Watch on YouTube: ${v.title}`}
               >
-                <span className="play-button"><PlayIcon /></span>
+                <span
+                  className="yt-card-thumb"
+                  style={{ backgroundImage: `url(https://img.youtube.com/vi/${v.id}/hqdefault.jpg)` }}
+                >
+                  <span className="play-button"><PlayIcon /></span>
+                </span>
+                <span className="yt-card-title">{v.title}</span>
               </a>
-              <div className="media-body">
-                <span className="media-tag">Latest</span>
-                <h3>Getting Started with Platizio Global</h3>
-                <p>A quick introduction to how Platizio Global works — explore US Stocks and ETFs from India with a simple onboarding flow.</p>
-                <a className="media-link" href={VIDEO_URL} target="_blank" rel="noopener noreferrer">
-                  Watch on YouTube <ArrowIcon />
-                </a>
-              </div>
-            </article>
+            ))}
+          </div>
 
-            {/* Circular channel redirect */}
-            <a
-              className="yt-channel-circle"
-              href={YOUTUBE_CHANNEL_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit Platizio Global on YouTube"
-            >
-              <img src="/app favicon 1.png" alt="Platizio Global" />
+          <div className="yt-channel-cta reveal">
+            <a className="btn btn-primary btn-lg" href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M23 12s0-3.6-.5-5.3a2.8 2.8 0 0 0-2-2C18.8 4.2 12 4.2 12 4.2s-6.8 0-8.5.5a2.8 2.8 0 0 0-2 2C1 8.4 1 12 1 12s0 3.6.5 5.3a2.8 2.8 0 0 0 2 2c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a2.8 2.8 0 0 0 2-2C23 15.6 23 12 23 12zM9.7 15.3V8.7l5.7 3.3-5.7 3.3z" />
+              </svg>
+              Visit our YouTube Channel
             </a>
           </div>
         </div>
@@ -95,60 +95,13 @@ export default function Media() {
             <p>Concepts, products and practical insights — written for Indian investors exploring international markets.</p>
           </div>
 
-          <div className="card-grid-3">
-            <article className="media-card reveal">
-              <Link
-                className="media-thumb"
-                to="/articles/why-international-investing-matters-2026"
-                aria-label="Why International Investing Will Matter More Than Ever by 2026"
-                style={{ backgroundImage: 'url(/article-1-logo.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-              />
-              <div className="media-body">
-                <span className="media-tag">International</span>
-                <h3>Why International Investing Will Matter More Than Ever by 2026</h3>
-                <p>As we move into 2026, the case for global diversification is stronger than ever — here's why Indian investors should take notice.</p>
-                <Link className="media-link" to="/articles/why-international-investing-matters-2026">
-                  Read Article <ArrowIcon />
-                </Link>
-              </div>
-            </article>
+          <ArticlesCarousel />
 
-            <article className="media-card reveal">
-              <Link
-                className="media-thumb"
-                to="/articles/lrs-explained"
-                aria-label="LRS Explained: How Indian Residents Can Invest Overseas"
-                style={{ backgroundImage: 'url(/article-2-logo.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-              />
-              <div className="media-body">
-                <span className="media-tag">LRS &amp; Compliance</span>
-                <h3>LRS Explained: How Indian Residents Can Invest Overseas</h3>
-                <p>The Liberalised Remittance Scheme is the gateway to overseas investing — how the USD 250,000 limit, TCS, and foreign-asset reporting actually work.</p>
-                <Link className="media-link" to="/articles/lrs-explained">
-                  Read Article <ArrowIcon />
-                </Link>
-              </div>
-            </article>
-
-            <article className="media-card reveal">
-              <Link
-                className="media-thumb"
-                to="/articles/currency-risk-explained"
-                aria-label="Currency Risk Explained: Why the Rupee-Dollar Movement Matters"
-                style={{ backgroundImage: 'url(/article-3-logo.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-              />
-              <div className="media-body">
-                <span className="media-tag">Currency</span>
-                <h3>Currency Risk Explained: Why the Rupee-Dollar Movement Matters</h3>
-                <p>When you invest abroad, returns ride on two things — the asset and the rupee. See how INR-USD moves can lift or trim your gains.</p>
-                <Link className="media-link" to="/articles/currency-risk-explained">
-                  Read Article <ArrowIcon />
-                </Link>
-              </div>
-            </article>
+          <div className="articles-viewall reveal">
+            <Link className="btn btn-primary btn-lg" to="/articles">
+              View All Articles <ArrowIcon />
+            </Link>
           </div>
-
-          <p className="articles-more-note reveal">More articles are on the way — check back soon.</p>
         </div>
       </section>
 
