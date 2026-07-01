@@ -58,8 +58,7 @@ export default function UserGuide() {
       <section className="section">
         <div className="container" style={{ maxWidth: 900 }}>
           <p className="guide-intro">
-            Use the official Platizio Global guides below — each opens in Google Drive, where
-            you can read it online or download a copy.
+            Use the official Platizio Global guides below.
           </p>
 
           <div className="guide-pdf-grid">
