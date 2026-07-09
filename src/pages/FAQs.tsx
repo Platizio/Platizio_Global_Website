@@ -460,8 +460,22 @@ const sections: FaqSection[] = [
       },
       {
         id: 'ma-5',
-        q: 'How do I close my account?',
-        a: <span>First withdraw or transfer out all funds and holdings, then contact us at <a href="mailto:supportglobal@platizio.com">supportglobal@platizio.com</a> to start the closure process. Closure usually takes a few business days.</span>,
+        q: 'How do I close my Platizio Global Trading Account?',
+        a: (
+          <span>
+            You can close your Platizio Global trading account by sending us an email request from your registered email address to <a href="mailto:supportglobal@platizio.com">supportglobal@platizio.com</a>. The closure process takes 2 working days once you submit your request.
+            <br /><br />
+            Before closing your account, please ensure you have:
+            <ul style={{ paddingLeft: '1.25rem', margin: '0.5rem 0' }}>
+              <li>Cleared any negative balance in your account</li>
+              <li>Sold off any holdings in the account</li>
+              <li>Withdrawn any cash balance from the account</li>
+              <li>Downloaded all necessary reports (trade confirms, ledger, and P&amp;L statements), as these will not be accessible once your account is closed</li>
+              <li>If you wish to move securities to another broker, transferred your shares and cash prior to requesting account closure</li>
+            </ul>
+            <strong>Please note:</strong> Upon submission of an account closure request, the client irrevocably agrees that any residual amounts — including but not limited to dividends, corporate action proceeds, or any other entitlements arising from prior holdings and received post-closure — shall not be credited to the client's account. The client acknowledges and accepts that such amounts may be forfeited, and that no claims shall lie against the Company in respect of the same.
+          </span>
+        ),
       },
       {
         id: 'ma-6',
