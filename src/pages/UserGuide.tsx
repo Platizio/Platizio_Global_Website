@@ -21,12 +21,12 @@ const resources = [
   {
     title: 'Account Registration — Resident Indians',
     description: 'How to create your Platizio Global account and complete your KYC, step by step.',
-    href: 'https://drive.google.com/file/d/1IzR3xHFgLOonXZ6xpzotMTagOdcbjL-7/view?usp=sharing',
+    href: 'https://drive.google.com/file/d/19NpAvDwdVMEU5xRPD5xDAR_iBIEFyUJH/view?usp=sharing',
   },
   {
     title: 'Funding Instructions',
     description: 'How to add funds to your account from your Indian bank under the LRS. Updated 10 June 2026.',
-    href: 'https://drive.google.com/file/d/19NpAvDwdVMEU5xRPD5xDAR_iBIEFyUJH/view?usp=sharing',
+    href: 'https://drive.google.com/file/d/1IzR3xHFgLOonXZ6xpzotMTagOdcbjL-7/view?usp=sharing',
   },
 ]
 
