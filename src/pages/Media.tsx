@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL, YOUTUBE_CHANNEL_URL } from '../constants'
 import SEO from '../components/SEO'
 import ArticlesCarousel from '../components/ArticlesCarousel'
+import { VIDEOS } from '../videos'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
@@ -14,13 +15,6 @@ const PlayIcon = () => (
     <path d="M8 5v14l11-7z" />
   </svg>
 )
-
-const VIDEOS = [
-  { id: '_WJBopr3x9I', title: 'Getting Started with Platizio Global', url: 'https://youtube.com/shorts/_WJBopr3x9I' },
-  { id: '71MGWFpYOcI', title: 'Why Indian Investors Need Global Investing', url: 'https://youtu.be/71MGWFpYOcI' },
-  { id: 'OGTdv3ZSXoY', title: 'Currency Risk in Global Investing, Explained in a Minute', url: 'https://youtube.com/shorts/OGTdv3ZSXoY' },
-  { id: '_xUeqs5hhvg', title: 'Global Diversification Explained Easily', url: 'https://youtube.com/shorts/_xUeqs5hhvg' },
-]
 
 export default function Media() {
   return (

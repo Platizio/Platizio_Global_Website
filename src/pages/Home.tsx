@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Globe } from '../components/Globe'
 import { TRADING_PLATFORM_URL, YOUTUBE_CHANNEL_URL } from '../constants'
+import { LATEST_VIDEO } from '../videos'
 import SEO from '../components/SEO'
 
 const ArrowIcon = () => (
@@ -237,19 +238,19 @@ export default function Home() {
             <article className="media-card yt-video-card">
               <a
                 className="media-thumb"
-                href="https://youtube.com/shorts/_WJBopr3x9I"
+                href={LATEST_VIDEO.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Getting Started with Platizio Global"
-                style={{ backgroundImage: 'url(https://img.youtube.com/vi/_WJBopr3x9I/hqdefault.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                aria-label={LATEST_VIDEO.title}
+                style={{ backgroundImage: `url(https://img.youtube.com/vi/${LATEST_VIDEO.id}/hqdefault.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center' }}
               >
                 <span className="play-button"><PlayIcon /></span>
               </a>
               <div className="media-body">
                 <span className="media-tag">Latest</span>
-                <h3>Getting Started with Platizio Global</h3>
-                <p>A quick introduction to how Platizio Global works — explore US Stocks and ETFs from India with a simple onboarding flow.</p>
-                <a className="media-link" href="https://youtube.com/shorts/_WJBopr3x9I" target="_blank" rel="noopener noreferrer">
+                <h3>{LATEST_VIDEO.title}</h3>
+                <p>{LATEST_VIDEO.blurb}</p>
+                <a className="media-link" href={LATEST_VIDEO.url} target="_blank" rel="noopener noreferrer">
                   Watch on YouTube <ArrowIcon />
                 </a>
               </div>
