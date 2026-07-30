@@ -81,7 +81,7 @@ export default function Media() {
       </section>
 
       {/* ===== ARTICLES ===== */}
-      <section className="section" style={{ background: 'var(--gray-50)' }} id="articles">
+      <section className="section bleed-clip-x" style={{ background: 'var(--gray-50)' }} id="articles">
         <div className="container">
           <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
             <span className="eyebrow">Articles</span>

@@ -1803,6 +1803,16 @@ p {
 /* =========================================================
    Articles Carousel (Media page — coverflow of all articles)
    ========================================================= */
+/* The carousel's 3-D ring parks its far cards well outside the container, and
+   the fully transparent ones further out still count towards the page's scroll
+   width — which gave the page a horizontal scrollbar, worst on narrow screens.
+   Clipping on the full-width section keeps the intended bleed to the viewport
+   edge while stopping the spill from widening the page. `clip` rather than
+   `hidden` so no scroll container is created and overflow-y stays visible. */
+.bleed-clip-x {
+  overflow-x: clip;
+}
+
 .articles-carousel {
   position: relative;
   --interval: 5000ms;
