@@ -127,6 +127,27 @@ export default function Help() {
         </div>
       </section>
 
+      {/* ===== RAISE A REQUEST =====
+          Deliberately ahead of the answers. Nothing here uses .reveal: it sits
+          above the fold on most screens, where the observer's 60ms pass can
+          land before the element has settled into view. */}
+      <section className="section help-raise-band">
+        <div className="container" style={{ maxWidth: 880 }}>
+          <div className="help-contact-cta">
+            <h3>Need a hand with something?</h3>
+            <p>Send us the details and our support team will get back to you within 24 hours on business days.</p>
+            <div className="guide-cta-actions">
+              <Link className="btn btn-gold" to="/help/raise">
+                Raise a support request <ArrowIcon />
+              </Link>
+              <button className="btn btn-ghost" onClick={() => openContact('Platform Support')}>
+                Quick enquiry
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== SEARCH + ANSWERS =====
           Nothing in this region uses .reveal. The accordion is unmounted while a
           search is active, and the reveal observer in App.tsx only runs once per
@@ -253,72 +274,6 @@ export default function Help() {
                 )}
               </article>
             ))}
-          </div>
-
-          <div className="help-contact-cta reveal">
-            <h3>Didn&rsquo;t find your answer?</h3>
-            <p>Send us the details and our support team will get back to you.</p>
-            <div className="guide-cta-actions">
-              <Link className="btn btn-gold" to="/help/raise">
-                Raise a support request <ArrowIcon />
-              </Link>
-              <button className="btn btn-ghost" onClick={() => openContact('Platform Support')}>
-                Quick enquiry
-              </button>
-            </div>
-          </div>
-
-          {/* ===== RESPONSE TIMES =====
-              Support and grievances carry different published commitments, and
-              until /faqs merged into /help they lived on separate pages. Shown
-              together so the two figures do not read as a contradiction.
-              Every number below is reproduced from an existing published
-              source — do not introduce a new or reworded promise here. */}
-          <div className="help-sla reveal">
-            <p className="help-sla-title">How quickly we respond</p>
-            <p className="help-sla-intro">
-              Routine questions and formal grievances follow different tracks, so they have different timelines.
-            </p>
-
-            <div className="help-sla-tracks">
-              {/* Source: Support FAQ — "How do I contact Platizio support?" */}
-              <div className="help-sla-track">
-                <h4>Support queries</h4>
-                <p className="help-sla-scope">Account, funding, trading, withdrawals, statements and platform help.</p>
-                <dl>
-                  <div className="help-sla-row">
-                    <dt>First response</dt>
-                    <dd>Within 24 hours<span className="help-sla-qualifier"> (business days)</span></dd>
-                  </div>
-                  <div className="help-sla-row">
-                    <dt>Resolution</dt>
-                    <dd>1–5 days</dd>
-                  </div>
-                </dl>
-              </div>
-
-              {/* Source: Terms &amp; Conditions §25 and Privacy Policy §19 */}
-              <div className="help-sla-track">
-                <h4>Formal grievances</h4>
-                <p className="help-sla-scope">Complaints escalated to our Grievance Officer when support has not resolved it.</p>
-                <dl>
-                  <div className="help-sla-row">
-                    <dt>Acknowledgement</dt>
-                    <dd>Within 24 hours</dd>
-                  </div>
-                  <div className="help-sla-row">
-                    <dt>Resolution</dt>
-                    <dd>15 working days</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-
-            <p className="help-sla-note">
-              Grievance timelines are subject to Applicable Law and the nature of the issue, and are set out in full in our{' '}
-              <Link to="/terms#tc-25">Terms &amp; Conditions</Link>. To escalate a complaint, see{' '}
-              <Link to="/help/grievance">grievance redressal</Link>.
-            </p>
           </div>
 
           {/* Important Disclaimer */}

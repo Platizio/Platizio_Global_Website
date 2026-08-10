@@ -9,10 +9,11 @@ import {
 } from '../help/ticketTaxonomy'
 import {
   submitTicket,
-  validateAttachment,
+  addAttachments,
   formatBytes,
   ATTACHMENTS_ENABLED,
   ATTACHMENT_ACCEPT,
+  ATTACHMENT_MAX_FILES,
 } from '../help/api/support'
 
 const ArrowIcon = () => (
@@ -51,45 +52,42 @@ export default function RaiseTicket() {
   const [sending, setSending] = useState(false)
   const [submittedTo, setSubmittedTo] = useState<string | null>(null)
 
-  // Held outside FormState: a File is not a form value we want to spread or
+  // Held outside FormState: Files are not form values we want to spread or
   // reset with the rest, and the <input type="file"> needs clearing by ref.
-  const [attachment, setAttachment] = useState<File | null>(null)
+  const [attachments, setAttachments] = useState<File[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null
-    if (!file) return setAttachment(null)
+    const picked = Array.from(e.target.files ?? [])
+    if (!picked.length) return
 
-    const problem = validateAttachment(file)
-    if (problem) {
-      setError(problem)
-      clearAttachment() // reject it outright rather than hold an invalid file
-      return
-    }
-    setError('')
-    setAttachment(file)
+    const { accepted, error: problem } = addAttachments(attachments, picked)
+    setAttachments(accepted)
+    setError(problem ?? '')
+
+    // Always reset the input, not just on rejection: the picker replaces its
+    // FileList each time, so without this, re-picking a file that was skipped
+    // as a duplicate fires no change event and looks broken.
+    resetFileInput()
   }
 
-  function clearAttachment() {
-    setAttachment(null)
-    // Resetting the DOM input matters: without it, re-picking the same file
-    // fires no change event and the user thinks the control is broken.
+  function resetFileInput() {
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index))
+    setError('')
+    resetFileInput()
   }
 
   const selectedCategory = getCategory(form.categoryId)
   const selectedSubcategory = getSubcategory(form.categoryId, form.subcategory)
 
-  // Guidance narrows as the user narrows: broad category advice the moment a
-  // category is picked, replaced by subcategory-specific advice once they
-  // choose one. Falling back rather than hiding means the panel never
-  // disappears mid-flow, which would read as a glitch.
-  const guidance = selectedSubcategory ?? selectedCategory
-  const guidanceTitle = selectedSubcategory
-    ? `What to include for ${selectedSubcategory.label}`
-    : selectedCategory
-      ? `What to include for ${selectedCategory.label}`
-      : ''
+  // Hover gives the description via the option's title attribute, but touch
+  // and keyboard users never hover — so the current selection's description is
+  // also shown inline beneath the control.
+  const activeDescription = selectedSubcategory?.description ?? selectedCategory?.description ?? ''
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -137,7 +135,7 @@ export default function RaiseTicket() {
       subject,
       description,
       consentGiven: form.consentGiven,
-      attachment,
+      attachments,
     })
 
     setSending(false)
@@ -193,7 +191,7 @@ export default function RaiseTicket() {
                 <Link className="btn btn-ghost" to="/help">Back to Help &amp; Support</Link>
                 <button
                   className="btn btn-gold"
-                  onClick={() => { setForm(EMPTY); clearAttachment(); setSubmittedTo(null); setError('') }}
+                  onClick={() => { setForm(EMPTY); setAttachments([]); resetFileInput(); setSubmittedTo(null); setError('') }}
                 >
                   Raise another request
                 </button>
@@ -249,10 +247,15 @@ export default function RaiseTicket() {
               <div className="help-form-row">
                 <div className="field">
                   <label htmlFor="rt-categoryId">Category <span className="req">*</span></label>
+                  {/* title= is what surfaces the description on hover. It is
+                      the only per-option hover affordance a native <select>
+                      supports, and keeping the native control is worth more
+                      than a custom widget here — it stays keyboard-navigable
+                      and uses the OS picker on mobile. */}
                   <select id="rt-categoryId" name="categoryId" value={form.categoryId} onChange={handleChange}>
                     <option value="">Select a category</option>
                     {CATEGORIES.map((c) => (
-                      <option key={c.id} value={c.id}>{c.label}</option>
+                      <option key={c.id} value={c.id} title={c.description}>{c.label}</option>
                     ))}
                   </select>
                 </div>
@@ -261,41 +264,20 @@ export default function RaiseTicket() {
                   <select id="rt-subcategory" name="subcategory" value={form.subcategory} onChange={handleChange} disabled={!selectedCategory}>
                     <option value="">{selectedCategory ? 'Select a subcategory' : 'Choose a category first'}</option>
                     {selectedCategory?.subcategories.map((s) => (
-                      <option key={s.label} value={s.label}>{s.label}</option>
+                      <option key={s.label} value={s.label} title={s.description}>{s.label}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Guidance, narrowing from category to subcategory. Keyed on the
-                  active guidance so React remounts it and the fade replays when
-                  the advice changes — otherwise the text swaps silently and the
-                  user never notices it updated. Pure-CSS fade, not .reveal:
-                  this mounts after the reveal observer has already run. */}
-              {guidance && (
-                <div className="help-hint help-fade-in" key={guidanceTitle}>
-                  <p className="help-hint-title">{guidanceTitle}</p>
-                  <ul className="help-checklist">
-                    {guidance.detailsToInclude.map((d) => (
-                      <li key={d}>{d}</li>
-                    ))}
-                  </ul>
-
-                  {selectedSubcategory?.caution && (
-                    <p className="help-hint-caution">{selectedSubcategory.caution}</p>
-                  )}
-
-                  {!selectedSubcategory && (
-                    <p className="help-hint-link">Choose a subcategory for more specific guidance.</p>
-                  )}
-
-                  {selectedCategory?.faqAnchor && (
-                    <p className="help-hint-link">
-                      Might already be answered — see{' '}
-                      <Link to={`/help#${selectedCategory.faqAnchor}`}>{selectedCategory.label} questions</Link>.
-                    </p>
-                  )}
-                </div>
+              {/* The inline echo of the hovered/selected description. Keyed so
+                  the fade replays on change — otherwise the text swaps
+                  silently. Pure-CSS fade, never .reveal: this mounts after the
+                  reveal observer has already run. */}
+              {activeDescription && (
+                <p className="help-selection-desc help-fade-in" key={activeDescription}>
+                  {activeDescription}
+                </p>
               )}
 
               <div className="field">
@@ -317,31 +299,41 @@ export default function RaiseTicket() {
 
               {ATTACHMENTS_ENABLED && (
                 <div className="field">
-                  <label htmlFor="rt-attachment">Attachment</label>
-                  {attachment ? (
-                    <div className="help-file-chosen">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6" />
-                      </svg>
-                      <span className="help-file-name">{attachment.name}</span>
-                      <span className="help-file-size">{formatBytes(attachment.size)}</span>
-                      <button type="button" onClick={clearAttachment} aria-label={`Remove ${attachment.name}`}>
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
+                  <label htmlFor="rt-attachment">Attachments</label>
+
+                  {attachments.length > 0 && (
+                    <ul className="help-file-list">
+                      {attachments.map((file, i) => (
+                        <li className="help-file-chosen" key={`${file.name}-${file.size}`}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6" />
+                          </svg>
+                          <span className="help-file-name">{file.name}</span>
+                          <span className="help-file-size">{formatBytes(file.size)}</span>
+                          <button type="button" onClick={() => removeAttachment(i)} aria-label={`Remove ${file.name}`}>
+                            Remove
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* The picker stays visible until the cap is reached, so a
+                      second batch adds to the list rather than replacing it. */}
+                  {attachments.length < ATTACHMENT_MAX_FILES && (
                     <input
                       type="file"
                       id="rt-attachment"
                       name="attachment"
                       ref={fileInputRef}
                       accept={ATTACHMENT_ACCEPT}
+                      multiple
                       onChange={handleFileChange}
                       className="help-file-input"
                     />
                   )}
                   <p className="help-file-note">
-                    Optional — one PDF, PNG or JPG, up to 5 MB. Screenshots, statements or transaction receipts help us investigate faster.
+                    Optional — up to {ATTACHMENT_MAX_FILES} files, PDF, PNG or JPG, 5 MB each. Screenshots, statements or transaction receipts help us investigate faster.
                     <strong> Please redact anything you do not need to share, and never upload passwords or full card numbers.</strong>
                   </p>
                 </div>
@@ -362,7 +354,7 @@ export default function RaiseTicket() {
 
               <p className="help-disclaimer-fine help-form-footnote">
                 {ATTACHMENTS_ENABLED
-                  ? 'Need to send more than one document? Reply to our email once we get back to you and attach the rest there.'
+                  ? `Need to send more than ${ATTACHMENT_MAX_FILES} documents? Reply to our email once we get back to you and attach the rest there.`
                   : 'Documents cannot be attached here — reply to our email once we get back to you and attach them there.'}
               </p>
             </form>

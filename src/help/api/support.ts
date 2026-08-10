@@ -15,19 +15,32 @@ export const WEB3FORMS_ENDPOINT = 'https' + '://api.web3forms.com/submit'
 
 // --- Attachments ---------------------------------------------------------
 //
-// Web3Forms delivers attachments as email attachments, and the field MUST be
-// named exactly "attachment" — their basic uploader takes ONE file, 5MB max.
+// Web3Forms delivers attachments as email attachments, under the field name
+// "attachment" exactly. Their basic uploader takes ONE file at 5MB; their
+// advanced uploader takes up to THREE. We post with plain fetch + FormData
+// rather than their client script, so multiple files are appended under the
+// same repeated key — standard multipart, but how many they forward is not
+// something their docs pin down.
 //
-// IMPORTANT: attachment delivery requires a Web3Forms PRO plan. On the free
-// tier the file is not delivered. Send one real test submission with a file
-// and confirm it arrives in the support inbox before telling customers this
-// works — a silently dropped bank statement is worse than no upload field.
-// If it does not arrive, set ATTACHMENTS_ENABLED to false; the form keeps
-// working and the copy reverts to "reply to our email to attach".
+// Because of that, ATTACHMENT_MANIFEST_FIELD always lists every filename as
+// plain text in the email body. Even if only the first binary arrives, whoever
+// picks up the ticket can see what else the customer meant to send and ask for
+// it, rather than silently missing a document.
+//
+// IMPORTANT: attachment delivery requires a Web3Forms PRO plan at all. On the
+// free tier nothing is delivered. Send one real test submission with files and
+// confirm they arrive before telling customers this works — a silently dropped
+// bank statement is worse than no upload field. If they do not arrive, set
+// ATTACHMENTS_ENABLED to false; the form keeps working and the copy reverts to
+// "reply to our email to attach".
 export const ATTACHMENTS_ENABLED = true
 
 export const ATTACHMENT_FIELD = 'attachment'
+const ATTACHMENT_MANIFEST_FIELD = 'Attached files'
+
 export const ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024
+/** Matches the ceiling of the Web3Forms advanced uploader. */
+export const ATTACHMENT_MAX_FILES = 3
 
 /** Deliberately narrow: documents and screenshots are the real use cases. */
 export const ATTACHMENT_ACCEPT = '.pdf,.png,.jpg,.jpeg'
@@ -42,15 +55,48 @@ export const formatBytes = (bytes: number): string =>
 export function validateAttachment(file: File): string | null {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
   if (!ALLOWED_EXTENSIONS.includes(ext)) {
-    return 'Attachments must be a PDF, PNG or JPG file.'
+    return `“${file.name}” is not a supported type. Attachments must be PDF, PNG or JPG.`
   }
   if (file.size > ATTACHMENT_MAX_BYTES) {
-    return `That file is ${formatBytes(file.size)}. The limit is 5 MB — please compress it or email it to us instead.`
+    return `“${file.name}” is ${formatBytes(file.size)}. The limit is 5 MB per file — please compress it or email it to us instead.`
   }
   if (file.size === 0) {
-    return 'That file appears to be empty. Please check it and try again.'
+    return `“${file.name}” appears to be empty. Please check it and try again.`
   }
   return null
+}
+
+export interface AttachmentAddResult {
+  accepted: File[]
+  error: string | null
+}
+
+/**
+ * Merges a newly picked set into the existing list: validates each, skips
+ * duplicates by name and size, and stops at ATTACHMENT_MAX_FILES. Returns the
+ * full new list so the caller never has to reason about partial state.
+ */
+export function addAttachments(existing: File[], incoming: File[]): AttachmentAddResult {
+  const accepted = [...existing]
+  let error: string | null = null
+
+  for (const file of incoming) {
+    if (accepted.length >= ATTACHMENT_MAX_FILES) {
+      error = `You can attach up to ${ATTACHMENT_MAX_FILES} files. Send anything further by replying to our email.`
+      break
+    }
+    const isDuplicate = accepted.some((f) => f.name === file.name && f.size === file.size)
+    if (isDuplicate) continue
+
+    const problem = validateAttachment(file)
+    if (problem) {
+      error = problem
+      continue // keep the valid ones already collected rather than dropping everything
+    }
+    accepted.push(file)
+  }
+
+  return { accepted, error }
 }
 
 export interface TicketSubmission {
@@ -63,8 +109,8 @@ export interface TicketSubmission {
   subject: string
   description: string
   consentGiven: boolean
-  /** Optional single file. Only delivered on a Web3Forms PRO plan. */
-  attachment?: File | null
+  /** Up to ATTACHMENT_MAX_FILES. Only delivered on a Web3Forms PRO plan. */
+  attachments?: File[]
 }
 
 export interface SubmitResult {
@@ -86,14 +132,18 @@ export async function submitTicket(ticket: TicketSubmission): Promise<SubmitResu
   fd.append('Description', ticket.description)
   fd.append('Consent given', ticket.consentGiven ? 'Yes' : 'No')
 
-  // Must be appended under this exact key for Web3Forms to treat it as an
-  // email attachment. FormData sets the multipart content type itself, which
+  // Must be appended under this exact key for Web3Forms to treat these as
+  // email attachments. FormData sets the multipart content type itself, which
   // is what their enctype="multipart/form-data" requirement amounts to here.
-  if (ATTACHMENTS_ENABLED && ticket.attachment) {
-    fd.append(ATTACHMENT_FIELD, ticket.attachment, ticket.attachment.name)
-    // Named separately so the file is still traceable in the email body even
-    // if the attachment itself is stripped by the plan tier.
-    fd.append('Attached file', `${ticket.attachment.name} (${formatBytes(ticket.attachment.size)})`)
+  const files = ATTACHMENTS_ENABLED ? (ticket.attachments ?? []) : []
+  if (files.length) {
+    files.forEach((file) => fd.append(ATTACHMENT_FIELD, file, file.name))
+    // Always sent as text too — see the note at the top of this file. If the
+    // binaries are stripped, this is what tells support a document is missing.
+    fd.append(
+      ATTACHMENT_MANIFEST_FIELD,
+      files.map((f) => `${f.name} (${formatBytes(f.size)})`).join(', ')
+    )
   }
 
   fd.append('access_key', WEB3FORMS_KEY)

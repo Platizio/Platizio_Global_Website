@@ -4032,61 +4032,31 @@ p {
   margin: 0.9rem 0 0;
 }
 
-/* Category hint, inside the form ------------------------- */
-.help-hint {
-  padding: 1.1rem 1.35rem;
-  margin-bottom: 1.35rem;
-  border-radius: var(--radius-md);
-  background: var(--gray-50);
-  /* Gold edge ties it to the select that produced it */
-  border: 1px solid var(--gray-200);
-  border-left: 3px solid var(--gold);
+/* Raise-a-request band, above the answers -----------------
+   Trims the section's default vertical padding: it sits directly under the
+   hero, and full spacing on both would push the search box off the fold. */
+.help-raise-band {
+  padding-top: 2.5rem;
+  padding-bottom: 0;
 }
 
-.help-hint-title {
-  font-weight: 600;
-  font-size: 0.9375rem;
-  color: var(--navy);
-  margin-bottom: 0.5rem;
+.help-raise-band .help-contact-cta {
+  margin-top: 0;
 }
 
-.help-hint .help-checklist {
-  font-size: 0.9375rem;
-}
-
-.help-hint-link {
-  font-size: 0.875rem;
-  color: var(--gray-500);
-  margin: 0.85rem 0 0;
-}
-
-/* Subcategory-specific warning — currently only login/OTP, where the guidance
-   itself could otherwise invite someone to paste a one-time code. */
-.help-hint-caution {
+/* Selected category / subcategory description -------------
+   The same text the <option title> shows on hover, echoed inline for touch
+   and keyboard users who never get a hover state. Deliberately quiet: it
+   confirms a choice, it is not a panel competing with the fields. */
+.help-selection-desc {
   display: flex;
-  gap: 0.5rem;
-  margin: 0.85rem 0 0;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius-sm);
-  background: #fff8e6;
-  border: 1px solid #f0d9a0;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: #6b4d09;
-}
-
-.help-hint-caution::before {
-  content: '!';
-  flex: 0 0 1.1rem;
-  height: 1.1rem;
-  border-radius: 50%;
-  background: #a97a12;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 0.55rem;
+  margin: -0.35rem 0 1.35rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--gold);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--gray-600);
 }
 
 /* Attachment field ---------------------------------------
@@ -4121,6 +4091,15 @@ p {
 
 .help-file-input::file-selector-button:hover {
   border-color: var(--gold);
+}
+
+.help-file-list {
+  list-style: none;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .help-file-chosen {
