@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAppContext } from '../context/AppContext'
+import { WEB3FORMS_KEY, WEB3FORMS_ENDPOINT } from '../help/api/support'
 
 interface FormState {
   fullName: string
@@ -10,8 +11,9 @@ interface FormState {
 }
 
 const EMPTY: FormState = { fullName: '', email: '', phone: '', interest: '', message: '' }
-const KEY = '256f7a96-c82a-41c5-b3eb-3c2395f68665'
-const EP  = 'https' + '://api.web3forms.com/submit'
+// Shared with the /help/raise intake form so the key lives in exactly one place
+const KEY = WEB3FORMS_KEY
+const EP  = WEB3FORMS_ENDPOINT
 
 export default function ContactModal() {
   const { isContactOpen, contactInterest, closeContact } = useAppContext()

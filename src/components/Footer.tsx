@@ -67,14 +67,14 @@ export default function Footer() {
             <ul>
               <li><Link to="/media#articles">Articles</Link></li>
               <li><Link to="/media#videos">Videos</Link></li>
-              <li><Link to="/faqs">FAQs</Link></li>
+              <li><Link to="/help">FAQs</Link></li>
             </ul>
           </div>
           <div className="footer-col">
             <h5>Support</h5>
             <ul>
               <li><a href="#" onClick={(e) => { e.preventDefault(); openContact() }}>Contact Us</a></li>
-              <li><Link to="/faqs">Help</Link></li>
+              <li><Link to="/help">Help &amp; Support</Link></li>
               <li><a href="mailto:grievances@platizio.com">Grievance</a></li>
             </ul>
           </div>

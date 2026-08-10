@@ -27,7 +27,7 @@ export default function Header() {
   }, [location.pathname])
 
   const isMediaActive = location.pathname === '/media' || location.pathname.startsWith('/articles')
-  const isResourcesActive = location.pathname === '/faqs' || location.pathname === '/user-guide'
+  const isResourcesActive = location.pathname.startsWith('/help') || location.pathname === '/user-guide'
 
   return (
     <header className="site-header" style={{ boxShadow: scrolled ? 'var(--shadow-sm)' : 'none' }}>
@@ -102,9 +102,9 @@ export default function Header() {
             </button>
             <ul className="dropdown">
               <li>
-                <Link to="/faqs" onClick={() => { setMenuOpen(false); setResourcesOpen(false) }}>
-                  <strong>FAQ</strong>
-                  <span>Common questions on investing, funding &amp; taxes</span>
+                <Link to="/help" onClick={() => { setMenuOpen(false); setResourcesOpen(false) }}>
+                  <strong>Help &amp; Support</strong>
+                  <span>Search answers on investing, funding &amp; taxes, or contact us</span>
                 </Link>
               </li>
               <li>

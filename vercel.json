@@ -1,4 +1,5 @@
 {
+  "redirects": [{ "source": "/faqs", "destination": "/help", "permanent": true }],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {

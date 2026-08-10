@@ -37,7 +37,7 @@ export default function NotFound() {
           <div className="notfound-links">
             <span>Popular pages:</span>
             <Link to="/products">Products</Link>
-            <Link to="/faqs">FAQs</Link>
+            <Link to="/help">Help &amp; Support</Link>
             <Link to="/user-guide">User Guide</Link>
             <Link to="/about">About Us</Link>
           </div>

@@ -30,7 +30,9 @@
 
   /* Layout */
   --container: 1200px;
+  --radius-sm: 8px;
   --radius: 12px;
+  --radius-md: 14px;
   --radius-lg: 18px;
   --radius-xl: 24px;
   --radius-full: 999px;
@@ -387,7 +389,11 @@ p {
   transform: translateY(0);
 }
 
-.dropdown a {
+/* `.nav-links a:not(.btn)` above is more specific than a bare `.dropdown a`,
+   so it was winning the `display` declaration and flattening these to
+   inline-block — which ran each item's title and description together on one
+   line. Scoping to .nav-links restores the intended stacked layout. */
+.nav-links .dropdown a {
   display: flex;
   flex-direction: column;
   padding: 0.65rem 0.85rem;
@@ -3588,6 +3594,785 @@ p {
 
 @media (max-width: 480px) {
   .legal-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   HELP & SUPPORT
+   ========================================================= */
+
+/* Search ------------------------------------------------- */
+.help-search {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.help-search input {
+  width: 100%;
+  padding: 0.95rem 3rem 0.95rem 3rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  transition: var(--t-fast);
+}
+
+.help-search input:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.12);
+}
+
+/* We render our own clear button, so hide the native one */
+.help-search input[type='search']::-webkit-search-decoration,
+.help-search input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.help-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 1.15rem;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.help-search-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.help-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--gray-500);
+  transition: var(--t-fast);
+}
+
+.help-search-clear:hover {
+  background: var(--gray-100);
+  color: var(--navy);
+}
+
+.help-search-clear svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Results ------------------------------------------------ */
+.help-results-count {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  margin-bottom: 1rem;
+}
+
+.help-result-tag {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold-deep);
+  margin-bottom: 0.3rem;
+}
+
+.help-empty {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+}
+
+.help-empty p {
+  margin-bottom: 1.25rem;
+}
+
+/* Search results and other conditionally-rendered blocks must NOT use .reveal:
+   the IntersectionObserver in App.tsx runs once per navigation, so anything
+   mounted later would never be observed and would stay at opacity: 0 forever.
+   This is a self-contained CSS animation with `both` fill, so it always ends
+   visible regardless of when it mounts. */
+@keyframes helpFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.help-fade-in {
+  animation: helpFadeIn 0.35s ease both;
+}
+
+/* Contact channels --------------------------------------- */
+.help-channel-grid {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.help-channel-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.75rem;
+  transition: var(--t);
+}
+
+.help-channel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--gray-300);
+}
+
+.help-channel-card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.help-channel-card p {
+  font-size: 0.92rem;
+  margin-bottom: 1.15rem;
+}
+
+.help-channel-value {
+  margin-top: auto;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--gold);
+  word-break: break-word;
+}
+
+.help-channel-value:hover {
+  text-decoration: underline;
+}
+
+/* Closing blocks ----------------------------------------- */
+.help-contact-cta {
+  margin-top: 2.5rem;
+  padding: 2.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  text-align: center;
+}
+
+.help-contact-cta h3 {
+  margin-bottom: 0.5rem;
+}
+
+.help-contact-cta p {
+  margin-bottom: 1.25rem;
+}
+
+.help-disclaimer {
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+}
+
+.help-disclaimer-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--navy);
+}
+
+/* Applied explicitly rather than via :last-child — .help-disclaimer is reused
+   with different inner structure, so a positional selector would style the
+   wrong paragraph. */
+.help-disclaimer-fine {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  font-style: italic;
+  margin: 0;
+}
+
+.help-disclaimer p {
+  margin-bottom: 0.75rem;
+}
+
+.help-disclaimer p:last-child,
+.help-disclaimer ul:last-child {
+  margin-bottom: 0;
+}
+
+.help-checklist {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--gray-600);
+  line-height: 1.65;
+}
+
+.help-checklist li {
+  margin-bottom: 0.4rem;
+}
+
+.help-checklist li:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .help-contact-cta,
+  .help-channel-card {
+    padding: 1.75rem 1.35rem;
+  }
+
+  .help-disclaimer {
+    padding: 1.35rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .help-search input {
+    padding: 0.85rem 2.75rem;
+  }
+}
+
+/* Intake form ------------------------------------------- */
+.help-form {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+}
+
+.help-form-legend {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.help-form-legend + .field,
+.help-form-legend + .help-form-row {
+  margin-top: 0;
+}
+
+.help-form .help-form-legend:not(:first-child) {
+  margin-top: 2rem;
+}
+
+.help-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+}
+
+.help-form select:disabled {
+  background: var(--gray-50);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+.help-inline-note {
+  background: #fff7f0;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.15rem;
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+.help-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.help-consent input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  accent-color: var(--gold);
+}
+
+.help-consent label {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--gray-600);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.help-form-error {
+  color: #B94B12;
+  font-size: 0.9rem;
+  margin-bottom: 0.9rem;
+  text-align: center;
+}
+
+.help-form-submit {
+  width: 100%;
+  justify-content: center;
+}
+
+.help-form-footnote {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* Success state ------------------------------------------ */
+.help-submitted {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2.25rem;
+  text-align: center;
+}
+
+.help-submitted svg {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.25rem;
+  color: var(--emerald);
+}
+
+.help-submitted p {
+  margin-bottom: 0.75rem;
+}
+
+.help-submitted .guide-cta-actions {
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .help-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .help-form,
+  .help-submitted {
+    padding: 1.75rem 1.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .help-fade-in {
+    animation: none;
+  }
+
+  .help-channel-card:hover {
+    transform: none;
+  }
+}
+
+/* Raise-a-request guidance --------------------------------
+   Three blocks around the intake form: deflection above it, category-specific
+   guidance inside it, and expectations below it. All are plain elements — none
+   carry .reveal, because they sit inside a conditional branch that mounts after
+   the reveal observer has already run. */
+.help-prefill {
+  padding: 1.35rem 1.75rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+}
+
+.help-prefill-title {
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+
+.help-prefill-intro {
+  font-size: 0.9375rem;
+  color: var(--gray-600);
+  margin-bottom: 0.9rem;
+}
+
+.help-quicklinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.help-quicklinks a {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  font-size: 0.875rem;
+  color: var(--navy);
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.help-quicklinks a:hover {
+  background: var(--gray-50);
+  border-color: var(--gold);
+}
+
+.help-prefill-search {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  margin: 0.9rem 0 0;
+}
+
+/* Category hint, inside the form ------------------------- */
+.help-hint {
+  padding: 1.1rem 1.35rem;
+  margin-bottom: 1.35rem;
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+  /* Gold edge ties it to the select that produced it */
+  border: 1px solid var(--gray-200);
+  border-left: 3px solid var(--gold);
+}
+
+.help-hint-title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+
+.help-hint .help-checklist {
+  font-size: 0.9375rem;
+}
+
+.help-hint-link {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  margin: 0.85rem 0 0;
+}
+
+/* Subcategory-specific warning — currently only login/OTP, where the guidance
+   itself could otherwise invite someone to paste a one-time code. */
+.help-hint-caution {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.85rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: #fff8e6;
+  border: 1px solid #f0d9a0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #6b4d09;
+}
+
+.help-hint-caution::before {
+  content: '!';
+  flex: 0 0 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: #a97a12;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Attachment field ---------------------------------------
+   The native file input is styled only through its ::file-selector-button, so
+   the control keeps its built-in keyboard and screen-reader behaviour. Once a
+   file is chosen the input is swapped for a summary row, which is why picking
+   the same file again needs an explicit input.value reset in the component. */
+.help-file-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px dashed var(--gray-300, var(--gray-200));
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+  font-size: 0.9375rem;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+
+.help-file-input::file-selector-button {
+  margin-right: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--navy);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.help-file-input::file-selector-button:hover {
+  border-color: var(--gold);
+}
+
+.help-file-chosen {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+}
+
+.help-file-chosen svg {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--gold);
+}
+
+.help-file-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Long filenames must not push the Remove button off the row */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9375rem;
+  color: var(--navy);
+}
+
+.help-file-size {
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+}
+
+.help-file-chosen button {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.help-file-chosen button:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.help-file-note {
+  margin: 0.55rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--gray-500);
+}
+
+.help-file-note strong {
+  color: var(--gray-600);
+}
+
+/* What happens next -------------------------------------- */
+.help-next {
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+}
+
+.help-next-title {
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 1.1rem;
+}
+
+.help-next-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.help-next-steps li {
+  display: flex;
+  gap: 0.9rem;
+  padding-bottom: 1.1rem;
+}
+
+.help-next-steps li:last-child {
+  padding-bottom: 0;
+}
+
+.help-next-num {
+  flex: 0 0 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-next-steps strong {
+  display: block;
+  color: var(--navy);
+  margin-bottom: 0.15rem;
+}
+
+.help-next-steps span span,
+.help-next-steps li > span:last-child {
+  color: var(--gray-600);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* Anti-phishing notice ------------------------------------ */
+.help-security {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.35rem;
+  border-radius: var(--radius-md);
+  background: #fff8e6;
+  border: 1px solid #f0d9a0;
+}
+
+.help-security svg {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  color: #a97a12;
+  margin-top: 0.1rem;
+}
+
+.help-security p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #6b4d09;
+}
+
+.help-security strong {
+  color: #5a3f06;
+}
+
+@media (max-width: 768px) {
+  .help-prefill,
+  .help-next {
+    padding: 1.35rem 1.35rem;
+  }
+}
+
+/* Response times ------------------------------------------
+   Two tracks with different published commitments: routine support queries
+   (FAQ) and formal grievances (T&C §25 / Privacy §19). They are shown side by
+   side because they were previously on separate pages and read as a
+   contradiction once /faqs merged into /help. The figures here are reproduced
+   from those sources — changing one means changing the policy document too. */
+.help-sla {
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+}
+
+.help-sla-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--navy);
+}
+
+.help-sla-intro {
+  color: var(--gray-600);
+  margin-bottom: 1.25rem;
+}
+
+.help-sla-tracks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.help-sla-track {
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+}
+
+.help-sla-track h4 {
+  font-size: 1rem;
+  color: var(--navy);
+  margin-bottom: 0.15rem;
+}
+
+.help-sla-scope {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  margin-bottom: 0.9rem;
+}
+
+.help-sla-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--gray-200);
+}
+
+.help-sla-row dt {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+.help-sla-row dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--navy);
+  text-align: right;
+}
+
+/* Keeps the "(business days)" caveat attached to the figure without competing
+   with it — the qualifier matters legally but should not read as the promise. */
+.help-sla-qualifier {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--gray-500);
+}
+
+.help-sla-note {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  margin: 1.15rem 0 0;
+}
+
+@media (max-width: 768px) {
+  .help-sla {
+    padding: 1.35rem 1.35rem;
+  }
+
+  .help-sla-tracks {
     grid-template-columns: 1fr;
   }
 }

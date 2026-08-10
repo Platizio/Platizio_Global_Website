@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, Outlet } from 'react-router-dom'
+import { Routes, Route, useLocation, Outlet, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { AppProvider } from './context/AppContext'
 import Header from './components/Header'
@@ -9,7 +9,9 @@ import Products from './pages/Products'
 import Pricing from './pages/Pricing'
 import Media from './pages/Media'
 import About from './pages/About'
-import FAQs from './pages/FAQs'
+import Help from './pages/Help'
+import Grievance from './pages/Grievance'
+import RaiseTicket from './pages/RaiseTicket'
 import UserGuide from './pages/UserGuide'
 import Articles from './pages/Articles'
 import ArticlePage from './components/ArticlePage'
@@ -62,6 +64,15 @@ function ScrollHandler() {
   return null
 }
 
+// /faqs was merged into /help. Production serves a 301 from vercel.json (which
+// is what passes link equity), but vite dev and vite preview ignore that file —
+// this keeps old links working locally, and preserves the #section anchor that
+// a plain <Navigate to="/help"> would drop.
+function FaqsRedirect() {
+  const { hash } = useLocation()
+  return <Navigate to={{ pathname: '/help', hash }} replace />
+}
+
 function Layout() {
   return (
     <>
@@ -87,7 +98,10 @@ export default function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/media" element={<Media />} />
           <Route path="/about" element={<About />} />
-          <Route path="/faqs" element={<FAQs />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/help/raise" element={<RaiseTicket />} />
+          <Route path="/help/grievance" element={<Grievance />} />
+          <Route path="/faqs" element={<FaqsRedirect />} />
           <Route path="/user-guide" element={<UserGuide />} />
           <Route path="/articles" element={<Articles />} />
           <Route path="/articles/:slug" element={<ArticlePage />} />

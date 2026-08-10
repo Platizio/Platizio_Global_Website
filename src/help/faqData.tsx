@@ -1,25 +1,24 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
-import { useAppContext } from '../context/AppContext'
-import SEO from '../components/SEO'
-import { TRADING_PLATFORM_URL } from '../constants'
+import { isValidElement } from 'react'
+import type { ReactNode } from 'react'
 
-interface FaqItem {
+export interface FaqItem {
   id: string
   q: string
-  a: React.ReactNode
+  a: ReactNode
 }
 
-interface FaqSection {
+export interface FaqSection {
   id: string
   num: number
   title: string
-  note?: React.ReactNode
+  note?: ReactNode
   items: FaqItem[]
 }
 
-const sections: FaqSection[] = [
+// Section ids double as DOM anchors. They are carried over verbatim from the old
+// /faqs page so that indexed deep links (/faqs#taxation → /help#taxation) survive
+// the redirect — do not rename them.
+export const sections: FaqSection[] = [
   {
     id: 'getting-started',
     num: 1,
@@ -508,172 +507,62 @@ const sections: FaqSection[] = [
   },
 ]
 
-const PlusIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 5v14M5 12h14" />
-  </svg>
-)
-
-const ChevronIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-)
-
-// FAQPage JSON-LD schema — plain-text Q&A pairs for Google rich results
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    { '@type': 'Question', name: 'Can I, as an Indian resident, legally invest in US stocks?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Indian residents can invest in the US stock market under the Reserve Bank of India\'s Liberalised Remittance Scheme (LRS), which permits remittances of up to USD 250,000 per individual per financial year for permitted purposes, including overseas equity investment. Investing in US-listed stocks and ETFs through Platizio is fully compliant with these rules.' } },
-    { '@type': 'Question', name: 'Who can open an account with Platizio?', acceptedAnswer: { '@type': 'Answer', text: 'Any Indian resident individual with a valid PAN and the documents needed to complete KYC can open an account. Both first-time and experienced investors are welcome. Accounts are opened in your name with ViewTrade IFSC, introduced and managed by Platizio.' } },
-    { '@type': 'Question', name: 'Can NRIs (Non-Resident Indians) invest through Platizio?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. NRIs may invest where supported, subject to the rules of their country of residence and our broker partner\'s onboarding requirements. NRIs are typically asked to provide their passport, proof of address, and a tax identification number for their country of tax residence. Please contact supportglobal@platizio.com to confirm eligibility for your country.' } },
-    { '@type': 'Question', name: 'What documents are required to complete KYC?', acceptedAnswer: { '@type': 'Answer', text: 'To complete KYC you will generally need a PAN card, proof of identity, proof of address (Aadhaar or equivalent), and your basic financial and bank details. The exact documents are confirmed during the digital onboarding process.' } },
-    { '@type': 'Question', name: 'How long does account approval take?', acceptedAnswer: { '@type': 'Answer', text: 'Instant account opening for resident Indians subject to no blockers, and up to 48 hours for NRIs and foreign nationals.' } },
-    { '@type': 'Question', name: 'Are there any account opening or maintenance charges?', acceptedAnswer: { '@type': 'Answer', text: 'No. There are no account opening or maintenance charges.' } },
-    { '@type': 'Question', name: 'In whose name are my securities held?', acceptedAnswer: { '@type': 'Answer', text: 'Securities are custodised in the name of ViewTrade IFSC with DTCC for the benefit of customers — shares are held in ViewTrade IFSC\'s name, not the customer\'s, to protect clients under US regulations. The ownership and benefit of the account still belong to you as the end client. This is an IFSC-regulated account, not a standard US brokerage account.' } },
-    { '@type': 'Question', name: 'Are my investments insured?', acceptedAnswer: { '@type': 'Answer', text: 'US brokerage accounts are covered by SIPC (the Securities Investor Protection Corporation) up to USD 500,000 in total, including up to USD 250,000 for cash. SIPC protects against the failure of a brokerage firm; it does not protect against a fall in the market value of your investments.' } },
-    { '@type': 'Question', name: 'How do I add money to my account?', acceptedAnswer: { '@type': 'Answer', text: 'You fund your US brokerage account by remitting money from your Indian bank account under the LRS. From within the platform you can select your bank, download the net-banking remittance instructions, and initiate the transfer. Funds are converted from INR to USD by your bank and credited to your brokerage account.' } },
-    { '@type': 'Question', name: 'What is TCS, and how much will I pay?', acceptedAnswer: { '@type': 'Answer', text: 'TCS (Tax Collected at Source) is a tax your bank collects when you remit money abroad under the LRS. For overseas investments such as US stocks and ETFs, TCS applies at 20% only on the amount that exceeds ₹10 lakh of total LRS remittances in a financial year — the first ₹10 lakh attracts no TCS. TCS is not an extra cost: it is adjustable against your income-tax liability and can be claimed back when you file your return.' } },
-    { '@type': 'Question', name: 'Can I buy fractions of a share?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. You can buy fractional shares, which lets you invest a fixed amount even in high-priced stocks. For example, if one share trades at USD 1,000 and you invest USD 100, you receive 0.1 of a share.' } },
-    { '@type': 'Question', name: 'How are my capital gains from US stocks taxed in India?', acceptedAnswer: { '@type': 'Answer', text: 'If you hold a US stock or ETF for more than 24 months, the gain is taxed as Long-Term Capital Gains at a flat 12.5% (plus surcharge and cess), without indexation. If you hold for 24 months or less, it is Short-Term Capital Gains, added to your income and taxed at your slab rate. There is no capital gains tax in the US for Indian investors — capital gains are taxed only in India.' } },
-    { '@type': 'Question', name: 'Do I have to pay any tax in the US?', acceptedAnswer: { '@type': 'Answer', text: 'You do not pay US tax on your capital gains. You do pay US withholding tax on dividends (25% under the India-US DTAA), which you can then claim as a credit in India. All capital-gains tax is payable in India.' } },
-    { '@type': 'Question', name: 'How do I withdraw money?', acceptedAnswer: { '@type': 'Answer', text: 'After you sell securities, the proceeds settle on a T+1 basis (one business day after the trade). Once the cash is settled, you can place a withdrawal request from the platform by entering the amount and your bank details. The bank account must be in your own name.' } },
-    { '@type': 'Question', name: 'How do I contact Platizio support?', acceptedAnswer: { '@type': 'Answer', text: 'You can reach us by email at supportglobal@platizio.com or call / WhatsApp at +91 92898 37100. We respond within 24 hours on business days, and queries are typically resolved within 1–5 days.' } },
-  ],
+// Answers are ReactNode (many contain live JSX), so they cannot be string-matched
+// directly. Flatten each one to plain text so both the search index and the
+// FAQPage JSON-LD can derive from the single source of truth above rather than
+// duplicating the copy — which is how the old hand-written schema drifted.
+export function nodeToText(node: ReactNode): string {
+  if (node === null || node === undefined || typeof node === 'boolean') return ''
+  if (typeof node === 'string' || typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(nodeToText).join(' ')
+  if (isValidElement(node)) {
+    return nodeToText((node.props as { children?: ReactNode }).children)
+  }
+  return ''
 }
 
-export default function FAQs() {
-  const [openSectionId, setOpenSectionId] = useState<string | null>(null)
-  const [openItemId, setOpenItemId] = useState<string | null>(null)
-  const { openContact } = useAppContext()
+const collapseWhitespace = (s: string) => s.replace(/\s+/g, ' ').trim()
 
-  const toggleSection = (id: string) => {
-    setOpenSectionId((prev) => (prev === id ? null : id))
-    setOpenItemId(null) // close any open question when switching sections
-  }
+export interface FaqEntry {
+  sectionId: string
+  sectionNum: number
+  sectionTitle: string
+  item: FaqItem
+  /** Lowercased question + flattened answer, for substring matching. */
+  haystack: string
+}
 
-  const toggleItem = (id: string) => setOpenItemId((prev) => (prev === id ? null : id))
+/** Every question across every section, flattened once at module load. */
+export const faqEntries: FaqEntry[] = sections.flatMap((section) =>
+  section.items.map((item) => ({
+    sectionId: section.id,
+    sectionNum: section.num,
+    sectionTitle: section.title,
+    item,
+    haystack: collapseWhitespace(`${item.q} ${nodeToText(item.a)}`).toLowerCase(),
+  }))
+)
 
-  return (
-    <>
-      <SEO
-        title="FAQs — US Stocks &amp; ETF Investing Questions Answered"
-        description="Find answers to common questions about investing in US Stocks and ETFs from India via Platizio Global — covering account opening, LRS, taxation, safety, and more."
-        canonical="/faqs"
-      />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
-      {/* ===== PAGE HERO ===== */}
-      <section className="page-hero">
-        <div className="container">
-          <div className="breadcrumb">
-            <Link to="/">Home</Link><span>/</span><span>FAQs</span>
-          </div>
-          <h1>Frequently Asked Questions</h1>
-          <p>Common questions about Platizio Global, getting started, US Stocks &amp; ETFs, compliance and support.</p>
-        </div>
-      </section>
+export const totalQuestionCount = faqEntries.length
 
-      {/* ===== FAQs ===== */}
-      <section className="section">
-        <div className="container" style={{ maxWidth: 880 }}>
-          {sections.map(({ id, num, title, note, items }) => (
-            <div className={`faq-section${openSectionId === id ? ' section-open' : ''}`} id={id} key={id}>
+export function searchFaqs(query: string): FaqEntry[] {
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
+  if (!terms.length) return []
+  return faqEntries.filter((entry) => terms.every((term) => entry.haystack.includes(term)))
+}
 
-              {/* Section header — click to expand */}
-              <button className="faq-section-header" onClick={() => toggleSection(id)} aria-expanded={openSectionId === id}>
-                <span className="faq-section-label">
-                  <span className="num">{num}</span>
-                  <span className="faq-section-title">{title}</span>
-                </span>
-                <span className="faq-section-chevron" aria-hidden="true"><ChevronIcon /></span>
-              </button>
-
-              {/* Collapsible body */}
-              <div className="faq-section-body">
-                <div className="faq-section-inner">
-                  {note && note}
-                  <div className="faq-list">
-                    {items.map(({ id: itemId, q, a }) => (
-                      <div className={`faq-item${openItemId === itemId ? ' open' : ''}`} key={itemId}>
-                        <button
-                          className="faq-q"
-                          onClick={() => toggleItem(itemId)}
-                          aria-expanded={openItemId === itemId}
-                        >
-                          {q}
-                          <span className="ico"><PlusIcon /></span>
-                        </button>
-                        <div className="faq-a">
-                          <div>{a}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {/* Important Disclaimer */}
-          <div
-            style={{
-              marginTop: '2rem',
-              padding: '1.5rem 2rem',
-              borderRadius: 'var(--radius-lg)',
-              background: 'var(--gray-50)',
-              border: '1px solid var(--gray-200)',
-            }}
-          >
-            <p style={{ fontWeight: 600, marginBottom: '0.5rem', color: 'var(--navy)' }}>Important Disclaimer</p>
-            <p style={{ fontSize: '0.875rem', color: 'var(--gray-500)', fontStyle: 'italic', margin: 0 }}>
-              Investing in securities involves market risk, including the possible loss of capital. The value of investments can go up as well as down. The information in these FAQs is provided for general guidance only and does not constitute investment, legal, or tax advice. Tax treatment depends on your individual circumstances and may change. Please read all product terms and consult a qualified financial or tax advisor before investing. Platizio Services LLP facilitates access to US markets through its US brokerage partner; investments are executed and held with ViewTrade IFSC at GIFT City.
-            </p>
-          </div>
-
-          {/* Still have questions? */}
-          <div
-            style={{
-              marginTop: '2rem',
-              padding: '2.25rem',
-              borderRadius: 'var(--radius-lg)',
-              background: 'var(--gray-50)',
-              border: '1px solid var(--gray-200)',
-              textAlign: 'center',
-            }}
-          >
-            <h3 style={{ marginBottom: '0.5rem' }}>Still have questions?</h3>
-            <p style={{ marginBottom: '1.25rem' }}>Reach out and our team will get back to you shortly.</p>
-            <button className="btn btn-gold" onClick={() => openContact()}>
-              Contact Platizio Global
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== START INVESTING CTA ===== */}
-      <section className="cta-band reveal">
-        <div className="container" style={{ textAlign: 'center' }}>
-          <h2>Ready to Start Investing?</h2>
-          <p>Open your Platizio Global account and explore US Stocks and ETFs today.</p>
-          <a
-            className="btn btn-gold btn-lg"
-            href={TRADING_PLATFORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Start Investing
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </section>
-    </>
-  )
+// FAQPage structured data, derived from the sections above so it can never drift
+// from what is actually rendered. Built at runtime from existing strings, so it
+// costs nothing in bundle size.
+export const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqEntries.map(({ item }) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: collapseWhitespace(nodeToText(item.a)),
+    },
+  })),
 }
