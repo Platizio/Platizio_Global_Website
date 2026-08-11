@@ -9,6 +9,10 @@ import App from './App'
 export { ROUTES, STATIC_ROUTES, TOPIC_ROUTES, ARTICLE_ROUTES } from './routes'
 export type { RouteEntry } from './routes'
 
+// Exposed for scripts/generate-article-images.mjs, which needs title/category/
+// logo per article and would otherwise have to parse TypeScript.
+export { ARTICLES as ARTICLES_FOR_TOOLING } from './articles/registry'
+
 // Already false under Node (react-helmet-async derives it from `typeof window`).
 // Set explicitly so it cannot flip if this ever runs under jsdom.
 HelmetProvider.canUseDOM = false

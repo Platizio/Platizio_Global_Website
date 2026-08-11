@@ -77,6 +77,7 @@ export default function Home() {
           <div className="promo-video reveal">
             <video
               src="/platizio-promo.mp4"
+              poster="/platizio-promo-poster.jpg"
               autoPlay
               muted
               loop
@@ -264,7 +265,7 @@ export default function Home() {
               rel="noopener noreferrer"
               aria-label="Visit Platizio Global on YouTube"
             >
-              <img src="/app favicon 1.png" alt="Platizio Global" />
+              <img src="/app favicon 1.png" alt="Platizio Global" width={1563} height={1563} />
             </a>
           </div>
         </div>

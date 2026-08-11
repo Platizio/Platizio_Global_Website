@@ -13,7 +13,7 @@ export default function Footer() {
             <div className="logo">
               <picture>
                 <source srcSet="/Logo_V2.webp" type="image/webp" />
-                <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" />
+                <img src="/Logo_V2.png" alt="Platizio Global" className="logo-img" width={500} height={500} />
               </picture>
             </div>
             <p>

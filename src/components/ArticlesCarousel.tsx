@@ -137,7 +137,7 @@ export default function ArticlesCarousel() {
                 aria-label={isActive ? `Read article: ${a.title}` : a.title}
                 onClick={() => onCardClick(i, a.slug)}
               >
-                <img className="ac-logo" src={a.logo} alt={a.title} loading="lazy" draggable={false} />
+                <img className="ac-logo" src={a.logo} alt={a.title} width={1200} height={630} loading="lazy" draggable={false} />
                 <div className="ac-scrim" aria-hidden="true" />
                 <div className="ac-hint">
                   <span className="ac-tag">{a.category}</span>
