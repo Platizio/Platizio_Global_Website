@@ -110,6 +110,30 @@ export const faqSchema = (faqs: { q: string; a: string }[]) => ({
   })),
 })
 
+/** VideoObject JSON-LD. `embedUrl` makes it eligible for video rich results. */
+export const videoSchema = (v: {
+  name: string
+  description: string
+  thumbnailUrl: string
+  uploadDate: string
+  contentUrl?: string
+  embedUrl?: string
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: v.name,
+  description: v.description,
+  thumbnailUrl: v.thumbnailUrl,
+  uploadDate: v.uploadDate,
+  publisher: {
+    '@type': 'Organization',
+    name: SITE_NAME,
+    logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
+  },
+  ...(v.contentUrl ? { contentUrl: v.contentUrl } : {}),
+  ...(v.embedUrl ? { embedUrl: v.embedUrl } : {}),
+})
+
 /** ItemList JSON-LD for an ordered set of article URLs. */
 export const itemListSchema = (items: { name: string; path: string }[]) => ({
   '@context': 'https://schema.org',

@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { isValidElement, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { useAppContext } from '../context/AppContext'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema, faqSchema } from '../components/SEO'
 import { TRADING_PLATFORM_URL } from '../constants'
 
 interface FaqItem {
@@ -520,28 +519,25 @@ const ChevronIcon = () => (
   </svg>
 )
 
-// FAQPage JSON-LD schema — plain-text Q&A pairs for Google rich results
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    { '@type': 'Question', name: 'Can I, as an Indian resident, legally invest in US stocks?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Indian residents can invest in the US stock market under the Reserve Bank of India\'s Liberalised Remittance Scheme (LRS), which permits remittances of up to USD 250,000 per individual per financial year for permitted purposes, including overseas equity investment. Investing in US-listed stocks and ETFs through Platizio is fully compliant with these rules.' } },
-    { '@type': 'Question', name: 'Who can open an account with Platizio?', acceptedAnswer: { '@type': 'Answer', text: 'Any Indian resident individual with a valid PAN and the documents needed to complete KYC can open an account. Both first-time and experienced investors are welcome. Accounts are opened in your name with ViewTrade IFSC, introduced and managed by Platizio.' } },
-    { '@type': 'Question', name: 'Can NRIs (Non-Resident Indians) invest through Platizio?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. NRIs may invest where supported, subject to the rules of their country of residence and our broker partner\'s onboarding requirements. NRIs are typically asked to provide their passport, proof of address, and a tax identification number for their country of tax residence. Please contact supportglobal@platizio.com to confirm eligibility for your country.' } },
-    { '@type': 'Question', name: 'What documents are required to complete KYC?', acceptedAnswer: { '@type': 'Answer', text: 'To complete KYC you will generally need a PAN card, proof of identity, proof of address (Aadhaar or equivalent), and your basic financial and bank details. The exact documents are confirmed during the digital onboarding process.' } },
-    { '@type': 'Question', name: 'How long does account approval take?', acceptedAnswer: { '@type': 'Answer', text: 'Instant account opening for resident Indians subject to no blockers, and up to 48 hours for NRIs and foreign nationals.' } },
-    { '@type': 'Question', name: 'Are there any account opening or maintenance charges?', acceptedAnswer: { '@type': 'Answer', text: 'No. There are no account opening or maintenance charges.' } },
-    { '@type': 'Question', name: 'In whose name are my securities held?', acceptedAnswer: { '@type': 'Answer', text: 'Securities are custodised in the name of ViewTrade IFSC with DTCC for the benefit of customers — shares are held in ViewTrade IFSC\'s name, not the customer\'s, to protect clients under US regulations. The ownership and benefit of the account still belong to you as the end client. This is an IFSC-regulated account, not a standard US brokerage account.' } },
-    { '@type': 'Question', name: 'Are my investments insured?', acceptedAnswer: { '@type': 'Answer', text: 'US brokerage accounts are covered by SIPC (the Securities Investor Protection Corporation) up to USD 500,000 in total, including up to USD 250,000 for cash. SIPC protects against the failure of a brokerage firm; it does not protect against a fall in the market value of your investments.' } },
-    { '@type': 'Question', name: 'How do I add money to my account?', acceptedAnswer: { '@type': 'Answer', text: 'You fund your US brokerage account by remitting money from your Indian bank account under the LRS. From within the platform you can select your bank, download the net-banking remittance instructions, and initiate the transfer. Funds are converted from INR to USD by your bank and credited to your brokerage account.' } },
-    { '@type': 'Question', name: 'What is TCS, and how much will I pay?', acceptedAnswer: { '@type': 'Answer', text: 'TCS (Tax Collected at Source) is a tax your bank collects when you remit money abroad under the LRS. For overseas investments such as US stocks and ETFs, TCS applies at 20% only on the amount that exceeds ₹10 lakh of total LRS remittances in a financial year — the first ₹10 lakh attracts no TCS. TCS is not an extra cost: it is adjustable against your income-tax liability and can be claimed back when you file your return.' } },
-    { '@type': 'Question', name: 'Can I buy fractions of a share?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. You can buy fractional shares, which lets you invest a fixed amount even in high-priced stocks. For example, if one share trades at USD 1,000 and you invest USD 100, you receive 0.1 of a share.' } },
-    { '@type': 'Question', name: 'How are my capital gains from US stocks taxed in India?', acceptedAnswer: { '@type': 'Answer', text: 'If you hold a US stock or ETF for more than 24 months, the gain is taxed as Long-Term Capital Gains at a flat 12.5% (plus surcharge and cess), without indexation. If you hold for 24 months or less, it is Short-Term Capital Gains, added to your income and taxed at your slab rate. There is no capital gains tax in the US for Indian investors — capital gains are taxed only in India.' } },
-    { '@type': 'Question', name: 'Do I have to pay any tax in the US?', acceptedAnswer: { '@type': 'Answer', text: 'You do not pay US tax on your capital gains. You do pay US withholding tax on dividends (25% under the India-US DTAA), which you can then claim as a credit in India. All capital-gains tax is payable in India.' } },
-    { '@type': 'Question', name: 'How do I withdraw money?', acceptedAnswer: { '@type': 'Answer', text: 'After you sell securities, the proceeds settle on a T+1 basis (one business day after the trade). Once the cash is settled, you can place a withdrawal request from the platform by entering the amount and your bank details. The bank account must be in your own name.' } },
-    { '@type': 'Question', name: 'How do I contact Platizio support?', acceptedAnswer: { '@type': 'Answer', text: 'You can reach us by email at supportglobal@platizio.com or call / WhatsApp at +91 92898 37100. We respond within 24 hours on business days, and queries are typically resolved within 1–5 days.' } },
-  ],
+// FAQPage JSON-LD schema.
+//
+// Derived from `sections` rather than hand-copied. The previous version listed
+// 15 questions as literal strings while the page rendered 71, and every edit to
+// an answer silently desynced the two. Answers are React.ReactNode, so plain
+// text is extracted from the node tree — link text and <strong> runs included.
+const nodeToText = (node: React.ReactNode): string => {
+  if (node === null || node === undefined || typeof node === 'boolean') return ''
+  if (typeof node === 'string' || typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(nodeToText).join('')
+  if (isValidElement(node)) {
+    return nodeToText((node.props as { children?: React.ReactNode }).children)
+  }
+  return ''
 }
+
+const allFaqs = sections.flatMap(({ items }) =>
+  items.map(({ q, a }) => ({ q, a: nodeToText(a).replace(/\s+/g, ' ').trim() }))
+)
 
 export default function FAQs() {
   const [openSectionId, setOpenSectionId] = useState<string | null>(null)
@@ -561,10 +557,11 @@ export default function FAQs() {
         title="FAQs — US Stocks &amp; ETF Investing Questions Answered"
         description="Find answers to common questions about investing in US Stocks and ETFs from India via Platizio Global — covering account opening, LRS, taxation, safety, and more."
         canonical="/faqs"
+        jsonLd={[
+          breadcrumbSchema([['Home', '/'], ['FAQs', '/faqs']]),
+          faqSchema(allFaqs),
+        ]}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
         <div className="container">

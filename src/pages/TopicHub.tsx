@@ -107,7 +107,7 @@ export default function TopicHub() {
       {/* ===== BACK TO ALL ARTICLES ===== */}
       <section className="section" style={{ background: 'var(--gray-50)' }}>
         <div className="container" style={{ textAlign: 'center' }}>
-          <Link className="btn btn-secondary" to="/articles">
+          <Link className="btn btn-ghost" to="/articles">
             Browse all articles
           </Link>
         </div>

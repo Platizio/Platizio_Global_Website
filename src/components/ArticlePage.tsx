@@ -1,11 +1,18 @@
 import { Link, useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { TRADING_PLATFORM_URL } from '../constants'
-import SEO from './SEO'
+import SEO, { breadcrumbSchema, faqSchema } from './SEO'
+import RelatedArticles from './RelatedArticles'
 import NotFound from '../pages/NotFound'
 import { getArticle } from '../articles/registry'
+import { SITE_NAME, SITE_URL, LOGO_URL, absoluteUrl } from '../siteConfig'
 
-const BASE_URL = 'https://platizioglobal.com'
+/** Rough word count from the article's HTML body, for schema wordCount. */
+const countWords = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z]+;/gi, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length
 
 export default function ArticlePage() {
   const { slug } = useParams<{ slug: string }>()
@@ -13,21 +20,27 @@ export default function ArticlePage() {
 
   if (!article) return <NotFound />
 
-  const url = `${BASE_URL}/articles/${article.slug}`
-  const image = article.logo.startsWith('http') ? article.logo : `${BASE_URL}${article.logo}`
+  const path = `/articles/${article.slug}`
+  const url = `${SITE_URL}${path}`
+  const image = absoluteUrl(article.logo)
+  const modified = article.updated ?? article.date
 
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
+    description: article.description,
     image,
     datePublished: article.date,
-    dateModified: article.date,
-    author: { '@type': 'Organization', name: 'Platizio Global', url: BASE_URL },
+    dateModified: modified,
+    articleSection: article.category,
+    wordCount: countWords(article.bodyHtml),
+    inLanguage: 'en-IN',
+    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     publisher: {
       '@type': 'Organization',
-      name: 'Platizio Global',
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/logo.png` },
+      name: SITE_NAME,
+      logo: { '@type': 'ImageObject', url: LOGO_URL },
     },
     mainEntityOfPage: url,
   }
@@ -37,14 +50,25 @@ export default function ArticlePage() {
       <SEO
         title={article.title}
         description={article.description}
-        canonical={`/articles/${article.slug}`}
+        canonical={path}
         ogImage={image}
+        ogImageAlt={article.title}
         ogType="article"
-        article={{ publishedTime: `${article.date}T00:00:00Z`, author: 'Platizio Global' }}
+        article={{
+          publishedTime: `${article.date}T00:00:00Z`,
+          modifiedTime: `${modified}T00:00:00Z`,
+          author: SITE_NAME,
+        }}
+        jsonLd={[
+          articleSchema,
+          breadcrumbSchema([
+            ['Home', '/'],
+            ['Articles', '/articles'],
+            [article.title, path],
+          ]),
+          ...(article.faqs?.length ? [faqSchema(article.faqs)] : []),
+        ]}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
-      </Helmet>
 
       <article className="article">
         <div className="breadcrumb" style={{ color: 'var(--gray-500)', marginBottom: '1rem' }}>
@@ -54,14 +78,31 @@ export default function ArticlePage() {
           <span>{article.category}</span>
         </div>
 
-        <p className="article-meta">{article.category} · {article.dateLabel} · {article.readTime}</p>
+        <p className="article-meta">
+          {article.category} · {article.dateLabel} · {article.readTime}
+          {article.updated && article.updated !== article.date && (
+            <> · Updated {article.updated}</>
+          )}
+        </p>
         <h1>{article.title}</h1>
 
         <div className="article-hero-img">
-          <img src={article.logo} alt={article.title} />
+          <img src={article.logo} alt={article.title} width={1200} height={630} />
         </div>
 
         <div className="article-body" dangerouslySetInnerHTML={{ __html: article.bodyHtml }} />
+
+        {article.faqs?.length ? (
+          <section className="article-faq">
+            <h2>Frequently asked questions</h2>
+            {article.faqs.map((faq) => (
+              <div className="article-faq-item" key={faq.q}>
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
+              </div>
+            ))}
+          </section>
+        ) : null}
 
         <div className="article-body" style={{ marginTop: '2rem' }}>
           <a className="btn btn-gold btn-lg" href={TRADING_PLATFORM_URL} target="_blank" rel="noopener noreferrer">
@@ -71,6 +112,8 @@ export default function ArticlePage() {
             </svg>
           </a>
         </div>
+
+        <RelatedArticles article={article} />
       </article>
     </>
   )

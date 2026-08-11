@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -47,6 +47,7 @@ export default function Products() {
         title="US Stocks &amp; ETFs — Invest from India via LRS"
         description="Explore US Stocks and ETFs on Platizio Global. Invest in Apple, NVIDIA, S&P 500 ETFs and more from India under the RBI Liberalised Remittance Scheme (LRS)."
         canonical="/products"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['Products', '/products']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">

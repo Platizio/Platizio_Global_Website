@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 import TeamCarousel from '../components/TeamCarousel'
 
 const ArrowIcon = () => (
@@ -45,6 +45,7 @@ export default function About() {
         title="About Us — IFSCA-Regulated Global Investing Platform"
         description="Learn about Platizio Global — an IFSCA-regulated platform that helps Indian investors access US Stocks and ETFs through the RBI's Liberalised Remittance Scheme (LRS)."
         canonical="/about"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['About Us', '/about']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
