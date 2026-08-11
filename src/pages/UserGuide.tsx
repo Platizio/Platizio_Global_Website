@@ -46,7 +46,7 @@ export default function UserGuide() {
         <div className="container">
           <div className="breadcrumb">
             <Link to="/">Home</Link><span>/</span>
-            <span>Resources</span><span>/</span>
+            <span>Help</span><span>/</span>
             <span>User Guide</span>
           </div>
           <h1>User Guide</h1>

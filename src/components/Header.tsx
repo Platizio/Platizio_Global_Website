@@ -98,7 +98,7 @@ export default function Header() {
               aria-expanded={resourcesOpen}
               aria-haspopup="true"
             >
-              Resources <span className="dropdown-chevron" aria-hidden="true" />
+              Help <span className="dropdown-chevron" aria-hidden="true" />
             </button>
             <ul className="dropdown">
               <li>
