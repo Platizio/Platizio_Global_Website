@@ -16,6 +16,7 @@ export const ARTICLES: Article[] = [
     slug: 'why-international-investing-matters-2026',
     title: 'Why International Investing Will Matter More Than Ever by 2026',
     category: 'International',
+    topics: ['global-investing', 'getting-started'],
     date: '2026-01-01',
     dateLabel: 'January 2026',
     readTime: '7 min read',
@@ -29,6 +30,7 @@ export const ARTICLES: Article[] = [
     slug: 'lrs-explained',
     title: 'LRS Explained: How Indian Residents Can Invest Overseas',
     category: 'LRS & Compliance',
+    topics: ['lrs-and-compliance', 'getting-started'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '6 min read',
@@ -42,6 +44,7 @@ export const ARTICLES: Article[] = [
     slug: 'currency-risk-explained',
     title: 'Currency Risk Explained: Why the Rupee-Dollar Movement Matters',
     category: 'Currency',
+    topics: ['global-investing', 'us-stocks'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '5 min read',
@@ -55,6 +58,7 @@ export const ARTICLES: Article[] = [
     slug: 'global-taxes',
     title: 'Global Taxes: What Indian Investors Need To Know',
     category: 'Taxation',
+    topics: ['taxation', 'global-investing'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '8 min read',
@@ -67,6 +71,7 @@ export const ARTICLES: Article[] = [
     slug: 'rsu-taxation',
     title: 'RSU Taxation Explained for Indian Employees Holding US Shares',
     category: 'Taxation',
+    topics: ['taxation', 'us-stocks'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '7 min read',
@@ -79,6 +84,7 @@ export const ARTICLES: Article[] = [
     slug: 'feeder-vs-combo-funds',
     title: 'Global Investing Made Simple: International Mutual Funds — Feeder vs Combo',
     category: 'Mutual Funds',
+    topics: ['etfs-and-funds', 'global-investing'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '6 min read',
@@ -91,6 +97,7 @@ export const ARTICLES: Article[] = [
     slug: 'gift-city',
     title: "GIFT City: India's Gateway to Global Investing",
     category: 'GIFT City',
+    topics: ['global-investing', 'lrs-and-compliance', 'getting-started'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '6 min read',
@@ -103,6 +110,7 @@ export const ARTICLES: Article[] = [
     slug: 'global-investment-allocation',
     title: 'Global Investment Allocation: A Guide for ₹5K to ₹5L Monthly Investors',
     category: 'Allocation',
+    topics: ['global-investing', 'getting-started'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '8 min read',
@@ -115,6 +123,7 @@ export const ARTICLES: Article[] = [
     slug: 'routes-for-international-investing',
     title: 'Routes for International Investing: Intl MFs, ETFs, Stocks & GIFT City',
     category: 'Getting Started',
+    topics: ['getting-started', 'global-investing', 'etfs-and-funds'],
     date: '2026-06-23',
     dateLabel: 'June 2026',
     readTime: '7 min read',
@@ -129,3 +138,32 @@ export const featuredArticles = ARTICLES.filter((a) => a.featured)
 
 export const getArticle = (slug: string): Article | undefined =>
   ARTICLES.find((a) => a.slug === slug)
+
+/** Articles belonging to a topic hub, in registry (display) order. */
+export const articlesByTopic = (topicId: string): Article[] =>
+  ARTICLES.filter((a) => a.topics.includes(topicId))
+
+/**
+ * Related reading for an article. Uses the explicit `related` list when the
+ * author set one; otherwise ranks the rest of the library by how many topics
+ * it shares, breaking ties by registry order so results are deterministic
+ * (which matters — a random tie-break would break hydration).
+ */
+export const getRelatedArticles = (article: Article, limit = 3): Article[] => {
+  if (article.related?.length) {
+    return article.related
+      .map(getArticle)
+      .filter((a): a is Article => Boolean(a) && a!.slug !== article.slug)
+      .slice(0, limit)
+  }
+
+  return ARTICLES.filter((a) => a.slug !== article.slug)
+    .map((a) => ({
+      article: a,
+      overlap: a.topics.filter((t) => article.topics.includes(t)).length,
+    }))
+    .filter((x) => x.overlap > 0)
+    .sort((a, b) => b.overlap - a.overlap)
+    .slice(0, limit)
+    .map((x) => x.article)
+}
