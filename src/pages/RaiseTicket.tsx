@@ -199,29 +199,6 @@ export default function RaiseTicket() {
             </div>
           ) : (
             <>
-            {/* ===== CHECK FIRST =====
-                Deflection, not decoration. Every link here points at a section
-                that already answers the question, so a user who reads it never
-                needs the form — and the queue stays for things that need a
-                person. Plain <Link>s, no .reveal: this block is inside the
-                conditional branch and the observer has already run. */}
-            <div className="help-prefill">
-              <p className="help-prefill-title">Check these first</p>
-              <p className="help-prefill-intro">
-                Most questions we receive are already answered on the help page — you may get your answer straight away.
-              </p>
-              <ul className="help-quicklinks">
-                <li><Link to="/help#funding">Adding funds, LRS &amp; TCS</Link></li>
-                <li><Link to="/help#withdrawals">Withdrawals &amp; settlement</Link></li>
-                <li><Link to="/help#taxation">Taxation for Indian residents</Link></li>
-                <li><Link to="/help#portfolio-reports">Statements &amp; reports</Link></li>
-                <li><Link to="/help#managing-account">Login &amp; account changes</Link></li>
-              </ul>
-              <p className="help-prefill-search">
-                Or <Link to="/help">search all 71 answers</Link>.
-              </p>
-            </div>
-
             <form onSubmit={handleSubmit} noValidate className="help-form">
 
               <h2 className="help-form-legend">Your details</h2>

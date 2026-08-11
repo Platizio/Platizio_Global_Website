@@ -3975,63 +3975,6 @@ p {
   }
 }
 
-/* Raise-a-request guidance --------------------------------
-   Three blocks around the intake form: deflection above it, category-specific
-   guidance inside it, and expectations below it. All are plain elements — none
-   carry .reveal, because they sit inside a conditional branch that mounts after
-   the reveal observer has already run. */
-.help-prefill {
-  padding: 1.35rem 1.75rem;
-  margin-bottom: 1.5rem;
-  border-radius: var(--radius-lg);
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
-}
-
-.help-prefill-title {
-  font-weight: 600;
-  color: var(--navy);
-  margin-bottom: 0.3rem;
-}
-
-.help-prefill-intro {
-  font-size: 0.9375rem;
-  color: var(--gray-600);
-  margin-bottom: 0.9rem;
-}
-
-.help-quicklinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.help-quicklinks a {
-  display: inline-block;
-  padding: 0.4rem 0.85rem;
-  border-radius: 999px;
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  font-size: 0.875rem;
-  color: var(--navy);
-  text-decoration: none;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.help-quicklinks a:hover {
-  background: var(--gray-50);
-  border-color: var(--gold);
-}
-
-.help-prefill-search {
-  font-size: 0.875rem;
-  color: var(--gray-500);
-  margin: 0.9rem 0 0;
-}
-
 /* Raise-a-request band, above the answers -----------------
    Trims the section's default vertical padding: it sits directly under the
    hero, and full spacing on both would push the search box off the fold. */
@@ -4254,7 +4197,6 @@ p {
 }
 
 @media (max-width: 768px) {
-  .help-prefill,
   .help-next {
     padding: 1.35rem 1.35rem;
   }
