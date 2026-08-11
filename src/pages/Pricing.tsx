@@ -18,8 +18,8 @@ const dematCharges = [
 const tradingCharges = [
   { head: 'Brokerage', value: '0.29% per transaction (or USD 1 minimum)' },
   { head: 'FINRA Transaction Fee', value: '$0.000195 — Multiplied by sales quantity' },
-  { head: 'SEC Fee', value: '0.0000206 — Multiplied by trade value (applies on sell transactions)' },
-  { head: 'IFSCA Turnover Fee', value: '0.00005 — Multiplied by trade value' },
+  { head: 'SEC Fee', value: '$0.0000206 — Multiplied by trade value (applies on sell transactions)' },
+  { head: 'IFSCA Turnover Fee', value: '$0.00005 — Multiplied by trade value' },
   { head: 'IGST (For Indian Residents)', value: '18% — Calculated on brokerage value' },
 ]
 
