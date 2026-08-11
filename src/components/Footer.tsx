@@ -112,7 +112,7 @@ export default function Footer() {
             a qualified financial or tax advisor before investing.
           </p>
           <div>
-            <p className="copyright">&copy; {new Date().getFullYear()} Platizio Global. All rights reserved.</p>
+            <p className="copyright">&copy; {__BUILD_YEAR__} Platizio Global. All rights reserved.</p>
             <p className="copyright" style={{ marginTop: '0.5rem' }}>
               <Link to="/terms" className="footer-legal-link">Terms &amp; Conditions</Link>
               <Link to="/privacy" className="footer-legal-link">Privacy Policy</Link>

@@ -1,20 +1,28 @@
 import { Helmet } from 'react-helmet-async'
-
-const SITE_NAME = 'Platizio Global'
-const BASE_URL = 'https://platizioglobal.com'
-const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`
+import {
+  SITE_NAME,
+  SITE_URL,
+  SITE_LOCALE,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_OG_IMAGE_ALT,
+  TWITTER_HANDLE,
+} from '../siteConfig'
 
 interface SEOProps {
   title: string
   description: string
   canonical: string
   ogImage?: string
+  ogImageAlt?: string
   ogType?: 'website' | 'article'
   noindex?: boolean
   article?: {
     publishedTime: string
+    modifiedTime?: string
     author: string
   }
+  /** JSON-LD emitted into <head>. Pass one object or several. */
+  jsonLd?: object | object[]
 }
 
 export default function SEO({
@@ -22,12 +30,15 @@ export default function SEO({
   description,
   canonical,
   ogImage = DEFAULT_OG_IMAGE,
+  ogImageAlt = DEFAULT_OG_IMAGE_ALT,
   ogType = 'website',
   noindex = false,
   article,
+  jsonLd,
 }: SEOProps) {
   const fullTitle = `${title} | ${SITE_NAME}`
-  const canonicalUrl = `${BASE_URL}${canonical}`
+  const canonicalUrl = `${SITE_URL}${canonical}`
+  const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
 
   return (
     <Helmet>
@@ -40,26 +51,73 @@ export default function SEO({
       {/* Open Graph */}
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:locale" content={SITE_LOCALE} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:alt" content={ogImageAlt} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content={TWITTER_HANDLE} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image:alt" content={ogImageAlt} />
 
       {/* Article-specific */}
       {article && (
         <meta property="article:published_time" content={article.publishedTime} />
       )}
-      {article && (
-        <meta property="article:author" content={article.author} />
+      {article?.modifiedTime && (
+        <meta property="article:modified_time" content={article.modifiedTime} />
       )}
+      {article && <meta property="article:author" content={article.author} />}
+
+      {/* Structured data */}
+      {schemas.map((schema, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      ))}
     </Helmet>
   )
 }
+
+/** BreadcrumbList JSON-LD from an ordered [name, path] trail. */
+export const breadcrumbSchema = (trail: [string, string][]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: trail.map(([name, path], i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name,
+    item: `${SITE_URL}${path}`,
+  })),
+})
+
+/** FAQPage JSON-LD from plain-text Q&A pairs. */
+export const faqSchema = (faqs: { q: string; a: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+})
+
+/** ItemList JSON-LD for an ordered set of article URLs. */
+export const itemListSchema = (items: { name: string; path: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: items.map(({ name, path }, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name,
+    url: `${SITE_URL}${path}`,
+  })),
+})

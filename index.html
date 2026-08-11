@@ -5,22 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="AZiBNhj-C88S1whuGo83lQpDvnOLL9rPYp-f5DUf-xo" />
     <meta name="msvalidate.01" content="BDB1DFA89268951120DC8374DF152176" />
-    <title>Platizio Global — Invest in US Stocks &amp; ETFs from India</title>
-    <meta name="description" content="Platizio Global lets Indian investors invest in US Stocks and ETFs under the RBI's Liberalised Remittance Scheme (LRS). IFSCA-regulated. Open your account today." />
-
-    <!-- Social defaults (non-JS scrapers); react-helmet overrides per page for JS crawlers -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Platizio Global" />
-    <meta property="og:title" content="Platizio Global — Invest in US Stocks &amp; ETFs from India" />
-    <meta property="og:description" content="Invest in US Stocks and ETFs from India under the RBI's Liberalised Remittance Scheme (LRS). IFSCA-regulated." />
-    <meta property="og:url" content="https://platizioglobal.com/" />
-    <meta property="og:image" content="https://platizioglobal.com/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Platizio Global — Invest in US Stocks &amp; ETFs from India" />
-    <meta name="twitter:description" content="Invest in US Stocks and ETFs from India under the RBI's Liberalised Remittance Scheme (LRS). IFSCA-regulated." />
-    <meta name="twitter:image" content="https://platizioglobal.com/og-image.png" />
+    <!-- Per-page title / description / canonical / OG / Twitter / JSON-LD.
+         Injected at build time by scripts/prerender.mjs from react-helmet-async,
+         then managed at runtime by the SEO component during client navigation.
+         Do not add static title or og:/twitter: meta tags here: react-helmet-async
+         only reconciles tags carrying data-rh, so static duplicates are never
+         removed and every page would ship two of each. -->
+    <!--app-head-->
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="96x96" />
@@ -69,8 +60,9 @@
     </script>
   </head>
   <body>
-    <noscript>Please enable JavaScript to use Platizio Global.</noscript>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- The marker must sit flush against the div: whitespace inside #root
+         becomes a stray text node that React warns about during hydration. -->
+    <div id="root"><!--app-html--></div>
+    <script type="module" src="/src/entry-client.tsx"></script>
   </body>
 </html>

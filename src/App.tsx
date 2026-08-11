@@ -12,6 +12,7 @@ import About from './pages/About'
 import FAQs from './pages/FAQs'
 import UserGuide from './pages/UserGuide'
 import Articles from './pages/Articles'
+import TopicHub from './pages/TopicHub'
 import ArticlePage from './components/ArticlePage'
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/PrivacyPolicy'
@@ -90,6 +91,8 @@ export default function App() {
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/user-guide" element={<UserGuide />} />
           <Route path="/articles" element={<Articles />} />
+          {/* Three segments, so this never collides with /articles/:slug */}
+          <Route path="/articles/topic/:topic" element={<TopicHub />} />
           <Route path="/articles/:slug" element={<ArticlePage />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
