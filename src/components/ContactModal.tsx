@@ -1,6 +1,32 @@
+// DECISION: this form stays on Web3Forms and does NOT move onto the ticketing
+// backend.
+//
+// It is a sales enquiry, not a support request. Routing it into `tickets` would
+// put it in the queue support is measured on and start an SLA clock against a
+// promise the site never made for enquiries — "24 hours on business days"
+// is published for support, and inheriting it here by accident would create an
+// obligation nobody agreed to. When it does move, it should move to its own
+// table with its own timings, in a later slice.
+//
+// What could not wait for that slice is the consent gap. This form collected
+// name, email and phone with no consent checkbox at all, which sits badly
+// against Privacy Policy §6 whatever the transport. It now carries one, worded
+// for this purpose, and sends the sentence verbatim rather than "Yes" — so the
+// email that lands in the inbox is at least a record of what was agreed to.
+// That is weaker than a row in consent_records and is not a substitute for
+// migrating; it is the difference between a weak record and none.
+
 import { useState, useEffect, useRef } from 'react'
 import { useAppContext } from '../context/AppContext'
 import { WEB3FORMS_KEY, WEB3FORMS_ENDPOINT } from '../help/api/support'
+import {
+  ENQUIRY_CONSENT_BEFORE_LINK,
+  ENQUIRY_CONSENT_TEXT,
+  CONSENT_LINK_LABEL,
+  CONSENT_AFTER_LINK,
+  POLICY_VERSION,
+  POLICY_URL,
+} from '../help/consent'
 
 interface FormState {
   fullName: string
@@ -8,9 +34,10 @@ interface FormState {
   phone: string
   interest: string
   message: string
+  consentGiven: boolean
 }
 
-const EMPTY: FormState = { fullName: '', email: '', phone: '', interest: '', message: '' }
+const EMPTY: FormState = { fullName: '', email: '', phone: '', interest: '', message: '', consentGiven: false }
 // Shared with the /help/raise intake form so the key lives in exactly one place
 const KEY = WEB3FORMS_KEY
 const EP  = WEB3FORMS_ENDPOINT
@@ -64,8 +91,8 @@ export default function ContactModal() {
   }, [isContactOpen, closeContact])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setForm((f) => ({ ...f, [name]: value }))
+    const { name, value, type, checked } = e.target as HTMLInputElement
+    setForm((f) => ({ ...f, [name]: type === 'checkbox' ? checked : value }))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -87,10 +114,16 @@ export default function ContactModal() {
     if (phoneDigits.length < 8) {
       setError('Please enter a valid contact number (at least 8 digits).'); focusField('phone'); return
     }
+    if (!form.consentGiven) {
+      setError('Please confirm you consent to us using these details to contact you.'); focusField('contactConsent'); return
+    }
 
     setSending(true)
     setError('')
     const fd = new FormData(e.currentTarget)
+    // Verbatim, with the policy version it referred to — not "Yes", which
+    // would evidence nothing about what was actually agreed to.
+    fd.set('Consent given', `${ENQUIRY_CONSENT_TEXT} (policy version ${POLICY_VERSION}, ${POLICY_URL})`)
     fd.append('access_key', KEY)
     fd.append('subject',    `New Enquiry from ${name} — Platizio Global`)
     fd.append('from_name',  'Platizio Global Website')
@@ -156,6 +189,22 @@ export default function ContactModal() {
                 <label htmlFor="message">Message / Query</label>
                 <textarea id="message" name="message" placeholder="Tell us how we can help (optional)" value={form.message} onChange={handleChange} />
               </div>
+              {/* Composed from the same constants that build the sentence sent
+                  with the submission, so the two cannot drift apart. */}
+              <div className="help-consent">
+                <input
+                  type="checkbox"
+                  id="contactConsent"
+                  name="consentGiven"
+                  checked={form.consentGiven}
+                  onChange={handleChange}
+                />
+                <label htmlFor="contactConsent">
+                  {ENQUIRY_CONSENT_BEFORE_LINK}
+                  <a href="/privacy">{CONSENT_LINK_LABEL}</a>{CONSENT_AFTER_LINK} <span className="req">*</span>
+                </label>
+              </div>
+
               {error && <p role="alert" style={{ color: '#B94B12', fontSize: '0.9rem', marginBottom: '0.75rem', textAlign: 'center' }}>{error}</p>}
               <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', justifyContent: 'center' }} disabled={sending}>
                 {sending ? 'Sending…' : 'Submit Enquiry'}

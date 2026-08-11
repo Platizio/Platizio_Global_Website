@@ -8,9 +8,17 @@ import {
   getSubcategory,
 } from '../help/ticketTaxonomy'
 import {
+  consentRecord,
+  CONSENT_BEFORE_LINK,
+  CONSENT_LINK_LABEL,
+  CONSENT_AFTER_LINK,
+} from '../help/consent'
+import { useTurnstile } from '../help/useTurnstile'
+import {
   submitTicket,
   addAttachments,
   formatBytes,
+  newIdempotencyKey,
   ATTACHMENTS_ENABLED,
   ATTACHMENT_ACCEPT,
   ATTACHMENT_MAX_FILES,
@@ -27,7 +35,7 @@ interface FormState {
   email: string
   mobile: string
   categoryId: string
-  subcategory: string
+  subcategoryId: string
   priority: string
   subject: string
   description: string
@@ -39,23 +47,40 @@ const EMPTY: FormState = {
   email: '',
   mobile: '',
   categoryId: '',
-  subcategory: '',
-  priority: 'Normal',
+  subcategoryId: '',
+  priority: 'NORMAL',
   subject: '',
   description: '',
   consentGiven: false,
+}
+
+/** What the success screen needs to know. */
+interface Submitted {
+  email: string
+  /** Null on the fallback transport, which cannot issue one. */
+  ticketRef: string | null
+  failedAttachments: string[]
 }
 
 export default function RaiseTicket() {
   const [form, setForm] = useState<FormState>(EMPTY)
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
-  const [submittedTo, setSubmittedTo] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState<Submitted | null>(null)
 
   // Held outside FormState: Files are not form values we want to spread or
   // reset with the rest, and the <input type="file"> needs clearing by ref.
   const [attachments, setAttachments] = useState<File[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const turnstile = useTurnstile()
+
+  // One key for this form session, deliberately stable across retries. If the
+  // network stalls and the customer sends again, the second request carries the
+  // same key, collides on a unique constraint server-side, and returns the
+  // first ticket instead of raising a duplicate. A new key is minted only when
+  // they start a genuinely new request.
+  const idempotencyKeyRef = useRef<string>(newIdempotencyKey())
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = Array.from(e.target.files ?? [])
@@ -82,7 +107,7 @@ export default function RaiseTicket() {
   }
 
   const selectedCategory = getCategory(form.categoryId)
-  const selectedSubcategory = getSubcategory(form.categoryId, form.subcategory)
+  const selectedSubcategory = getSubcategory(form.categoryId, form.subcategoryId)
 
   // Hover gives the description via the option's title attribute, but touch
   // and keyboard users never hover — so the current selection's description is
@@ -97,11 +122,23 @@ export default function RaiseTicket() {
       ...f,
       [name]: type === 'checkbox' ? checked : value,
       // Subcategories belong to a category — keep them from going out of sync
-      ...(name === 'categoryId' ? { subcategory: '' } : {}),
+      ...(name === 'categoryId' ? { subcategoryId: '' } : {}),
     }))
   }
 
   const focusField = (id: string) => (document.getElementById(id) as HTMLElement | null)?.focus()
+
+  const startAnother = () => {
+    setForm(EMPTY)
+    setAttachments([])
+    resetFileInput()
+    setSubmitted(null)
+    setError('')
+    // A new request is a new key, or it would be treated as a resend of the
+    // last one and hand back the previous reference.
+    idempotencyKeyRef.current = newIdempotencyKey()
+    turnstile.reset()
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -117,10 +154,14 @@ export default function RaiseTicket() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail('Please enter a valid email address.', 'rt-email')
     if (mobileDigits.length < 8) return fail('Please enter a valid mobile number (at least 8 digits).', 'rt-mobile')
     if (!form.categoryId) return fail('Please choose a category.', 'rt-categoryId')
-    if (!form.subcategory) return fail('Please choose a subcategory.', 'rt-subcategory')
+    if (!form.subcategoryId) return fail('Please choose a subcategory.', 'rt-subcategoryId')
     if (subject.length < 4) return fail('Please enter a short subject for your request.', 'rt-subject')
     if (description.length < 20) return fail('Please describe the issue in a little more detail (at least 20 characters).', 'rt-description')
     if (!form.consentGiven) return fail('Please confirm you consent to us using these details to respond.', 'rt-consentGiven')
+    if (turnstile.enabled && !turnstile.ready) {
+      setError('Please complete the verification check below before sending.')
+      return
+    }
 
     setSending(true)
     setError('')
@@ -129,22 +170,35 @@ export default function RaiseTicket() {
       fullName: name,
       email,
       mobile: form.mobile.trim(),
-      category: selectedCategory?.label ?? '',
-      subcategory: form.subcategory,
-      priority: form.priority,
+      categoryId: form.categoryId,
+      subcategoryId: form.subcategoryId,
+      categoryLabel: selectedCategory?.label ?? '',
+      subcategoryLabel: selectedSubcategory?.label ?? '',
+      priority: (form.priority as (typeof PRIORITIES)[number]['id']),
       subject,
       description,
-      consentGiven: form.consentGiven,
+      consent: consentRecord(),
+      idempotencyKey: idempotencyKeyRef.current,
+      turnstileToken: turnstile.getToken(),
       attachments,
     })
 
     setSending(false)
-    if (result.ok) {
-      setSubmittedTo(email)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      setError(result.message ?? 'Something went wrong. Please try again.')
+
+    if (result.status === 'error') {
+      setError(result.message)
+      // The token is single-use, so a retry needs a fresh one. The idempotency
+      // key is deliberately NOT reset — a retry is the same request.
+      turnstile.reset()
+      return
     }
+
+    setSubmitted({
+      email,
+      ticketRef: result.ticketRef,
+      failedAttachments: result.status === 'partial' ? result.failedAttachments : [],
+    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function fail(message: string, fieldId: string) {
@@ -173,26 +227,46 @@ export default function RaiseTicket() {
 
       <section className="section">
         <div className="container" style={{ maxWidth: 720 }}>
-          {submittedTo ? (
-            // Deliberately no ticket reference or status link: there is no
-            // ticketing backend yet, so a reference number would be fiction.
+          {submitted ? (
             <div className="help-submitted help-fade-in">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" /><path d="M9 12l2 2 4-4" />
               </svg>
               <h2>Your request has been sent</h2>
+
+              {/* Shown only when the request was stored and the reference can
+                  actually be looked up. Where it cannot be, nothing is shown —
+                  a number that leads nowhere is worse than no number. */}
+              {submitted.ticketRef && (
+                <div className="help-ticket-ref">
+                  <p className="help-ticket-ref-label">Your reference</p>
+                  <p className="help-ticket-ref-value">{submitted.ticketRef}</p>
+                </div>
+              )}
+
+              {submitted.failedAttachments.length > 0 && (
+                <div className="help-attachment-warning" role="status">
+                  <strong>Your request was logged, but we did not receive
+                  {submitted.failedAttachments.length === 1 ? ' this file' : ' these files'}:</strong>
+                  <ul>
+                    {submitted.failedAttachments.map((name) => (<li key={name}>{name}</li>))}
+                  </ul>
+                  Please reply to our email once you hear from us and attach
+                  {submitted.failedAttachments.length === 1 ? ' it' : ' them'} there.
+                </div>
+              )}
+
               <p>
-                Our support team will reply to <strong>{submittedTo}</strong>. Business hours are Monday to Friday, 9:00 AM to 5:00 PM IST.
+                Our support team will reply to <strong>{submitted.email}</strong>. Business hours are Monday to Friday, 9:00 AM to 5:00 PM IST.
               </p>
               <p className="help-disclaimer-fine">
-                Need to send another screenshot, statement or document? Reply directly to our email once you hear from us and attach it there.
+                {submitted.ticketRef
+                  ? 'Please quote your reference if you write to us about this again. Need to send another screenshot, statement or document? Reply directly to our email once you hear from us and attach it there.'
+                  : 'Need to send another screenshot, statement or document? Reply directly to our email once you hear from us and attach it there.'}
               </p>
               <div className="guide-cta-actions">
                 <Link className="btn btn-ghost" to="/help">Back to Help &amp; Support</Link>
-                <button
-                  className="btn btn-gold"
-                  onClick={() => { setForm(EMPTY); setAttachments([]); resetFileInput(); setSubmittedTo(null); setError('') }}
-                >
+                <button className="btn btn-gold" onClick={startAnother}>
                   Raise another request
                 </button>
               </div>
@@ -237,11 +311,13 @@ export default function RaiseTicket() {
                   </select>
                 </div>
                 <div className="field">
-                  <label htmlFor="rt-subcategory">Subcategory <span className="req">*</span></label>
-                  <select id="rt-subcategory" name="subcategory" value={form.subcategory} onChange={handleChange} disabled={!selectedCategory}>
+                  <label htmlFor="rt-subcategoryId">Subcategory <span className="req">*</span></label>
+                  {/* value is the stable id, not the label — the label is free
+                      to be reworded without orphaning historical tickets. */}
+                  <select id="rt-subcategoryId" name="subcategoryId" value={form.subcategoryId} onChange={handleChange} disabled={!selectedCategory}>
                     <option value="">{selectedCategory ? 'Select a subcategory' : 'Choose a category first'}</option>
                     {selectedCategory?.subcategories.map((s) => (
-                      <option key={s.label} value={s.label} title={s.description}>{s.label}</option>
+                      <option key={s.id} value={s.id} title={s.description}>{s.label}</option>
                     ))}
                   </select>
                 </div>
@@ -260,7 +336,7 @@ export default function RaiseTicket() {
               <div className="field">
                 <label htmlFor="rt-priority">How urgent is it?</label>
                 <select id="rt-priority" name="priority" value={form.priority} onChange={handleChange}>
-                  {PRIORITIES.map((p) => (<option key={p} value={p}>{p}</option>))}
+                  {PRIORITIES.map((p) => (<option key={p.id} value={p.id}>{p.label}</option>))}
                 </select>
               </div>
 
@@ -318,10 +394,18 @@ export default function RaiseTicket() {
 
               <div className="help-consent">
                 <input type="checkbox" id="rt-consentGiven" name="consentGiven" checked={form.consentGiven} onChange={handleChange} />
+                {/* Composed from the same three constants that build the text
+                    stored in consent_records, so what the customer reads and
+                    what we keep as evidence cannot drift apart. */}
                 <label htmlFor="rt-consentGiven">
-                  I consent to Platizio Global using the details above to respond to my request, in line with the <Link to="/privacy">Privacy Policy</Link>. <span className="req">*</span>
+                  {CONSENT_BEFORE_LINK}<Link to="/privacy">{CONSENT_LINK_LABEL}</Link>{CONSENT_AFTER_LINK} <span className="req">*</span>
                 </label>
               </div>
+
+              {/* Renders nothing at all until a site key is configured. */}
+              {turnstile.enabled && (
+                <div className="help-turnstile" ref={turnstile.containerRef} />
+              )}
 
               {error && <p role="alert" className="help-form-error">{error}</p>}
 

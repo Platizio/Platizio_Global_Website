@@ -3954,6 +3954,69 @@ p {
   margin-top: 1.75rem;
 }
 
+/* Ticket reference ---------------------------------------
+   Shown only when the request was actually stored and the reference can be
+   looked up. On the fallback transport there is no reference and this block
+   does not render at all — a number nobody can trace is worse than none. */
+.help-ticket-ref {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.35rem auto 1.35rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+}
+
+.help-ticket-ref-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.help-ticket-ref-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.32rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  margin: 0;
+}
+
+/* Partial success — the request landed, a document did not. Warning colours
+   rather than error colours: nothing was lost that the customer must redo. */
+.help-attachment-warning {
+  text-align: left;
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1.1rem;
+  background: #FFF8E6;
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  line-height: 1.55;
+}
+
+.help-attachment-warning strong {
+  color: var(--navy);
+}
+
+.help-attachment-warning ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.15rem;
+}
+
+/* Captcha widget. Only rendered when a site key is configured, so this
+   selector matches nothing until then. */
+.help-turnstile {
+  margin: 0 0 1.1rem;
+  min-height: 65px;
+}
+
 @media (max-width: 640px) {
   .help-form-row {
     grid-template-columns: 1fr;

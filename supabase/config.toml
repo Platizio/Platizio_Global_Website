@@ -1,0 +1,76 @@
+# Supabase project configuration.
+#
+# Used by the Supabase CLI for local development and for `supabase db push` /
+# `supabase functions deploy`. The live project this describes is the Mumbai one
+# — region ap-south-1, chosen because support requests carry KYC-grade personal
+# data and region is immutable after creation.
+
+project_id = "qtjnlkobvnhhgsnyufzv"
+
+[api]
+enabled = true
+port = 54321
+# `private` is deliberately absent. Everything in it — rate-limit counters, the
+# cron helpers — is unreachable over PostgREST at any key precisely because it
+# is not listed here. Adding it would silently expose all of it.
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+# Nothing legitimate reads rows over the API today (anon has no grants and staff
+# use Studio), but a cap means a future permissive policy leaks a page rather
+# than a table.
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.pooler]
+enabled = false
+
+[storage]
+enabled = true
+# Per-file ceiling for the whole project. The ticket-attachments bucket sets its
+# own 5 MB limit in 0006 as well; this is the outer bound.
+file_size_limit = "5MiB"
+
+[auth]
+enabled = true
+site_url = "https://platizioglobal.com"
+additional_redirect_urls = ["https://www.platizioglobal.com"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+# No public sign-ups. The only accounts are staff, created deliberately.
+enable_signup = false
+
+[auth.email]
+enable_signup = false
+enable_confirmations = true
+
+# Puts staff roles into app_metadata on every token issue. Creating the function
+# in 0008 is not enough on its own — without this the hook never runs and every
+# staff login gets a token with no roles, which reads as "not staff" to every
+# RLS policy.
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/public/custom_access_token_hook"
+
+# --- Edge Functions --------------------------------------------------------
+#
+# verify_jwt = true on all four. For the two browser-facing functions that means
+# the anon key must be presented, which is a low bar but a real one. For the two
+# worker functions it is only the first gate: they additionally require the
+# caller's token to carry role = service_role, because the anon key ships in the
+# site bundle and would otherwise be enough to drive the outbox.
+
+[functions.create-ticket]
+verify_jwt = true
+
+[functions.finalize-ticket]
+verify_jwt = true
+
+[functions.drain-outbox]
+verify_jwt = true
+
+[functions.sweep-storage]
+verify_jwt = true

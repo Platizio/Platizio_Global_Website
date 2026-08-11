@@ -18,3 +18,11 @@ yarn-error.log*
 # Editor / OS
 .DS_Store
 Thumbs.db
+
+# Supabase CLI scratch — link state, generated types, local containers
+supabase/.temp/
+supabase/.branches/
+
+# Example env files are committed; real ones never are. The service role key
+# belongs in Supabase secrets and Vercel env vars, and nowhere in this repo.
+.env.example.local
