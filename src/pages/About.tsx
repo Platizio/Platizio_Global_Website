@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 import TeamCarousel from '../components/TeamCarousel'
 
 const ArrowIcon = () => (
@@ -45,6 +45,7 @@ export default function About() {
         title="About Us — IFSCA-Regulated Global Investing Platform"
         description="Learn about Platizio Global — an IFSCA-regulated platform that helps Indian investors access US Stocks and ETFs through the RBI's Liberalised Remittance Scheme (LRS)."
         canonical="/about"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['About Us', '/about']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
@@ -82,7 +83,7 @@ export default function About() {
             <div className="about-art reveal">
               <picture>
                 <source srcSet="/platizio-logo.webp" type="image/webp" />
-                <img src="/platizio-logo.png" alt="Platizio Global" className="about-logo-img" />
+                <img src="/platizio-logo.png" alt="Platizio Global" className="about-logo-img" width={500} height={500} />
               </picture>
             </div>
           </div>
@@ -100,7 +101,7 @@ export default function About() {
             <div className="leader-photo-wrap">
               <picture>
                 <source srcSet="/sir.webp" type="image/webp" />
-                <img src="/sir.png" alt="Vividh — Director, Platizio Global" className="leader-photo" />
+                <img src="/sir.png" alt="Vividh — Director, Platizio Global" className="leader-photo" width={640} height={640} />
               </picture>
             </div>
             <div className="leader-info">

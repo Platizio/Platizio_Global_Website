@@ -3591,6 +3591,239 @@ p {
     grid-template-columns: 1fr;
   }
 }
+/* =========================================================
+   Topic hubs, related articles, per-article FAQs
+   ========================================================= */
+.section-title {
+  font-size: 1.65rem;
+  margin-bottom: 1.75rem;
+  color: var(--navy);
+}
+
+.container-narrow {
+  max-width: 820px;
+}
+
+/* ---- Browse by topic (on /articles) ---- */
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.topic-card {
+  display: block;
+  padding: 1.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  text-decoration: none;
+  transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+}
+
+.topic-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--gold);
+}
+
+.topic-card h3 {
+  font-size: 1.1rem;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+
+.topic-card p {
+  font-size: 0.94rem;
+  color: var(--gray-600);
+  margin-bottom: 0.9rem;
+}
+
+.topic-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-deep);
+}
+
+.topic-count svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---- Topic hub page ---- */
+.topic-intro {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.topic-faq-item {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.topic-faq-item:last-child {
+  border-bottom: none;
+}
+
+.topic-faq-item h3 {
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+
+.topic-faq-item p {
+  color: var(--gray-600);
+  line-height: 1.7;
+}
+
+/* ---- Per-article FAQ block ---- */
+.article-faq {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.article-faq > h2 {
+  font-size: 1.4rem;
+  color: var(--navy);
+  margin-bottom: 1.25rem;
+}
+
+.article-faq-item {
+  margin-bottom: 1.5rem;
+}
+
+.article-faq-item h3 {
+  font-size: 1.02rem;
+  color: var(--navy);
+  margin-bottom: 0.4rem;
+}
+
+.article-faq-item p {
+  color: var(--gray-600);
+  line-height: 1.75;
+}
+
+/* ---- Related reading ---- */
+.related-articles {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.related-articles > h2 {
+  font-size: 1.3rem;
+  color: var(--navy);
+  margin-bottom: 1.25rem;
+}
+
+.related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.related-list a {
+  display: block;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  background: var(--white);
+  text-decoration: none;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.related-list a:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.related-tag {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 0.3rem;
+}
+
+.related-title {
+  display: block;
+  font-weight: 650;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+}
+
+.related-excerpt {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.related-topics,
+.related-all {
+  font-size: 0.95rem;
+  color: var(--gray-600);
+}
+
+.related-topics a,
+.related-all a {
+  color: var(--gold-deep);
+  font-weight: 600;
+}
+
+.related-all {
+  margin-top: 0.75rem;
+}
+
+.related-all svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: -2px;
+}
+
+/* ---- "Read more" links at the foot of each FAQ section ---- */
+.faq-read-more {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.faq-read-more > span {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 0.6rem;
+}
+
+.faq-read-more ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.faq-read-more a {
+  font-size: 0.93rem;
+  font-weight: 600;
+  color: var(--gold-deep);
+}
+
+.faq-read-more a:hover {
+  text-decoration: underline;
+}
 
 /* =========================================================
    Floating WhatsApp button

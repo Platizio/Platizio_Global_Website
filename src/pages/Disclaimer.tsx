@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 
 const points = [
   {
@@ -51,6 +51,7 @@ export default function Disclaimer() {
         title="Risk Disclosure & Disclaimer"
         description="Risk disclosure and disclaimer for Platizio Global. Investing in US Stocks and ETFs involves market risk; this is not investment advice. Read before investing."
         canonical="/disclaimer"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['Risk Disclosure & Disclaimer', '/disclaimer']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">

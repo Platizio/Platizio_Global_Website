@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -57,6 +57,7 @@ export default function Pricing() {
         title="Pricing &amp; Charges — US Stocks Account"
         description="Transparent pricing for investing in US Stocks from India via Platizio Global — demat account charges, equity trading charges, and taxation & TCS details."
         canonical="/pricing"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['Pricing', '/pricing']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">

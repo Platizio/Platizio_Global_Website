@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL } from '../constants'
 import { useAppContext } from '../context/AppContext'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -39,6 +39,7 @@ export default function UserGuide() {
         title="User Guide — How to Start Investing in US Stocks & ETFs"
         description="Download the official Platizio Global guides — account registration for resident Indians and funding instructions (LRS) — to start investing in US Stocks & ETFs."
         canonical="/user-guide"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['User Guide', '/user-guide']])}
       />
 
       {/* ===== PAGE HERO ===== */}

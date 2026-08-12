@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 
 export default function PrivacyPolicy() {
   return (
@@ -8,6 +8,7 @@ export default function PrivacyPolicy() {
         title="Privacy Policy"
         description="How Platizio Global collects, uses, and protects your personal data for its international investing offering — US Stocks and ETFs for Indian investors."
         canonical="/privacy"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['Privacy Policy', '/privacy']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">

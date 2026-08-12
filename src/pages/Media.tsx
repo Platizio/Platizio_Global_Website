@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { TRADING_PLATFORM_URL, YOUTUBE_CHANNEL_URL } from '../constants'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema, videoSchema } from '../components/SEO'
 import ArticlesCarousel from '../components/ArticlesCarousel'
 import { VIDEOS } from '../videos'
 
@@ -23,6 +23,18 @@ export default function Media() {
         title="Videos &amp; Articles — Learn Global Investing"
         description="Watch videos and read articles about US Stocks, ETFs, LRS, and global investing for Indian investors. Education-first content from the Platizio Global team."
         canonical="/media"
+        jsonLd={[
+          breadcrumbSchema([['Home', '/'], ['Media', '/media']]),
+          ...VIDEOS.map((v) =>
+            videoSchema({
+              name: v.title,
+              description: v.blurb,
+              thumbnailUrl: `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`,
+              uploadDate: v.date,
+              embedUrl: `https://www.youtube.com/embed/${v.id}`,
+            })
+          ),
+        ]}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">

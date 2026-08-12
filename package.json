@@ -5,8 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "tsc && node scripts/prerender.mjs",
+    "build:debug": "tsc && node scripts/prerender.mjs --dev",
+    "build:spa": "tsc && vite build",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "preview": "node scripts/serve-static.mjs",
+    "preview:spa": "vite preview",
+    "webp": "node scripts/convert-webp.mjs"
   },
   "dependencies": {
     "cobe": "^0.6.3",

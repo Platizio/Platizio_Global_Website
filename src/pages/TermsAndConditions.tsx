@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import SEO from '../components/SEO'
+import SEO, { breadcrumbSchema } from '../components/SEO'
 
 export default function TermsAndConditions() {
   return (
@@ -8,6 +8,7 @@ export default function TermsAndConditions() {
         title="Terms & Conditions"
         description="Terms & Conditions for Platizio Global's international investing offering — US Stocks and ETFs for Indian investors via ViewTrade IFSC."
         canonical="/terms"
+        jsonLd={breadcrumbSchema([['Home', '/'], ['Terms & Conditions', '/terms']])}
       />
       {/* ===== PAGE HERO ===== */}
       <section className="page-hero">
