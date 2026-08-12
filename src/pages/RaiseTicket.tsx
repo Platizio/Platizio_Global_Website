@@ -265,7 +265,15 @@ export default function RaiseTicket() {
                   : 'Need to send another screenshot, statement or document? Reply directly to our email once you hear from us and attach it there.'}
               </p>
               <div className="guide-cta-actions">
-                <Link className="btn btn-ghost" to="/help">Back to Help &amp; Support</Link>
+                {/* Only offered when there is a reference to check. On the
+                    fallback transport there is nothing to look up, and sending
+                    someone to a status page that cannot find their request
+                    would be the same broken promise this page used to make. */}
+                {submitted.ticketRef ? (
+                  <Link className="btn btn-ghost" to="/help/status">Check its status</Link>
+                ) : (
+                  <Link className="btn btn-ghost" to="/help">Back to Help &amp; Support</Link>
+                )}
                 <button className="btn btn-gold" onClick={startAnother}>
                   Raise another request
                 </button>

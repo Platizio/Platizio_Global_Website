@@ -12,6 +12,7 @@ import About from './pages/About'
 import Help from './pages/Help'
 import Grievance from './pages/Grievance'
 import RaiseTicket from './pages/RaiseTicket'
+import TicketStatus from './pages/TicketStatus'
 import UserGuide from './pages/UserGuide'
 import Articles from './pages/Articles'
 import ArticlePage from './components/ArticlePage'
@@ -100,6 +101,7 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/help" element={<Help />} />
           <Route path="/help/raise" element={<RaiseTicket />} />
+          <Route path="/help/status" element={<TicketStatus />} />
           <Route path="/help/grievance" element={<Grievance />} />
           <Route path="/faqs" element={<FaqsRedirect />} />
           <Route path="/user-guide" element={<UserGuide />} />

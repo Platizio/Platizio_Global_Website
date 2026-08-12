@@ -10,12 +10,14 @@ is why the pre-existing Singapore project was abandoned rather than reused.
 ```
 supabase/
   config.toml
-  migrations/     0001–0014, applied in order
+  migrations/     0001–0016, applied in order
   functions/
-    _shared/                validation, CORS, captcha, service client
-    create-ticket/          intake            (browser, anon key)
+    _shared/                validation, CORS, captcha, tokens, service client
+    create-ticket/          intake                     (browser, anon key)
     finalize-ticket/        upload confirmation + acknowledgement
-    drain-outbox/           email sender      (cron, service key only)
+    request-status-link/    emails a magic link        (browser, anon key)
+    lookup-status/          token -> the customer's own tickets
+    drain-outbox/           email sender               (cron, service key only)
     sweep-storage/          orphan + retention file removal (cron)
 ```
 
@@ -130,12 +132,64 @@ granting full read and write over every customer's support history.
 | `0012_intake_api` | The SECURITY DEFINER RPCs the Edge Functions call |
 | `0013_purge_honours_ticket_hold` | Fix: a hold on a ticket now also holds its complaint |
 | `0014_relocate_pg_net` | Move `pg_net` out of the `public` schema |
+| `0015_status_lookup` | Magic-link tokens and the customer-safe ticket projection |
+| `0016_fix_rate_limit_ambiguity` | Fix: the rate limiter raised on every call and never counted |
 
-Two files are not in the layout the design sketched, and both are deliberate.
-`0012` exists because "what can code outside the database make it do?" deserves
-one file as its answer, the same argument that put all the RLS policies in
-`0010`. `0013` and `0014` are corrections found by running the thing, and are
-appended rather than folded back into `0011` because migrations are append-only.
+`0012` is not in the layout the design sketched, and that is deliberate: "what
+can code outside the database make it do?" deserves one file as its answer, the
+same argument that put all the RLS policies in `0010`. `0013`, `0014` and `0016`
+are corrections found by running the thing, appended rather than folded back
+into the migrations they fix, because migrations are append-only.
+
+### `0016` is the one worth reading
+
+The rate limiter **never worked**. `rate_limit_consume` declared a variable
+named `window_start` and wrote to a column named `window_start`; PL/pgSQL calls
+that ambiguous and refuses the statement outright, so every call raised.
+
+It survived deployment because of how the two callers handle that error, and
+they differ on purpose:
+
+- `create-ticket` logs and continues. Losing a genuine support request because a
+  counter was briefly unavailable is worse than failing to throttle one. So
+  intake worked perfectly and was completely unthrottled.
+- `request-status-link` fails closed, because it sends mail. It returned 503 for
+  every request — which is how the bug surfaced, on its first test.
+
+The lesson is not "fail closed everywhere"; intake's choice is still right. It
+is that the fail-open branch turned a hard error into silence, and the signal
+that would have caught it — how often the limiter errors — is the one nobody was
+watching. **Worth an alert on that log line before this takes traffic.**
+
+It also means the first verification pass read stronger than it was: the brief
+asked for "exceed the rate limit; confirm rejection", and that check had not
+actually been run. It has now, both directly and over HTTP.
+
+---
+
+## The customer status page
+
+`/help/status`. A customer enters an email, gets a link by mail, and the link
+opens the requests raised from that address.
+
+**It is not "enter your ticket number", and cannot be.** References come from
+one sequence, so a lookup keyed on the reference would hand anyone every
+customer's name, email, mobile and problem description by counting upwards.
+Adding "and your email" narrows that but still answers "has this person ever
+contacted Platizio", which is itself a disclosure for a broker's support desk.
+Proving control of the mailbox is the only version that leaks nothing.
+
+- Tokens are 32 random bytes; only the SHA-256 is stored, so the table holds no
+  working links.
+- 30-minute expiry, reusable within it — a single-use link breaks on a refresh
+  or an email client that pre-fetches URLs, and the failure looks like a bug.
+- `request-status-link` returns an identical response whether or not the
+  address has tickets, including when rate-limited. The truth is a log line.
+- The projection is built in SQL and returns `status_customer` only. No
+  internal status, no assigned agent, no SLA deadline, no submitting IP.
+- Unlike intake, this endpoint **fails closed** if the rate limiter errors. It
+  sends mail, and an unthrottled mail-sending endpoint is somebody else's
+  problem to live with.
 
 ---
 
@@ -182,6 +236,14 @@ email lowercased.
 **Abuse** `[HTTP]` — a replayed submission returned the original reference and
 created no second ticket. A malformed submission returned a clean 400 that
 quotes no schema detail. `drain-outbox` called with the anon key returned 401.
+Seven intake attempts from one address: five accepted, the sixth and seventh
+refused with **429**.
+
+**Status page** `[HTTP]` — a known and an unknown address returned byte-identical
+responses; only the known one minted a token and queued mail. What is stored is
+the SHA-256, not the link. The token opened exactly one ticket carrying the
+customer-safe fields and nothing else — no internal status, no agent, no SLA
+date, no mobile number. Expired and unrecognised tokens both dead-end.
 
 **Acknowledgement** — rendered at enqueue and inspected in full; carries the
 real reference, the published timelines quoted from the Support FAQ, and the
