@@ -76,8 +76,7 @@ export default function Home() {
           </div>
           <div className="promo-video reveal">
             <video
-              src="/platizio-promo.mp4"
-              poster="/platizio-promo-poster.jpg"
+              src="/global_promo_good_voice.mp4"
               autoPlay
               muted
               loop
