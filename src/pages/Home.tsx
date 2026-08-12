@@ -271,6 +271,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== START HERE: GUIDES ===== */}
+      <section className="section">
+        <div className="container">
+          <div className="section-header reveal">
+            <span className="eyebrow">Start here</span>
+            <h2>Guides for Indian investors going global</h2>
+            <p>The questions that come up before the first investment — how the process works, what it costs, and how it is taxed.</p>
+          </div>
+
+          <div className="topic-grid reveal">
+            <Link className="topic-card" to="/articles/how-to-invest-in-us-stocks-from-india">
+              <h3>How to invest in US stocks from India</h3>
+              <p>KYC, Form W-8BEN, remitting under the LRS, and placing your first trade — the full process end to end.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/tax-on-us-stocks-in-india">
+              <h3>Tax on US stocks in India</h3>
+              <p>Capital gains at 12.5% after 24 months, dividend withholding, and what each schedule of your return needs.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/is-investing-in-us-stocks-safe-and-legal">
+              <h3>Is it safe and legal?</h3>
+              <p>The RBI scheme behind it, who regulates the account, where your shares are custodied, and what SIPC covers.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <Link className="btn btn-light" to="/articles">Browse all articles <ArrowIcon /></Link>
+          </div>
+        </div>
+      </section>
+
       {/* ===== CLOSING CTA ===== */}
       <section className="section" style={{ paddingTop: '2rem' }}>
         <div className="container">

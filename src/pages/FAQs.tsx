@@ -16,11 +16,14 @@ interface FaqSection {
   title: string
   note?: React.ReactNode
   items: FaqItem[]
+  /** Articles that go deeper on this section's questions */
+  readMore?: { label: string; to: string }[]
 }
 
 const sections: FaqSection[] = [
   {
     id: 'getting-started',
+    readMore: [{ label: 'How to invest in US stocks from India', to: '/articles/how-to-invest-in-us-stocks-from-india' }, { label: 'Minimum investment and real costs', to: '/articles/minimum-investment-and-costs-us-stocks' }],
     num: 1,
     title: 'Getting Started',
     items: [
@@ -84,6 +87,7 @@ const sections: FaqSection[] = [
   },
   {
     id: 'safety-custody',
+    readMore: [{ label: 'Is investing in US stocks safe and legal?', to: '/articles/is-investing-in-us-stocks-safe-and-legal' }],
     num: 2,
     title: 'Safety, Custody & Regulation',
     items: [
@@ -121,6 +125,7 @@ const sections: FaqSection[] = [
   },
   {
     id: 'funding',
+    readMore: [{ label: 'How to transfer money abroad', to: '/articles/how-to-transfer-money-for-us-stock-investing' }, { label: 'TCS on LRS remittances', to: '/articles/tcs-on-lrs-explained' }, { label: 'LRS explained', to: '/articles/lrs-explained' }],
     num: 3,
     title: 'Funding Your Account',
     items: [
@@ -174,6 +179,7 @@ const sections: FaqSection[] = [
   },
   {
     id: 'trading',
+    readMore: [{ label: 'US stock market timings in India', to: '/articles/us-stock-market-timings-india' }, { label: 'Fractional shares explained', to: '/articles/fractional-shares-explained' }, { label: 'NYSE, NASDAQ and the US indices', to: '/articles/nyse-nasdaq-and-us-indices-explained' }],
     num: 4,
     title: 'Trading US Stocks & ETFs',
     items: [
@@ -241,6 +247,7 @@ const sections: FaqSection[] = [
   },
   {
     id: 'withdrawals',
+    readMore: [{ label: 'How to withdraw money back to India', to: '/articles/how-to-withdraw-money-from-us-stocks-to-india' }],
     num: 5,
     title: 'Withdrawals',
     items: [
@@ -357,6 +364,7 @@ const sections: FaqSection[] = [
   },
   {
     id: 'esops-rsus',
+    readMore: [{ label: 'RSU taxation explained', to: '/articles/rsu-taxation' }, { label: 'Schedule FA and foreign asset reporting', to: '/articles/schedule-fa-foreign-assets-reporting' }],
     num: 8,
     title: 'ESOPs, RSUs & ESPPs',
     items: [
@@ -379,6 +387,7 @@ const sections: FaqSection[] = [
   },
   {
     id: 'taxation',
+    readMore: [{ label: 'Tax on US stocks in India', to: '/articles/tax-on-us-stocks-in-india' }, { label: 'Dividend tax on US stocks', to: '/articles/dividend-tax-us-stocks-india' }, { label: 'DTAA and foreign tax credit', to: '/articles/dtaa-india-us-foreign-tax-credit' }, { label: 'How to report US stocks in your ITR', to: '/articles/how-to-report-us-stocks-in-itr' }, { label: 'US estate tax for Indian investors', to: '/articles/us-estate-tax-indian-investors' }],
     num: 9,
     title: 'Taxation (for Indian Residents)',
     note: (
@@ -576,7 +585,7 @@ export default function FAQs() {
       {/* ===== FAQs ===== */}
       <section className="section">
         <div className="container" style={{ maxWidth: 880 }}>
-          {sections.map(({ id, num, title, note, items }) => (
+          {sections.map(({ id, num, title, note, items, readMore }) => (
             <div className={`faq-section${openSectionId === id ? ' section-open' : ''}`} id={id} key={id}>
 
               {/* Section header — click to expand */}
@@ -609,6 +618,16 @@ export default function FAQs() {
                       </div>
                     ))}
                   </div>
+                  {readMore && readMore.length > 0 && (
+                    <div className="faq-read-more">
+                      <span>Read more:</span>
+                      <ul>
+                        {readMore.map(({ label, to }) => (
+                          <li key={to}><Link to={to}>{label}</Link></li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

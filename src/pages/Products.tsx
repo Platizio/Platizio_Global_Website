@@ -192,6 +192,48 @@ export default function Products() {
         </div>
       </section>
 
+      {/* ===== RELATED READING ===== */}
+      <section className="section" style={{ background: 'var(--gray-50)' }}>
+        <div className="container">
+          <div className="subsection-header reveal" style={{ textAlign: 'center', margin: '0 auto 3rem' }}>
+            <span className="eyebrow">Before you invest</span>
+            <h2>Understand the product, the process and the tax</h2>
+          </div>
+          <div className="topic-grid reveal">
+            <Link className="topic-card" to="/articles/how-to-invest-in-us-stocks-from-india">
+              <h3>How to invest in US stocks from India</h3>
+              <p>The full process: KYC, Form W-8BEN, LRS remittance, first trade and the records you will need.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/how-to-invest-in-sp500-from-india">
+              <h3>Three routes to the S&amp;P 500</h3>
+              <p>Direct US ETF, Indian feeder fund or GIFT City — the same index, quite different tax outcomes.</p>
+              <span className="topic-count">Compare the routes <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/best-us-etfs-for-indian-investors">
+              <h3>How to evaluate US ETFs</h3>
+              <p>Expense ratio, liquidity and tracking difference — plus the dividend withholding drag no factsheet shows.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/fractional-shares-explained">
+              <h3>Fractional shares explained</h3>
+              <p>Invest an amount rather than a quantity, and why share price no longer shapes your portfolio.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/tax-on-us-stocks-in-india">
+              <h3>Tax on US stocks in India</h3>
+              <p>12.5% after 24 months, why the ₹1.25 lakh exemption does not apply, and what your ITR needs.</p>
+              <span className="topic-count">Read the guide <ArrowIcon /></span>
+            </Link>
+            <Link className="topic-card" to="/articles/topic/us-stocks">
+              <h3>All US Stocks guides</h3>
+              <p>Everything on investing in US-listed shares from India, in one place.</p>
+              <span className="topic-count">Browse the topic <ArrowIcon /></span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ===== CLOSING CTA ===== */}
       <section className="section">
         <div className="container">
