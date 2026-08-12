@@ -4,6 +4,7 @@ import { AppProvider } from './context/AppContext'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ContactModal from './components/ContactModal'
+import WhatsAppFloat from './components/WhatsAppFloat'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import Pricing from './pages/Pricing'
@@ -72,6 +73,7 @@ function Layout() {
       </main>
       <Footer />
       <ContactModal />
+      <WhatsAppFloat />
     </>
   )
 }
