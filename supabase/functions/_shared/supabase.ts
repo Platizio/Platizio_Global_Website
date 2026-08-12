@@ -16,6 +16,31 @@ export function adminClient(): SupabaseClient {
 }
 
 /**
+ * A client that acts as *the caller*, not as the service. Every request it
+ * makes carries the caller's own access token, so auth.uid() inside the
+ * database is the signed-in staff member and RLS applies to them.
+ *
+ * This is the client the staff functions must use for anything the database is
+ * meant to authorise. Reaching for adminClient() there would silently hand a
+ * support agent service-role reach — the RPC would still run, it would just
+ * stop being able to tell who ran it.
+ */
+export function userClient(req: Request): SupabaseClient {
+  const url = Deno.env.get('SUPABASE_URL')
+  const anon = Deno.env.get('SUPABASE_ANON_KEY')
+  if (!url || !anon) {
+    throw new Error('SUPABASE_URL / SUPABASE_ANON_KEY are not available to this function')
+  }
+
+  const authorization = req.headers.get('authorization') ?? ''
+
+  return createClient(url, anon, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { Authorization: authorization } },
+  })
+}
+
+/**
  * Worker functions are called by pg_cron with the service key, never by a
  * browser. The platform has already verified the JWT signature by the time this
  * runs (verify_jwt is on), so reading the role out of the payload is enough —

@@ -57,16 +57,45 @@ uri = "pg-functions://postgres/public/custom_access_token_hook"
 
 # --- Edge Functions --------------------------------------------------------
 #
-# verify_jwt = true on all four. For the two browser-facing functions that means
-# the anon key must be presented, which is a low bar but a real one. For the two
-# worker functions it is only the first gate: they additionally require the
-# caller's token to carry role = service_role, because the anon key ships in the
-# site bundle and would otherwise be enough to drive the outbox.
+# verify_jwt = true on all eight, and it means three different things depending
+# on who the function is for:
+#
+#   Public intake and status (create-ticket, finalize-ticket,
+#   request-status-link, lookup-status) — the anon key must be presented. A low
+#   bar, but it keeps the endpoints off the open internet, and each of them
+#   carries its own real gate behind it: Turnstile, a rate limit, or a token
+#   that arrived by email.
+#
+#   Staff (staff-attachment, invite-staff) — the anon key is *not* enough. Both
+#   act as the caller rather than as the service, so the database sees the
+#   staff member's own uuid and refuses anyone who is not active staff. The
+#   anon key reaches them and gets a 403.
+#
+#   Workers (drain-outbox, sweep-storage) — called by pg_cron with the service
+#   key. They additionally check role = service_role in the token, because the
+#   anon key ships in the site bundle and would otherwise be enough to drive
+#   the outbox.
+#
+# Every function listed here must also exist on disk. A function deployed but
+# missing from this file gets the CLI's defaults on the next deploy, which for
+# a worker would mean losing verify_jwt.
 
 [functions.create-ticket]
 verify_jwt = true
 
 [functions.finalize-ticket]
+verify_jwt = true
+
+[functions.request-status-link]
+verify_jwt = true
+
+[functions.lookup-status]
+verify_jwt = true
+
+[functions.staff-attachment]
+verify_jwt = true
+
+[functions.invite-staff]
 verify_jwt = true
 
 [functions.drain-outbox]

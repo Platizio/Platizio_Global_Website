@@ -10,16 +10,29 @@ is why the pre-existing Singapore project was abandoned rather than reused.
 ```
 supabase/
   config.toml
-  migrations/     0001–0018, applied in order
+  migrations/     0001–0026, applied in order
   functions/
-    _shared/                validation, CORS, captcha, tokens, service client
+    _shared/                validation, CORS, captcha, tokens, clients
     create-ticket/          intake                     (browser, anon key)
     finalize-ticket/        upload confirmation + acknowledgement
     request-status-link/    emails a magic link        (browser, anon key)
     lookup-status/          token -> the customer's own tickets
+    staff-attachment/       audited 60-second document link  (staff session)
+    invite-staff/           auth user + roles, one call      (staff session)
     drain-outbox/           email sender               (cron, service key only)
     sweep-storage/          orphan + retention file removal (cron)
+
+src/admin/api/            the staff side, as typed calls
+  session.ts                sign-in and refresh, against GoTrue directly
+  desk.ts                   every staff RPC, one function each
+  types.ts                  the shapes those RPCs return
 ```
+
+`src/admin/api` adds no dependency — no `@supabase/supabase-js`, same as the
+customer transport in `src/help/api`. This is a marketing site whose bundle
+every visitor downloads, and the SDK would be carried by all of them to serve
+the handful of people who ever sign in. There is no admin **UI** yet; this is
+the seam one would be built on.
 
 ---
 
@@ -35,7 +48,7 @@ Nothing below is optional, and none of it can be done from a code change.
 | 4 | **Resend (or Postmark) account + API key** | Supabase's built-in mailer is for auth only and explicitly not for transactional mail. |
 | 5 | **Vault secrets** (below) | Without them the two cron-driven Edge Functions no-op. Nothing breaks; nothing sends either. |
 | 6 | **Vercel environment variables** (below) | Until these are set, the form still posts to Web3Forms and issues no reference. |
-| 7 | **Fill in the holiday calendar** | `business_holidays` is seeded with three fixed-date national holidays only. Everything else moves with the lunar calendar and is an operational decision. |
+| 7 | **Fill in the holiday calendar** | Only the fixed-date national holidays are seeded. Everything else — Diwali, Holi, the two Eids — moves, and the dates come from the exchange circular. See "The calendar errs short" below; `staff_dashboard()` reports `holidayCoverage.looksThin` until this is done. |
 | 8 | **Restrict Supabase org membership** | Studio runs as `service_role`. Adding a member is granting database god mode — see "The honest limit" below. |
 
 ### Vercel environment variables
@@ -136,12 +149,27 @@ granting full read and write over every customer's support history.
 | `0016_fix_rate_limit_ambiguity` | Fix: the rate limiter raised on every call and never counted |
 | `0017_staff_workflow` | Staff provisioning, assignment, status, replies; derived customer status |
 | `0018_complaints_workflow` | Grievances: raise, progress, close; the T&C §23 clock joins the sweep |
+| `0019_staff_read_api` | The read side: queue, detail, dashboard, directory; live SLA state |
+| `0020_attachment_access` | Audited KYC downloads; storage policy narrowed to ADMIN break-glass |
+| `0021_staff_admin_api` | Account lifecycle, the role-change trail, the last-admin lock |
+| `0022_closure_emails` | Fix: resolving a ticket and closing a grievance both told the customer nothing |
+| `0023_holiday_calendar` | `staff_set_holidays()`, and a coverage figure on the dashboard |
+| `0024_staff_whoami` | Who is asking, and what they may do |
+| `0025_admin_guard_allows_direct_sql` | Fix: `0021` locked the SQL editor out of creating the first admin |
+| `0026_fix_consent_column_in_detail` | Fix: `0019` read `consent_records.granted_at`, which does not exist |
 
 `0012` is not in the layout the design sketched, and that is deliberate: "what
 can code outside the database make it do?" deserves one file as its answer, the
-same argument that put all the RLS policies in `0010`. `0013`, `0014` and `0016`
-are corrections found by running the thing, appended rather than folded back
-into the migrations they fix, because migrations are append-only.
+same argument that put all the RLS policies in `0010`. `0013`, `0014`, `0016`,
+`0022`, `0025` and `0026` are corrections found by running the thing, appended
+rather than folded back into the migrations they fix, because migrations are
+append-only.
+
+`0026` is the exception to that rule and says so in its own header: `0019` had
+not shipped when the defect was found, so its file **is** corrected in place and
+`0026` exists only because this project has already recorded `0019` as applied
+and will not run it again. A fresh deployment gets `0019` right first time and
+`0026` is a harmless re-creation there.
 
 ### `0016` is the one worth reading
 
@@ -217,6 +245,35 @@ select public.provision_staff_user(
   array['ADMIN','GRIEVANCE_OFFICER']::public.staff_role[]);
 ```
 
+After that first one, `invite-staff` does both halves in a call — it creates the
+login through the Auth admin API and grants the roles, rolling the auth user
+back if the second half fails. An orphaned login is not harmless: it exists, it
+can complete a password reset, and it holds no roles, so it reads as a dormant
+employee rather than as debris.
+
+Only an **active** `ADMIN` may call it, and that is checked against the table
+rather than the token — `has_staff_role()` reads `app_metadata`, which is a
+snapshot from up to an hour ago, so an admin switched off twenty minutes ago
+would still pass it. `staff_whoami()` reads `staff_users.is_active`, so they do
+not.
+
+**Roles afterwards** are `staff_set_roles()` (replaces the set) and
+`staff_set_active()` (the leaver switch — accounts are never deleted, because
+their id is attached to every message they wrote). Both are ADMIN-only, both
+append to `staff_role_audit`, and two locks stop the answer to "who is admin"
+becoming "nobody":
+
+- An admin cannot strip their own `ADMIN` or deactivate themselves. The
+  realistic version of this mistake is not malice, it is someone tidying up
+  their own account and locking the door from the outside.
+- The last active `ADMIN` cannot be removed by any route, including the service
+  key and the SQL editor. Without this, the first lock is defeated by two admins
+  demoting each other.
+
+`staff_set_active` does **not** kill an existing token. Tokens live an hour, so
+a deactivated account keeps working until its current one expires; for a real
+emergency, deactivate *and* sign the user out in the dashboard.
+
 **Enable the JWT hook** — Authentication → Hooks → Customize Access Token (JWT)
 Claims → `public.custom_access_token_hook`. Creating the function is not enough.
 Without this every staff login issues a token with no roles, which reads as
@@ -238,6 +295,104 @@ a customer who escalates is saying the matter is not settled, whatever the
 ticket says. Closure is `staff_close_complaint`, requires a written outcome, and
 is refused to anyone without `GRIEVANCE_OFFICER`. It still cannot be done from
 Studio at all, because a Studio session has no resolvable actor.
+
+**Reading the desk.** Four read RPCs, each one round trip and each returning the
+shape a screen wants: `staff_ticket_queue` (filter, search, paginate),
+`staff_ticket_detail` (ticket, messages, attachments, trail, consent, grievance
+and outbox in one call), `staff_dashboard`, `staff_directory`.
+
+SLA state on those comes from the due dates *live*, not from the stored
+`first_response_breached` flags. Those are set by the hourly sweep, so between
+sweeps they lag by up to an hour, and a queue that says "on time" about a ticket
+that went past due forty minutes ago is worse than no queue.
+
+### Two endings that used to be silent
+
+Found while writing the read API, and fixed in `0022`:
+
+- `staff_set_status(..., 'RESOLVED')` resolved the ticket and **sent nothing**.
+  Every reply the customer had received said "reply to this email"; the last
+  word in the conversation was ours and we never said it.
+- `staff_close_complaint()` wrote the closure summary into an **internal** note.
+  So the outcome of a formal grievance — the document the whole escalation
+  exists to produce — was recorded where the complainant could not see it. That
+  is not a UX gap; a grievance process that does not communicate its outcome has
+  not concluded.
+
+Both now render at enqueue and go through the same outbox as everything else.
+The resolution email carries the closing note as its body and names the
+escalation route, because a resolution the customer does not accept is exactly
+when the grievance path matters. The internal note on closure stays — the email
+is a separate obligation and neither substitutes for the other.
+
+### Someone looked at a customer's passport
+
+`0006` put attachments in a private bucket and `0010` gave staff a storage
+SELECT policy over it. Correct as far as it goes — the documents are not public
+and the people who need them can reach them. What it did not do is leave a
+record. An agent could enumerate every object and download every address proof,
+bank statement and government ID the firm has ever received, and afterwards
+nothing anywhere said they had.
+
+For ordinary attachments that would be untidy. For KYC-grade documents it is the
+precise thing this system was built to avoid — the original complaint about
+Web3Forms was that these files went somewhere unaccountable.
+
+So `0020` narrows the storage policy to `ADMIN` break-glass, and ordinary access
+goes through `staff_open_attachment()`, which writes an append-only
+`attachment_access_log` row and hands back a path. The `staff-attachment` Edge
+Function turns that into a **60-second** signed URL using the service key. The
+enforcement is not a rule asking clients to log their reads; it is the removal
+of any way to read without logging — minting a signed URL needs the service key,
+and the service key is not in the browser.
+
+Two consequences worth naming:
+
+- The log is written **before** the URL exists, so a failure to sign leaves a
+  record of an access that produced no bytes. That is the right way round: an
+  over-recorded attempt is noise, an unrecorded successful read is the failure.
+- `attachment_access_log.attachment_id` carries **no foreign key**, deliberately.
+  Attachments are purged at 12 months while the ticket lives five years, so a
+  cascade would lose the record of who read the file before the record stopped
+  mattering. And `ON DELETE SET NULL` executes as a real `UPDATE`, which an
+  append-only table refuses — `confirm_attachments_swept()` would have started
+  failing on the first 12-month sweep. Append-only and `ON DELETE SET NULL`
+  cannot both be true of one column.
+
+`staff_attachment_access_history()` is the supervisory read, and is restricted
+to `SUPERVISOR` / `GRIEVANCE_OFFICER` / `ADMIN`. An agent writes to that log
+constantly and never needs to read it; letting the watched read the watchlist is
+how you find out which reads go unnoticed.
+
+### The calendar errs short
+
+`business_holidays` holds the statutory fixed dates only. Every other Indian
+market holiday moves, and the dates come from the exchange circular each year.
+`0023` does **not** guess them, and that is a choice rather than an omission:
+
+- A *missing* holiday makes the SLA tighter than it should be. We promise a
+  first response sooner than the calendar really allows.
+- A *wrongly-added* holiday makes the SLA looser. We quietly give ourselves an
+  extra day the customer was never told about.
+
+The first is embarrassing; the second makes a published SLA untrue, which is the
+whole thing this system exists to prevent. So load them from the circular:
+
+```sql
+select public.staff_set_holidays(2027, '[
+  {"date":"2027-01-26","label":"Republic Day"},
+  {"date":"2027-03-22","label":"Holi"}
+]'::jsonb);
+```
+
+It replaces the year outright rather than merging — the failure mode of a merge
+is last year's Diwali sitting in the table, silently extending one SLA a year,
+indistinguishable from a date somebody meant to add. It refuses an empty list,
+refuses a date outside the year named, and de-duplicates a repeated line.
+
+**Due dates are stored when a ticket is created** (that is how `0009` makes them
+immutable), so loading a holiday changes the SLA of tickets raised *afterwards*
+and nothing already in the queue. Load the year before the year starts.
 
 ---
 
@@ -318,6 +473,38 @@ preserves existing claims, and returns an empty array for a stranger.
 readable; `notifications` (SUPERVISOR/ADMIN) and `ticket_access_tokens` (ADMIN)
 both return zero rows. A signed-in non-staff user reads zero rows everywhere.
 
+**The read API, admin surface and audited attachments** — 37 steps against four
+simulated staff sessions (ADMIN, AGENT, SUPERVISOR, GRIEVANCE_OFFICER) plus a
+signed-in stranger and a plain SQL session. All pass:
+
+| | |
+|---|---|
+| Bootstrap | The first `ADMIN` provisioned from a claimless SQL session — the `0025` path |
+| Queue | Default view, `unassigned` filter, and a search for a literal `%` returning **0** rather than everything, which is the `LIKE` escaping working |
+| Detail | Consent record with its `given_at` and policy URL, attachments, trail — the `0026` fix |
+| SLA | A ticket raised 15:44 IST Wed came due **15:45 IST Thu** — 8 business hours across a closing time |
+| Workflow | Reply stamped first response and queued mail; `WAITING_ON_BROKER` showed the customer `IN_PROGRESS`; resolving queued the resolution email carrying the closing note; **resolving a second time queued no second email** |
+| Grievance | Closure by the officer queued the outcome email to the customer, carrying the findings verbatim |
+| Attachments | Opening one wrote the log row with actor, reason and IP; the supervisor read it back |
+| Append-only | `UPDATE` and `DELETE` on `attachment_access_log`, and `DELETE` on `staff_role_audit`, all rejected from a `postgres` session |
+| Admin locks | Self-demotion refused, self-deactivation refused, and deactivating the **only** admin refused even from SQL |
+| Calendar | Agent refused; wrong-year payload refused; empty payload refused; a 4-line list with one duplicate loaded as 3 |
+
+Refusals were checked by their message, not just by failing:
+`This action requires one of these roles: GRIEVANCE_OFFICER`,
+`This action requires an active staff account`,
+`You cannot deactivate your own account.`
+
+All fixture data was purged afterwards and every counter is back to zero.
+Removing the `staff_role_audit` rows needed the table's owner to drop the
+trigger and put it back, which is itself the property that table claims:
+`service_role` cannot do that, and `postgres` can.
+
+**Every SECURITY DEFINER function reachable by `authenticated` was checked for
+its guard** — 18 of 19 call `require_staff()` or `require_admin()`. The
+nineteenth is `staff_whoami()`, which is unguarded on purpose and reads only the
+caller's own row.
+
 **Build** — `npm run build` (which runs `tsc` first) is clean.
 
 ### Not verified here, and why
@@ -360,9 +547,30 @@ the browser network tab for the response Storage gave.
 references subtracted give a volume estimate, so the reference must never be
 used as an ordering or counting signal anywhere public.
 
-**One deliberate advisor notice remains:** `private.rate_limit_hits` has RLS
-enabled with no policies. That is the intent — no policy means no access, and
-the schema is not exposed to PostgREST at all.
+**Two advisor notices remain, both deliberate.**
+
+`private.rate_limit_hits` has RLS enabled with no policies (INFO). That is the
+intent — no policy means no access, and the schema is not exposed to PostgREST
+at all.
+
+`authenticated_security_definer_function_executable` (WARN) fires once for each
+of the 19 staff RPCs. It is describing the architecture rather than a defect:
+every staff function is `SECURITY DEFINER` and granted to `authenticated`
+precisely so that a signed-in agent reaches a written refusal instead of
+`permission denied for function`, and so the projection they get is decided in
+one place rather than by whatever RLS happens to allow.
+
+The lint's real concern — a `SECURITY DEFINER` function that forgets to
+authorise — is worth checking mechanically after any migration that adds one:
+
+```sql
+select p.proname
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.prosecdef
+  and has_function_privilege('authenticated', p.oid, 'EXECUTE')
+  and p.prosrc !~ 'require_staff|require_admin';
+-- must return staff_whoami and nothing else
+```
 
 ---
 
@@ -385,10 +593,16 @@ the schema is not exposed to PostgREST at all.
 - **Who owns the queue**, and who gets Supabase org membership.
 - **Web3Forms key rotation** when the fallback transport is retired. The key is
   in the repository history, so deleting the code does not undo the exposure.
-- **The admin app.** Everything the staff side needs now exists in the database,
-  but there is no UI on it. Until there is, the team works in Studio — which is
-  audited, but is also `service_role`, so see "the honest limit" above. Closing
-  a grievance is the one action Studio cannot do at all.
+- **The admin app.** The database and its API are complete, and `src/admin/api`
+  is a typed client for all of it, but **there is no UI**. That is the one
+  substantial thing still missing, and it is a frontend job rather than a
+  backend one. Until it exists the team works in Studio — audited, but
+  `service_role`, so see "the honest limit" above.
+
+  Two actions Studio cannot perform at all, because both need a resolvable
+  actor: closing a grievance, and opening an attachment through the audited
+  path. The second has an `ADMIN` break-glass route through the storage policy
+  if the Edge Function is ever down; the first does not.
 - **`ContactModal`** now captures consent but still posts to Web3Forms. The
   decision recorded in that file is that it moves to its own table with its own
   timings in a later slice — deliberately not into `tickets`, which would put
