@@ -10,7 +10,7 @@ is why the pre-existing Singapore project was abandoned rather than reused.
 ```
 supabase/
   config.toml
-  migrations/     0001–0016, applied in order
+  migrations/     0001–0018, applied in order
   functions/
     _shared/                validation, CORS, captcha, tokens, service client
     create-ticket/          intake                     (browser, anon key)
@@ -134,6 +134,8 @@ granting full read and write over every customer's support history.
 | `0014_relocate_pg_net` | Move `pg_net` out of the `public` schema |
 | `0015_status_lookup` | Magic-link tokens and the customer-safe ticket projection |
 | `0016_fix_rate_limit_ambiguity` | Fix: the rate limiter raised on every call and never counted |
+| `0017_staff_workflow` | Staff provisioning, assignment, status, replies; derived customer status |
+| `0018_complaints_workflow` | Grievances: raise, progress, close; the T&C §23 clock joins the sweep |
 
 `0012` is not in the layout the design sketched, and that is deliberate: "what
 can code outside the database make it do?" deserves one file as its answer, the
@@ -190,6 +192,52 @@ Proving control of the mailbox is the only version that leaks nothing.
 - Unlike intake, this endpoint **fails closed** if the rate limiter errors. It
   sends mail, and an unthrottled mail-sending endpoint is somebody else's
   problem to live with.
+
+---
+
+## The staff side
+
+Two paths change a ticket, and both are legitimate:
+
+| | |
+|---|---|
+| **The `staff_*` RPCs** | Do what a bare `UPDATE` cannot: stamp `first_response_at`, queue the customer's email, attach a reason to the trail. Called by a signed-in agent's own session. |
+| **A direct edit in Studio** | Still audited by the trigger, still bound by every constraint. It just does not send or stamp anything the triggers cannot. |
+
+The second exists because the team has to be able to work before an admin app
+is built. It is not a hole — it is the consequence of shipping the database
+first, and the trail records it either way.
+
+**Provisioning the first account.** Creating the auth user needs the Auth admin
+API, so do it in the dashboard (Authentication → Users → Add user), then:
+
+```sql
+select public.provision_staff_user(
+  '<uuid from the dashboard>', 'Anuj Pal', 'anuj@platizio.com',
+  array['ADMIN','GRIEVANCE_OFFICER']::public.staff_role[]);
+```
+
+**Enable the JWT hook** — Authentication → Hooks → Customize Access Token (JWT)
+Claims → `public.custom_access_token_hook`. Creating the function is not enough.
+Without this every staff login issues a token with no roles, which reads as
+"not staff" to every policy.
+
+**Customer status is derived**, not set by hand. `WAITING_ON_BROKER` shows the
+customer plain "In progress" — they never learn their query is sitting with a
+counterparty. An agent who wants to say something different can still set
+`status_customer` explicitly in the same statement; the trigger defers to them.
+
+**Replying is what stops the first-response clock.** `staff_post_reply` stamps
+`first_response_at` and nothing else does, because a separate "mark responded"
+call would eventually be missed and the SLA report would quietly measure
+nothing. An internal note deliberately does not stop it.
+
+**Grievances.** `staff_raise_complaint` registers one, emails the customer the
+acknowledgement T&C §23 promises within 24 hours, and **reopens the ticket** —
+a customer who escalates is saying the matter is not settled, whatever the
+ticket says. Closure is `staff_close_complaint`, requires a written outcome, and
+is refused to anyone without `GRIEVANCE_OFFICER`. It still cannot be done from
+Studio at all, because a Studio session has no resolvable actor.
 
 ---
 
@@ -252,6 +300,23 @@ anti-phishing line. A retried finalize did not queue a second one.
 **Retention** — a ticket with a live complaint survived the purge; under legal
 hold it survived; with both released it was deleted, and its trail, consent and
 attachment rows cascaded with it.
+
+**Staff workflow** — run against a real provisioned staff account with a
+simulated session (the JWT hook, `auth.uid()` and every policy exercised for the
+first time). Assignment promoted `NEW → TRIAGED`; an internal note left
+`first_response_at` null and queued no mail; a reply stamped it, queued the
+mail and moved the ticket to `IN_PROGRESS`; `WAITING_ON_BROKER` showed the
+customer `IN_PROGRESS`; resolving stamped `resolved_at`; raising a grievance
+reopened the ticket and queued the acknowledgement. An `AGENT` attempting to
+close the grievance was refused, the `GRIEVANCE_OFFICER` succeeded, and a
+signed-in non-staff user was refused everything.
+
+**The JWT hook** — returns `app_metadata.platizio_roles` for each staff member,
+preserves existing claims, and returns an empty array for a stranger.
+
+**Staff RLS** — with an `AGENT` token: tickets, consent records and the trail
+readable; `notifications` (SUPERVISOR/ADMIN) and `ticket_access_tokens` (ADMIN)
+both return zero rows. A signed-in non-staff user reads zero rows everywhere.
 
 **Build** — `npm run build` (which runs `tsc` first) is clean.
 
@@ -320,6 +385,10 @@ the schema is not exposed to PostgREST at all.
 - **Who owns the queue**, and who gets Supabase org membership.
 - **Web3Forms key rotation** when the fallback transport is retired. The key is
   in the repository history, so deleting the code does not undo the exposure.
+- **The admin app.** Everything the staff side needs now exists in the database,
+  but there is no UI on it. Until there is, the team works in Studio — which is
+  audited, but is also `service_role`, so see "the honest limit" above. Closing
+  a grievance is the one action Studio cannot do at all.
 - **`ContactModal`** now captures consent but still posts to Web3Forms. The
   decision recorded in that file is that it moves to its own table with its own
   timings in a later slice — deliberately not into `tickets`, which would put
