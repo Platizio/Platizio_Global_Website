@@ -3954,6 +3954,192 @@ p {
   margin-top: 1.75rem;
 }
 
+/* Ticket reference ---------------------------------------
+   Shown only when the request was actually stored and the reference can be
+   looked up. On the fallback transport there is no reference and this block
+   does not render at all — a number nobody can trace is worse than none. */
+.help-ticket-ref {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.35rem auto 1.35rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+}
+
+.help-ticket-ref-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.help-ticket-ref-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.32rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  margin: 0;
+}
+
+/* Partial success — the request landed, a document did not. Warning colours
+   rather than error colours: nothing was lost that the customer must redo. */
+.help-attachment-warning {
+  text-align: left;
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1.1rem;
+  background: #FFF8E6;
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  line-height: 1.55;
+}
+
+.help-attachment-warning strong {
+  color: var(--navy);
+}
+
+.help-attachment-warning ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.15rem;
+}
+
+/* Captcha widget. Only rendered when a site key is configured, so this
+   selector matches nothing until then. */
+.help-turnstile {
+  margin: 0 0 1.1rem;
+  min-height: 65px;
+}
+
+/* Status page -------------------------------------------
+   One card per request. Deliberately plain: this is a page someone opens
+   worried about their money, not a dashboard to admire. */
+.status-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.status-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.6rem;
+}
+
+.status-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.7rem;
+}
+
+.status-ref {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.status-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.status-badge-neutral { background: var(--gray-100); color: var(--gray-700); }
+.status-badge-active  { background: #E6F0FF; color: #1D4ED8; }
+/* The one state that needs the customer to act, so it is the one that draws
+   the eye — the site's accent colour, used nowhere else on this page. */
+.status-badge-waiting { background: #FFF1E6; color: var(--gold-deep); }
+.status-badge-done    { background: #E7F8F0; color: #047857; }
+
+.status-subject {
+  font-size: 1.06rem;
+  margin: 0 0 0.4rem;
+  color: var(--navy);
+}
+
+.status-detail {
+  font-size: 0.92rem;
+  color: var(--gray-600);
+  margin: 0 0 1.1rem;
+}
+
+.status-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.85rem 1.5rem;
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-100);
+}
+
+.status-meta dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 0.2rem;
+}
+
+.status-meta dd {
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  margin: 0;
+}
+
+.status-files {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0.9rem 0 0;
+  border-top: 1px solid var(--gray-100);
+  display: grid;
+  gap: 0.4rem;
+}
+
+.status-files li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.87rem;
+  color: var(--gray-700);
+}
+
+.status-files li span {
+  font-size: 0.74rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+
+.status-files li.is-missing span {
+  color: #B94B12;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .status-card {
+    padding: 1.25rem 1.15rem;
+  }
+}
+
 @media (max-width: 640px) {
   .help-form-row {
     grid-template-columns: 1fr;
