@@ -90,10 +90,21 @@ Deno.serve(async (req: Request) => {
 
   if (!isServiceRoleCaller(req)) {
     const { data, error } = await asCaller.rpc('staff_whoami')
+
     if (error) {
+      // 42501 here is not a fault, it is an answer. staff_whoami is granted to
+      // `authenticated` and not to `anon`, so a caller presenting the anon key
+      // — which ships in the site bundle, so anyone can — gets permission
+      // denied rather than a payload. Reporting that as a 500 would blame the
+      // server for the caller not being signed in, and would tell a monitor
+      // the function is broken every time someone pokes it.
+      if (error.code === '42501' || error.code === 'PGRST301') {
+        return fail(req, 403, 'Only an active ADMIN can create staff accounts.', error)
+      }
       console.error('could not establish the caller', error)
       return fail(req, 500, 'We could not establish who you are.')
     }
+
     const me = data as WhoAmI
     if (!me.signedIn || !me.isActive || !(me.roles ?? []).includes('ADMIN')) {
       return fail(req, 403, 'Only an active ADMIN can create staff accounts.')

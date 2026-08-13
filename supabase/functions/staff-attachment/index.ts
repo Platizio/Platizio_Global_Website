@@ -25,6 +25,32 @@ import { clientIp } from '../_shared/validation.ts'
 const SIGNED_URL_TTL_SECONDS = 60
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
+/**
+ * Two different things arrive as error code 42501, and only one of them is safe
+ * to repeat to the caller.
+ *
+ *   require_staff() raising — "This action requires an active staff account".
+ *   Written for the person reading it, describes their own situation, and is
+ *   the whole point of granting these functions to `authenticated` rather than
+ *   hiding them: a signed-in agent should learn why they were refused.
+ *
+ *   PostgREST's grant check failing — "permission denied for function
+ *   staff_open_attachment". Written for a DBA, and it hands the name of an
+ *   internal function to whoever asked. An anon caller reaches exactly this
+ *   one, and the anon key ships in the site bundle.
+ *
+ * So messages are passed through only when they are recognisably ours. The
+ * allowlist is by prefix rather than by content, because a new refusal added to
+ * a migration later should default to being withheld, not to being echoed.
+ */
+const OURS = ['This action requires', 'attachment ', 'Closing a grievance', 'You cannot ']
+
+function speakable(message?: string): string {
+  const text = (message ?? '').trim()
+  if (OURS.some((prefix) => text.startsWith(prefix))) return text
+  return 'You do not have permission to open that attachment.'
+}
+
 interface OpenResult {
   attachmentId: string
   ticketId: string
@@ -74,13 +100,12 @@ Deno.serve(async (req: Request) => {
   })
 
   if (error) {
-    // The database's messages here are written for a staff member and are safe
-    // to pass on — "requires an active staff account", "attachment is REJECTED,
-    // not VERIFIED". They describe the caller's own situation, not the schema.
     const code = error.code ?? ''
-    if (code === '42501') return fail(req, 403, error.message, error)
+    if (code === '42501' || code === 'PGRST301') {
+      return fail(req, 403, speakable(error.message), error)
+    }
     if (code === 'P0002') return fail(req, 404, 'That attachment no longer exists.', error)
-    if (code === '22023') return fail(req, 409, error.message, error)
+    if (code === '22023') return fail(req, 409, speakable(error.message), error)
     console.error('staff_open_attachment failed', error)
     return fail(req, 500, 'We could not open that attachment just now.')
   }
