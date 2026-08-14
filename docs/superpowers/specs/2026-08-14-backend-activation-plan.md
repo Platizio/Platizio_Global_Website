@@ -134,56 +134,241 @@ Rejected: a dedicated Node/NestJS or Python API (loses RLS, adds ops, duplicates
 
 ---
 
-## Part 4 — Target architecture
+## Part 4 — Target architecture, in depth
+
+Nothing in the function tier has been redesigned. `create-ticket` and `finalize-ticket` are live,
+deployed, and stay exactly as they are. This section documents what is already there rather than
+proposing a replacement — the only addition is `create-enquiry`, which follows the same shape.
+
+### 4.1 The function tier
+
+Nine Deno functions sit between the browser and Postgres. All are `verify_jwt = true`, so the
+gateway rejects an unsigned request before any of this code runs.
+
+| Function | Called by | Acts as | Does |
+|---|---|---|---|
+| `create-ticket` | browser, anon key | `adminClient` (service) | Validate → Turnstile → rate limit → `create_support_ticket` → mint signed upload URLs |
+| `finalize-ticket` | browser, anon key | `adminClient` | Read the uploaded bytes back, sniff magic numbers, delete fakes, `finalize_support_ticket` |
+| `request-status-link` | browser, anon key | `adminClient` | Turnstile → rate limit → mint 32-byte token, store **SHA-256 only** → queue magic-link email |
+| `lookup-status` | browser, anon key | `adminClient` | Hash the presented token → `lookup_tickets_by_token` |
+| `staff-attachment` | staff SPA | **`userClient`** (the caller) | Log the access **first**, then mint a 60-second signed URL |
+| `invite-staff` | staff SPA | `userClient` + admin | Provision a staff account against `auth.users` |
+| `drain-outbox` | `pg_cron` via `pg_net` | `adminClient` | Claim ≤10 notifications, POST to Resend, mark each complete |
+| `sweep-storage` | `pg_cron` via `pg_net` | `adminClient` | Delete storage objects whose rows are gone |
+| `create-enquiry` **[new]** | browser, anon key | `adminClient` | Same shape as `create-ticket`, writing `contact_enquiries` |
+
+The `adminClient` / `userClient` split is the load-bearing detail. `_shared/supabase.ts` documents it
+directly: reaching for `adminClient()` in a staff function would *"silently hand a support agent
+service-role reach — the RPC would still run, it would just stop being able to tell who ran it."*
+So `staff-attachment` acts as the caller, and `auth.uid()` inside the RPC is the actual person.
+
+`drain-outbox` and `sweep-storage` additionally call `isServiceRoleCaller()`, which reads the `role`
+claim out of the already-verified JWT. Without it the anon key would be enough to trigger the outbox
+drain — and the anon key ships in the site bundle.
+
+### 4.2 Why the tier exists at all
+
+Five things it does that PostgREST structurally cannot:
+
+1. **Verify Turnstile** — needs a server-held secret.
+2. **Mint signed upload and download URLs** — needs the service key, which cannot be in a browser.
+3. **Read uploaded bytes back and sniff magic numbers** — a `.pdf` containing a shell script is
+   rejected here, because the browser's extension check never opened the file.
+4. **Rate-limit before the database is touched** — `private.rate_limit_hits` is deliberately outside
+   the PostgREST schema list.
+5. **Call outward to Resend.**
+
+Everything else — authorisation, audit, SLA arithmetic, retention — stays in Postgres, where RLS
+enforces it rather than application code remembering to.
+
+### 4.3 Flow — raising a ticket
+
+Three browser calls, two of them into the function tier.
 
 ```
- PUBLIC VISITOR
-      │
-      ▼
- ┌──────────────────────────────────────────────┐
- │ Vercel — platizioglobal.com                  │
- │ Static prerendered React, 49 routes          │
- │ No server runtime                            │
- └───────────────┬──────────────────────────────┘
-                 │  fetch + anon key + x-turnstile-token
-                 │  CORS allowlist — _shared/cors.ts
-                 ▼
- ┌──────────────────────────────────────────────┐
- │ Supabase Edge Functions (Deno) · ap-south-1  │
- │ verify_jwt: true                             │
- │  create-ticket · finalize-ticket             │
- │  request-status-link · lookup-status         │
- │  create-enquiry                       [new]  │
- └───────────────┬──────────────────────────────┘
-                 │ service_role
-                 ▼
- ┌──────────────────────────────────────────────┐
- │ Postgres 17 · RLS on every table             │
- │  intake RPCs · staff_* RPCs                  │
- │  audit · consent · SLA · retention           │
- └──┬──────────────┬───────────────┬────────────┘
-    │ pg_cron      │ pg_net        │ Storage
-    ▼              ▼               ▼
- sweep_sla    drain-outbox    ticket-attachments
- purge        → Resend        (private, signed URLs)
- requeue
-
- STAFF MEMBER
-      │  Supabase Auth (email+password, signup disabled)
-      │  JWT carries app_metadata.platizio_roles
-      ▼
- ┌──────────────────────────────────────────────┐
- │ /staff SPA — Vite, this repo, own Vercel     │
- │ project → staff.platizioglobal.com           │
- └───────────────┬──────────────────────────────┘
-                 │ authenticated JWT
-                 ▼  PostgREST /rest/v1/rpc/*
-           staff_* RPCs → require_staff()
+Browser                    create-ticket              Postgres                 Storage
+   │                            │                        │                        │
+   │─ POST create-ticket ──────▶│                        │                        │
+   │  anon key                  │                        │                        │
+   │  x-turnstile-token         │                        │                        │
+   │  idempotencyKey, name,     │                        │                        │
+   │  email, mobile, category,  │                        │                        │
+   │  subcategory, priority,    │                        │                        │
+   │  subject, description,     │                        │                        │
+   │  consent{text,version,url} │                        │                        │
+   │  attachments[{name,mime,bytes}]                     │                        │
+   │                            │                        │                        │
+   │              1. preflight — CORS origin allowlist    │                        │
+   │              2. parseTicketIntent — shape, lengths,  │                        │
+   │                 email regex, mobile digits, safeName │                        │
+   │              3. verifyTurnstile(token, ip)           │                        │
+   │              4. rate_limit_consume ─────────────────▶│ intake:ip     10/hr    │
+   │                                   ─────────────────▶│ intake:email   5/hr    │
+   │              5. rpc create_support_ticket ──────────▶│                        │
+   │                                                      │ ── ONE TRANSACTION ──  │
+   │                                                      │  consent or reject     │
+   │                                                      │  idempotency dedup     │
+   │                                                      │  insert tickets        │
+   │                                                      │   ↳ set_ticket_ref     │
+   │                                                      │     → PG-YYYY-NNNNNN   │
+   │                                                      │   ↳ set_ticket_due_dates
+   │                                                      │     → add_business_time
+   │                                                      │  insert consent_records│
+   │                                                      │  insert ticket_attachments
+   │                                                      │     state = PENDING    │
+   │              6. createSignedUploadUrl per file ──────────────────────────────▶│
+   │◀─ 200 {ticketId, ticketRef, uploads[{index,signedUrl}], unavailable[]}        │
+   │                                                                               │
+   │─ PUT signedUrl — raw bytes, one per file ────────────────────────────────────▶│
+   │                                                                               │
+   │                       finalize-ticket                                         │
+   │─ POST finalize-ticket ────▶│                        │                        │
+   │  {ticketId, idempotencyKey}│                        │                        │
+   │              1. load ticket, compare idempotency_key │                        │
+   │                 mismatch → 403. This is what stops   │                        │
+   │                 anyone finalising someone else's     │                        │
+   │                 ticket by guessing a uuid.           │                        │
+   │              2. select attachments where PENDING ───▶│                        │
+   │              3. per file: list → size → sign 60s →   │                        │
+   │                 GET Range: bytes=0-15 → sniffMime ──────────────────────────▶│
+   │                 verdict: VERIFIED | REJECTED | MISSING                        │
+   │              4. delete REJECTED objects ────────────────────────────────────▶│
+   │              5. rpc finalize_support_ticket ────────▶│ update attachments     │
+   │                                                      │ tickets.finalized_at   │
+   │                                                      │ insert notifications   │
+   │                                                      │  'ticket_acknowledgement'
+   │                                                      │  dedupe 'ack:<uuid>'   │
+   │◀─ 200 {ticketRef, acknowledgementQueued, failedAttachments}                   │
 ```
 
-**Two trust zones, deliberately different transports.**
+Three properties worth stating plainly, because they are what the two-call split buys:
 
-Anonymous intake goes through **edge functions** because it needs work PostgREST cannot do: Turnstile verification, IP and email rate limiting, signed upload URL minting, magic-number checking of uploaded bytes. Staff traffic goes **straight to PostgREST**, because every `staff_*` RPC already calls `require_staff()` internally and RLS backs it — an intermediary would add latency and a second place for authorisation to drift.
+- **The ticket exists after call one.** A failed upload or a failed finalize degrades attachments,
+  never the request itself.
+- **The bytes are never trusted.** `declared_mime` comes from the browser; `verified_mime` is read
+  from the first 16 bytes of the stored object. They are stored separately and a mismatch is logged.
+- **Finalize is idempotent.** `finalized_at` uses `coalesce`, and the notification insert is
+  `on conflict (dedupe_key) do nothing`. Calling it twice is harmless.
+
+### 4.4 The hole in that flow
+
+`create_support_ticket` (migration `0012`, lines 156–277) contains **no reference to
+`notifications`, `render_ticket_acknowledgement`, or any acknowledgement at all.** The
+acknowledgement email is queued in exactly one place: `finalize_support_ticket`, line 324.
+
+And the client skips finalize entirely when there is nothing to upload —
+`src/lib/supportChat.ts:176-178`:
+
+```ts
+// No files: the ticket is complete as it stands.
+if (draft.files.length === 0) {
+  return { kind: 'raised', reference: body.ticketRef }
+}
+```
+
+So a ticket raised **without attachments is never finalized**: `finalized_at` stays null and the
+customer never receives an acknowledgement. That is the majority of support tickets. The comment
+asserts the ticket "is complete as it stands" — it is recorded, but it is not acknowledged.
+
+**Fix: always call `finalize-ticket`.** It is already idempotent, it is a sub-second call on a form
+submit, and it keeps one invariant — a ticket is complete when finalize says so — rather than
+splitting acknowledgement across two functions. This is Phase B alongside the `source` fix, because
+both are one-line-ish changes on the same path and both need the same end-to-end test.
+
+### 4.5 Flow — customer checks status (no account)
+
+```
+Browser ── POST request-status-link {email} ──▶ Turnstile → rate limit (3/hr email, 10/hr ip)
+                                              → newAccessToken(): 32 random bytes, base64url
+                                              → store sha256(token) in ticket_access_tokens
+                                              → queue magic-link email, 30-minute TTL
+        ◀─ always the same answer, whether or not that email has tickets ─
+                 "If we have any requests from that email address, a link is on its way."
+
+Browser ── POST lookup-status {token} ───────▶ rate limit 60/hr per ip
+                                              → sha256(token) → lookup_tickets_by_token
+        ◀─ the customer's tickets ─
+```
+
+Two deliberate choices: the response never reveals whether an address is known, and the raw token is
+never stored — only its SHA-256, the same pattern the escalation grants will reuse.
+
+### 4.6 Flow — staff opens an attachment
+
+The ordering here is the whole design.
+
+```
+Staff SPA ── POST staff-attachment {attachmentId, reason} ──▶ userClient, caller's JWT
+                                                              │
+                                        rpc staff_open_attachment  ← as auth.uid(), not service
+                                                              │
+                                        writes attachment_access_log  ← BEFORE any URL exists
+                                                              │
+                                        adminClient.createSignedUrl(60s, download: filename)
+          ◀─ {url, filename, expiresInSeconds: 60} ─
+```
+
+Migration `0020` narrowed the storage policy to ADMIN break-glass precisely so this path is the only
+one. As the function's own header puts it: the enforcement is *"not a rule asking clients to log
+their reads, but the removal of any way to read without logging."* If signing then fails, the log
+records an access that produced no bytes — the right way round.
+
+### 4.7 Flow — email, and the background jobs
+
+Email is a transactional outbox, never sent inline. Every workflow that needs to notify someone
+inserts a `notifications` row inside its own transaction; nothing blocks on SMTP.
+
+```
+any workflow ──▶ insert notifications (dedupe_key)      [inside the business transaction]
+
+pg_cron 'platizio-outbox-drain'  every minute
+   └─▶ private.invoke_edge_function('drain-outbox')
+         └─▶ pg_net.http_post with the Vault-held service key
+               └─▶ drain-outbox: isServiceRoleCaller → claim_notifications(10)
+                     └─▶ POST api.resend.com → complete_notification(ok | error)
+```
+
+Four distinct cron jobs (registered by five `cron.schedule` calls — `platizio-retention-purge` is
+re-registered in `0015` to add token purging):
+
+| Job | Schedule | Work |
+|---|---|---|
+| `platizio-outbox-drain` | every minute | invoke `drain-outbox` |
+| `platizio-sla-sweep` | every 15 min | `sweep_sla()` + `requeue_stuck_notifications()` |
+| `platizio-storage-sweep` | hourly at :17 | invoke `sweep-storage` |
+| `platizio-retention-purge` | daily 21:00 UTC | `purge_expired_records()` + `purge_expired_access_tokens()` |
+
+`drain-outbox` holds rather than fails when `RESEND_API_KEY` is unset — queued mail waits for
+configuration instead of being marked undeliverable.
+
+### 4.8 The two trust zones
+
+```
+ ANONYMOUS                                    AUTHENTICATED
+ ─────────                                    ─────────────
+ Browser, anon key                            Staff SPA, user JWT
+   │  + x-turnstile-token                       │  app_metadata.platizio_roles
+   │  CORS origin allowlist                     │
+   ▼                                            ▼
+ Edge functions  ── captcha, rate limits,     PostgREST  ── no intermediary
+                    signed URLs, byte sniffing              /rest/v1/rpc/staff_*
+   │  service_role                              │  authenticated role
+   ▼                                            ▼
+ ══════════════════ Postgres 17 · RLS on every table ══════════════════
+   intake RPCs · staff_* RPCs (require_staff) · append-only audit
+   consent · SLA clocks · retention
+   │                    │                     │
+   │ pg_cron            │ pg_net              │ Storage
+   ▼                    ▼                     ▼
+ sla sweep          drain-outbox          ticket-attachments
+ purge · requeue    → Resend              private, ADMIN break-glass only
+```
+
+Staff traffic skips the function tier because every `staff_*` RPC already calls `require_staff()`
+and RLS backs it; an intermediary would add latency and a second place for authorisation to drift.
+The two exceptions are `staff-attachment` and `invite-staff`, which are functions precisely because
+they need the service key for work the database cannot do alone — signing a storage URL, and
+touching `auth.users`.
 
 ---
 
@@ -201,7 +386,7 @@ Same React 18 / TypeScript / Vite baseline, so there is one toolchain and no new
 
 ### Backend
 
-Supabase on `ap-south-1`: Postgres 17.6 · PostgREST · Deno edge functions · Supabase Auth (email/password, signup disabled, `custom_access_token_hook`) · Supabase Storage (private bucket, 5 MiB, signed URLs) · `pg_cron` (5 jobs) · `pg_net`.
+Supabase on `ap-south-1`: Postgres 17.6 · PostgREST · Deno edge functions · Supabase Auth (email/password, signup disabled, `custom_access_token_hook`) · Supabase Storage (private bucket, 5 MiB, signed URLs) · `pg_cron` (4 jobs) · `pg_net`.
 
 ### Third-party
 
@@ -224,7 +409,24 @@ Nothing user-visible; this closes the gap between the repo and reality.
 - Confirm no drift before adding anything: `npx supabase db reset`, then `npx supabase db diff --linked` reports empty.
 - Add Vitest + jsdom + testing-library; one smoke test per new module thereafter.
 
-### Phase B — Fix the `source` defect (blocking)
+### Phase B — Fix the two intake defects (blocking)
+
+Both sit on the same code path and need the same end-to-end test, so they ship together.
+
+#### B1 — Tickets without attachments are never acknowledged
+
+The more damaging of the two, because it hits the majority case. See §4.4: the acknowledgement email
+is queued only inside `finalize_support_ticket`, and the client skips `finalize-ticket` whenever
+there are no files. A customer with nothing to upload gets a reference number on screen and then
+silence, and `tickets.finalized_at` stays null.
+
+- Drop the early return at `src/lib/supportChat.ts:176-178` and always call `finalize-ticket`.
+  It is already idempotent — `coalesce(finalized_at, now())` plus
+  `on conflict (dedupe_key) do nothing` on the `ack:<uuid>` key.
+- Test: raise a ticket with **no** attachment, assert a `notifications` row with template
+  `ticket_acknowledgement` exists and `finalized_at` is set.
+
+#### B2 — `source='chatbot'` is silently dropped
 
 Verified, not inferred:
 
@@ -293,11 +495,19 @@ The `2026-08-13-help-centre-design.md` extension phases: `support-chat` edge fun
 4. **Database** — `npx supabase test db`, including the `source='chatbot'` test that inserts a real row.
 5. **Edge functions** — `deno test` on validation and Turnstile paths.
 6. **Ticket round trip, in a browser** — walk the assistant to a leaf, raise a ticket with one PDF attachment. Confirm via MCP: a `tickets` row with `source='chatbot'` and a `PG-` ref; a `consent_records` row with verbatim text and version; a `ticket_attachments` row whose `verified_mime` was read from the bytes; a `notifications` row that `drain-outbox` moved to sent.
-7. **Turnstile bites** — submit with the widget bypassed and confirm a 403, not a silent accept.
-8. **Enquiry round trip** — submit the contact modal, confirm a `contact_enquiries` row with a `PG-ENQ-` ref and no corresponding `tickets` row.
-9. **Staff round trip** — sign in, claim from the queue, post a customer-visible reply, confirm the email is queued and the first-response SLA clock stops; open an attachment and confirm the `attachment_access_log` row was written before the URL was issued.
-10. **Authorisation** — confirm a non-`GRIEVANCE_OFFICER` cannot close a complaint, and that the refusal text is the database's own.
-11. **Rate limits** — 11 submissions from one IP inside an hour; the 11th returns 429.
+7. **Ticket round trip with no attachment** — the majority case, and the one B1 fixes. Raise a
+   ticket with zero files and confirm `tickets.finalized_at` is set and a
+   `ticket_acknowledgement` notification exists. Before the fix this produces neither.
+8. **Finalize is safe twice** — call `finalize-ticket` a second time with the same
+   `ticketId` and `idempotencyKey`; confirm exactly one acknowledgement row, and that a
+   mismatched key returns 403.
+9. **Bad bytes are rejected** — upload a file named `.pdf` whose contents are not a PDF. Confirm
+   the attachment lands `REJECTED`, the storage object is deleted, and the ticket still stands.
+10. **Turnstile bites** — submit with the widget bypassed and confirm a 403, not a silent accept.
+11. **Enquiry round trip** — submit the contact modal, confirm a `contact_enquiries` row with a `PG-ENQ-` ref and no corresponding `tickets` row.
+12. **Staff round trip** — sign in, claim from the queue, post a customer-visible reply, confirm the email is queued and the first-response SLA clock stops; open an attachment and confirm the `attachment_access_log` row was written before the URL was issued.
+13. **Authorisation** — confirm a non-`GRIEVANCE_OFFICER` cannot close a complaint, and that the refusal text is the database's own.
+14. **Rate limits** — 11 submissions from one IP inside an hour; the 11th returns 429.
 
 ---
 
