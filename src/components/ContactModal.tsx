@@ -255,9 +255,16 @@ export default function ContactModal() {
                     onChange={handleChange}
                     style={{ marginTop: '0.25rem', flexShrink: 0 }}
                   />
+                  {/*
+                    Rendered verbatim, then the link added after it. What the
+                    person reads and what `consent_records.consent_text` stores
+                    are the same string with no transformation in between —
+                    which is the only thing that makes the stored row evidence
+                    of what they actually agreed to.
+                  */}
                   <span style={{ fontSize: '0.88rem', lineHeight: 1.5 }}>
-                    {CONSENT_TEXT.replace(/, as described in the Privacy Policy\.$/, '')}, as described in the{' '}
-                    <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+                    {CONSENT_TEXT}{' '}
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer">Read the Privacy Policy</a>.
                     <span className="req"> *</span>
                   </span>
                 </label>
