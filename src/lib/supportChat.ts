@@ -1,4 +1,7 @@
 import { SUPPORT_EMAIL } from '../siteConfig'
+import { anonHeaders, backendConfig, isBackendConfigured } from './backend'
+
+export { isBackendConfigured }
 
 /**
  * Submitting a request from the assistant.
@@ -86,15 +89,7 @@ export type SubmitOutcome =
   | { kind: 'drafted'; attachmentsPending?: number }
   | { kind: 'failed'; message: string }
 
-function config() {
-  const url = import.meta.env.VITE_SUPABASE_URL
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY
-  return url && key ? { url, key } : null
-}
-
-export function isBackendConfigured(): boolean {
-  return config() !== null
-}
+const config = backendConfig
 
 function trail(breadcrumb: string[]): string {
   return breadcrumb.length > 0 ? breadcrumb.join(' > ') : 'Not specified'
@@ -134,10 +129,7 @@ export async function submitTicket(draft: TicketDraft): Promise<SubmitOutcome> {
   try {
     const response = await fetch(`${settings.url}${CREATE_PATH}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${settings.key}`,
-      },
+      headers: anonHeaders(settings),
       body: JSON.stringify({
         idempotencyKey,
         fullName: draft.fullName,
@@ -209,10 +201,7 @@ export async function submitTicket(draft: TicketDraft): Promise<SubmitOutcome> {
     // repeat call settles nothing twice and sends nothing twice.
     const finalize = await fetch(`${settings.url}${FINALIZE_PATH}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${settings.key}`,
-      },
+      headers: anonHeaders(settings),
       body: JSON.stringify({ ticketId: body.ticketId, idempotencyKey }),
     })
 
