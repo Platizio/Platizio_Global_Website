@@ -15,6 +15,19 @@ export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
 export const ALLOWED_MIME = ['application/pdf', 'image/png', 'image/jpeg'] as const
 export const PRIORITIES = ['LOW', 'NORMAL', 'URGENT'] as const
 
+/**
+ * What a browser is allowed to claim about where its request came from.
+ *
+ * Deliberately narrower than the database constraint, which also permits
+ * 'email', 'phone' and 'staff'. Those three describe a request a staff member
+ * logged on someone else's behalf, and nothing reaching this endpoint is one of
+ * them — this is the public intake path and it is reached with the anon key,
+ * which ships in the site bundle. Accepting 'staff' here would let anyone forge
+ * a ticket that reads as though an agent raised it, which is exactly the sort
+ * of row an audit is supposed to be able to trust.
+ */
+export const CLIENT_SOURCES = ['web', 'chatbot'] as const
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -35,6 +48,7 @@ export interface TicketIntent {
   categoryId: string
   subcategoryId: string
   priority: string
+  source: string
   subject: string
   description: string
   consent: { text: string; version: string; url: string }
@@ -141,6 +155,15 @@ export function parseTicketIntent(raw: unknown): TicketIntent {
     throw new ValidationError('That urgency level is not one we recognise.')
   }
 
+  // Absent means the plain web form, which is what every caller predating the
+  // guided assistant sends. An unrecognised value is refused rather than
+  // coerced to 'web': silently rewriting it is how the old behaviour hid this
+  // bug for as long as it did.
+  const source = str(body.source).toLowerCase() || 'web'
+  if (!CLIENT_SOURCES.includes(source as typeof CLIENT_SOURCES[number])) {
+    throw new ValidationError('That request source is not one we recognise.')
+  }
+
   const subject = bounded(str(body.subject), 'The subject', 4, 200)
   const description = bounded(str(body.description), 'The description', 20, 5000)
 
@@ -158,6 +181,7 @@ export function parseTicketIntent(raw: unknown): TicketIntent {
     categoryId,
     subcategoryId,
     priority,
+    source,
     subject,
     description,
     consent: { text: consentText, version: consentVersion, url: consentUrl },

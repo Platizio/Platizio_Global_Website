@@ -64,6 +64,7 @@ Deno.serve(async (req: Request) => {
       categoryId: intent.categoryId,
       subcategoryId: intent.subcategoryId,
       priority: intent.priority,
+      source: intent.source,
       subject: intent.subject,
       description: intent.description,
       captchaVerified: captcha.verified,
