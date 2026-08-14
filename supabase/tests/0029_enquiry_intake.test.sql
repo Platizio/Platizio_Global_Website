@@ -61,8 +61,11 @@ select is(
 
 -- ── The separation that 0027 exists to protect ─────────────────────────────
 
+-- Scoped to this enquiry's address rather than asserting the whole table is
+-- empty. A global count would pass or fail depending on what other test files
+-- had done first, which makes it a test of the suite rather than of the code.
 select is(
-  (select count(*)::int from public.tickets),
+  (select count(*)::int from public.tickets where requester_email = 'enquiry@example.com'),
   0,
   'and no ticket is created — an enquiry never enters the SLA queue'
 );

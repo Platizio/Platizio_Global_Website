@@ -26,6 +26,26 @@ That distinction shapes the sequencing. Phase B fixes the code defects **before*
 
 This plan therefore optimises for **activation**: get what exists into production, correctly and safely, before building anything new.
 
+## Progress
+
+| Phase | State | Notes |
+|---|---|---|
+| **A** — Merge and de-risk | **Done** | CI added and green. `npm run build` plus a job that replays every migration onto a clean Postgres and runs pgTAP. The replay passing is the drift proof §15 asked for. Vitest not yet added — the pgTAP suite covers what Phase B needed. |
+| **B** — Fix the intake defects | **Done** | B1 and B2 both fixed and covered by tests that insert real rows. |
+| **C** — Turn the lights on | **Blocked on you** | Needs `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` on Vercel and `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `MAIL_FROM`, `ALLOWED_ORIGINS`, `SITE_URL` on Supabase. Secrets, so not something to do from here. |
+| **D** — Contact form onto `contact_enquiries` | **Done** | RPC, `create-enquiry` function, consent record, modal switched over. Web3Forms kept as a fallback only until C lands. |
+| **E** — Staff console | Not started | |
+| **F** — Customer status page | Not started | |
+
+Migrations `0028` and `0029` are committed but **have not been applied to the live project**. Applying schema changes to a production database for a regulated entity is a decision to take deliberately, not a side effect of a code change. When you want them:
+
+```
+npx supabase link --project-ref qtjnlkobvnhhgsnyufzv
+npx supabase db push          # applies 0028 and 0029
+npx supabase functions deploy create-enquiry
+npx supabase functions deploy create-ticket    # picks up the source whitelist
+```
+
 ---
 
 ## Part 1 — Frontend overview
