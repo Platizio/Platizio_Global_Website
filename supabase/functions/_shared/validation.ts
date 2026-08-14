@@ -189,6 +189,83 @@ export function parseTicketIntent(raw: unknown): TicketIntent {
   }
 }
 
+export interface EnquiryIntent {
+  idempotencyKey: string
+  fullName: string
+  email: string
+  phoneRaw: string
+  phoneDigits: string
+  interestId: string | null
+  message: string | null
+  consent: { text: string; version: string; url: string }
+}
+
+/**
+ * The enquiry form's payload.
+ *
+ * Bounds match the CHECK constraints in 0027 exactly, for the same reason the
+ * ticket bounds match 0003 and 0006: the database is the backstop, never the
+ * error surface. A constraint violation reaching a customer is a 500 and a lost
+ * enquiry; a refusal here is a sentence they can act on.
+ *
+ * Note what is *not* validated here — `interestId` is checked for shape only.
+ * Whether that id exists is settled against `enquiry_interests` inside the RPC,
+ * which cannot drift out of step with the seed the way a copy in this file
+ * would. An unknown interest is dropped there rather than refused, because the
+ * dropdown is optional and routing metadata; losing it costs the team a
+ * routing hint, and refusing over it would cost them the enquiry.
+ */
+export function parseEnquiryIntent(raw: unknown): EnquiryIntent {
+  if (typeof raw !== 'object' || raw === null) {
+    throw new ValidationError('The request body was not readable.')
+  }
+  const body = raw as Record<string, unknown>
+
+  const idempotencyKey = str(body.idempotencyKey)
+  if (!UUID_RE.test(idempotencyKey)) {
+    throw new ValidationError('The request identifier was missing or unreadable.')
+  }
+
+  const fullName = bounded(str(body.fullName), 'Your name', 2, 120)
+
+  const email = str(body.email).toLowerCase()
+  if (!EMAIL_RE.test(email) || [...email].length > 254) {
+    throw new ValidationError('Please enter a valid email address.')
+  }
+
+  const phoneRaw = bounded(str(body.phone), 'Your contact number', 8, 32)
+  const phoneDigits = phoneRaw.replace(/\D/g, '')
+  if (phoneDigits.length < 8 || phoneDigits.length > 15) {
+    throw new ValidationError('Please enter a valid contact number.')
+  }
+
+  const interestRaw = str(body.interestId)
+  if (interestRaw && !SLUG_RE.test(interestRaw)) {
+    throw new ValidationError('That interest is not one we recognise.')
+  }
+
+  const messageRaw = str(body.message)
+  if ([...messageRaw].length > 5000) {
+    throw new ValidationError('That message is too long (limit 5000 characters).')
+  }
+
+  const consentRaw = (body.consent ?? {}) as Record<string, unknown>
+  const consentText = bounded(str(consentRaw.text), 'The consent statement', 20, 2000)
+  const consentVersion = bounded(str(consentRaw.version), 'The policy version', 1, 40)
+  const consentUrl = str(consentRaw.url) || 'https://platizioglobal.com/privacy'
+
+  return {
+    idempotencyKey,
+    fullName,
+    email,
+    phoneRaw,
+    phoneDigits,
+    interestId: interestRaw || null,
+    message: messageRaw || null,
+    consent: { text: consentText, version: consentVersion, url: consentUrl },
+  }
+}
+
 const IPV4_RE = /^(\d{1,3}\.){3}\d{1,3}$/
 const IPV6_RE = /^[0-9a-f:]+$/i
 

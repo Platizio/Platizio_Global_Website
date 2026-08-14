@@ -76,3 +76,9 @@ verify_jwt = true
 
 [functions.staff-attachment]
 verify_jwt = true
+
+# Reached with the anon key from the enquiry modal, exactly like create-ticket.
+# The JWT check is the gateway rejecting unsigned noise, not the authorisation
+# decision — that is Turnstile plus rate_limit_consume.
+[functions.create-enquiry]
+verify_jwt = true
