@@ -20,6 +20,10 @@ Two facts explain why it looks like there is no backend:
 
 So the backend is not missing — it is **disconnected and unshipped**. `src/lib/supportChat.ts:89` gates every call on `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`, neither of which is set, so every support request silently degrades to a `mailto:` draft. The file's own header says so: *"This is the state today."*
 
+**But wiring alone is not sufficient.** Tracing the intake path call by call (§4.3–4.4) turned up a defect on the majority route: the acknowledgement email is queued only inside `finalize_support_ticket`, and the client skips `finalize-ticket` entirely whenever there are no attachments. Set the two environment variables today and most customers would file a ticket, see a reference number, and never hear anything. Nothing in the database is wrong — the hole is in which of the two intake calls the browser makes.
+
+That distinction shapes the sequencing. Phase B fixes the code defects **before** Phase C turns the traffic on, because switching a silent failure into a visible one in front of real customers is worse than waiting two days.
+
 This plan therefore optimises for **activation**: get what exists into production, correctly and safely, before building anything new.
 
 ---
@@ -117,6 +121,13 @@ The `private` schema is deliberately excluded from PostgREST so internal helpers
 - No write path to `contact_enquiries` — migration 0027 built the table, enum, ref generator and seeds, but there is no RPC and no edge function that inserts
 - `callback_requests`, `support_nodes`, `faq_articles`/`faq_chunks`, `chat_*`, `chat_escalation_grants`, `support-chat` — all designed in `docs/superpowers/specs/2026-08-13-help-centre-design.md`, none built
 - No tests at any layer, no CI
+
+### And one thing that is built but broken
+
+- **Acknowledgement on the no-attachment path.** Not a missing feature — a hole between two working
+  functions. `finalize_support_ticket` queues the email; `create_support_ticket` never does; the
+  client calls the first and skips the second whenever there is nothing to upload. Covered in §4.4
+  and fixed in Phase B1.
 
 ---
 
