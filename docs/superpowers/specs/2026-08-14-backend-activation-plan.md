@@ -30,7 +30,7 @@ This plan therefore optimises for **activation**: get what exists into productio
 
 | Phase | State | Notes |
 |---|---|---|
-| **A** — Merge and de-risk | **Done** | CI added and green. `npm run build` plus a job that replays every migration onto a clean Postgres and runs pgTAP. The replay passing is the drift proof §15 asked for. Vitest not yet added — the pgTAP suite covers what Phase B needed. |
+| **A** — Merge and de-risk | **Built, not on `main`** | CI exists and went green on this branch — `npm run build` plus a job replaying every migration onto a clean Postgres and running pgTAP. It is **not on `main`**, which has no `.github/` at all, so the default branch currently has no CI. Vitest still not added. |
 | **B** — Fix the intake defects | **Done** | B1 and B2 both fixed and covered by tests that insert real rows. |
 | **C** — Turn the lights on | **Code done, secrets outstanding** | The client half of Turnstile now exists — `src/lib/useTurnstile.ts`, wired into both forms, sending `x-turnstile-token`. What remains is only the secret values, which have to be set by someone who holds them. |
 | **D** — Contact form onto `contact_enquiries` | **Done and live** | RPC, `create-enquiry` function, consent record, modal switched over. Web3Forms kept as a fallback only until C lands. |
@@ -41,7 +41,19 @@ This plan therefore optimises for **activation**: get what exists into productio
 
 `0028` and `0029` are on `qtjnlkobvnhhgsnyufzv`; the project is at **29 migrations and 9 edge functions**, `create-ticket` at v4. Verified after the fact: the `tickets_source` constraint now admits `'chatbot'`, `create_support_ticket` reads `payload.source`, and `create_contact_enquiry` is granted to `service_role` only — it does **not** appear in the security advisor's list of functions callable by `authenticated`, which is how you can tell the `revoke … from public` actually bit. Advisors otherwise unchanged from the pre-change baseline.
 
-PR #3 merged as `21c08f68`, so `main` matches production again. That ordering matters: production briefly led `main`, and while it did, the claim in `config.toml` that the git history evidences what was live on which date was not true.
+### Superseded on 2026-08-17: main was rewound
+
+PRs #3 and #4 were merged, and then **deliberately unmerged** — `main` was reset from `844792e6` back to `329230d`, with `backup/main-pre-unmerge` created first to preserve the work. Two unrelated commits (App Store badges, a `.gitignore` update) now sit on top.
+
+So the position today is:
+
+- **`main` has no `supabase/` directory and no `.github/`.** Neither the vendored migration history nor CI is on the default branch.
+- **The live project still runs 29 migrations and 9 edge functions.** Production leads git-main by the whole backend.
+- Everything is preserved on `backup/main-pre-unmerge` and on this branch.
+
+The drift is benign in behaviour — `0028` and `0029` are additive, nothing on `main` calls them, and `create_support_ticket` still defaults `source` to `'web'`. It is not benign for the claim in `config.toml` that the migration history evidences which behaviour was live on which date. That claim currently holds only if you read the branches, not the default branch.
+
+**Standing constraints for this work:** the live Supabase project is not to be modified, and nothing is to be merged to `main`. Development continues on `claude/frontend-review-backend-plan-4xdi5i`.
 
 ### The remaining secrets
 
