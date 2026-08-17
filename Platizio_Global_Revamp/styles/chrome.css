@@ -1,0 +1,346 @@
+/* =========================================================
+   Chrome — header and footer
+   =========================================================
+   The page now opens with an ink band under the hero and closes with the ink
+   footer. Both carry the same brand-gradient hairline, so the design reads as
+   bookended rather than as a light page with a dark strip in it.
+
+   Loaded after base.css. Targets the existing selectors, so no markup changes.
+   ========================================================= */
+
+/* =========================================================
+   1. Header
+   ========================================================= */
+
+.site-header {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid var(--line);
+  transition: background var(--t), border-color var(--t);
+}
+
+.nav {
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+}
+
+/* ── Nav links ───────────────────────────────────────────
+   The old active state was an 18px underline bar centred under the label.
+   A pill reads as "you are here" at a glance and matches the hover
+   affordance, so the two states are the same shape at different strengths
+   rather than two unrelated ideas. */
+
+.nav-links { gap: var(--space-1); }
+
+.nav-links a:not(.btn),
+.nav-links .nav-trigger {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: var(--tracking-snug);
+  color: var(--gray-600);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+
+.nav-links a:not(.btn):hover,
+.nav-links .nav-trigger:hover {
+  color: var(--ink-800);
+  background: var(--gray-100);
+}
+
+.nav-links a.active,
+.nav-links .nav-trigger.active {
+  color: var(--ink-900);
+  font-weight: 600;
+  background: var(--gray-100);
+}
+
+/* Replaced by the pill. */
+.nav-links a.active::after { display: none; }
+
+.dropdown-chevron { opacity: 0.55; }
+
+/* ── Dropdown ────────────────────────────────────────────── */
+
+.dropdown {
+  top: calc(100% + 6px);
+  min-width: 264px;
+  border-color: var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2);
+}
+
+.dropdown a {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  gap: 2px;
+  transition: background var(--t-fast);
+}
+
+.dropdown a:hover { background: var(--gray-100); }
+
+.dropdown a strong {
+  color: var(--ink-800);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.dropdown a span {
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--gray-500);
+}
+
+/* ── Actions ─────────────────────────────────────────────── */
+
+.nav-actions { gap: var(--space-2); }
+
+.menu-toggle {
+  border-radius: var(--radius-sm);
+  color: var(--ink-800);
+  transition: background var(--t-fast);
+}
+
+.menu-toggle:hover { background: var(--gray-100); }
+
+/* =========================================================
+   2. Footer
+   ========================================================= */
+
+.site-footer {
+  position: relative;
+  background: var(--ink-900);
+  color: rgba(255, 255, 255, 0.68);
+  padding: var(--space-20) 0 var(--space-8);
+  margin-top: 0;
+}
+
+/* Same hairline as the trending band — the two ink surfaces are visibly a
+   pair rather than a coincidence. */
+.site-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--gold-gradient-h);
+  opacity: 0.8;
+}
+
+.footer-top {
+  gap: var(--space-8) var(--space-6);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid var(--line-on-dark);
+}
+
+.footer-brand p {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.footer-col h5 {
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-caps);
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: var(--space-4);
+}
+
+.footer-col ul { gap: var(--space-3); }
+
+.footer-col a {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.68);
+  transition: color var(--t-fast);
+}
+
+/* --gold is #B94B12, a dark orange. On a near-black footer it measured worse
+   than the resting state, so hovering a link made it HARDER to read. The
+   on-dark accent is the correct token here. */
+.footer-col a:hover,
+.footer-legal-link:hover,
+.footer-contact-list a:hover {
+  color: var(--accent-300);
+}
+
+/* 0.35 alpha is invisible against ink. These labels caption a phone number and
+   a postal address — content people actively hunt for. */
+.footer-contact-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-contact-list address,
+.footer-contact-list a {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.footer-bottom { padding-top: var(--space-8); }
+
+.site-footer .disclaimer {
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.site-footer .copyright {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-legal-link {
+  color: rgba(255, 255, 255, 0.68);
+  transition: color var(--t-fast);
+}
+
+.social a {
+  border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.72);
+  transition: color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+}
+
+.social a:hover {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.10);
+  transform: translateY(-2px);
+}
+
+.footer-app h5 {
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-caps);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* =========================================================
+   3. Responsive
+   ========================================================= */
+
+/* ── Footer columns ───────────────────────────────────────
+   These must be restated all the way down, not just at 1100.
+   styles.css drops the footer to two columns at 768 and one at 480, but this
+   file loads later, so a lone `max-width: 1100` rule outranks both at equal
+   specificity and the footer stayed four columns at 375px — overflowing the
+   page sideways. A later, wider media query silently beats an earlier,
+   narrower one. */
+
+@media (max-width: 1100px) {
+  /* Six columns at 1.4fr + 5x1fr crushes the link lists into two-word
+     wraps well before the mobile breakpoint. */
+  .footer-top { grid-template-columns: 1.6fr repeat(3, 1fr); }
+  .footer-brand { grid-column: 1 / -1; max-width: 560px; }
+}
+
+@media (max-width: 768px) {
+  .footer-top { grid-template-columns: 1fr 1fr; gap: var(--space-8) var(--space-6); }
+  .footer-brand { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .footer-top { grid-template-columns: 1fr; }
+}
+
+/* ── Nav collapse ─────────────────────────────────────────
+   The desktop nav stops fitting at about 1030px, but styles.css only swaps in
+   the burger at 768px. That left roughly 260px of viewport — ordinary small
+   laptops and landscape tablets — where .nav-actions overflowed the page and
+   the whole document scrolled sideways. Measured: 1010px of content in a
+   981px viewport.
+
+   Collapsing at 1080 rather than 1024: the nav's content measures ~1011px, so
+   1024 left only 19px of headroom — one longer label or a different font
+   metric and it overflows again. 1080 gives roughly 70px of slack.
+
+   One breakpoint rather than duplicating the panel at two widths; below 768
+   this simply restates what styles.css already does. */
+@media (max-width: 1080px) {
+  .menu-toggle { display: grid; }
+
+  /* Anchored to the header itself rather than a hardcoded offset.
+   *
+   * styles.css used `position: fixed; top: 72px`, which stopped matching the
+   * moment the header's height changed — and it changes on its own, because
+   * hiding the CTAs at this width takes the bar from 86px to 69px. Absolute
+   * positioning against the sticky header means `top: 100%` is always exactly
+   * under the bar, whatever it currently measures. */
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--white);
+    padding: var(--space-4) var(--space-6) var(--space-6);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+    gap: var(--space-1);
+    /* Own height plus a buffer that comfortably exceeds any header height,
+       so the closed panel clears the top of the viewport rather than peeking
+       over the bar. Height-independent by design. */
+    transform: translateY(calc(-100% - 200px));
+    transition: transform var(--t);
+    pointer-events: none;
+  }
+
+  .nav-links.is-open {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .nav-links a:not(.btn),
+  .nav-links .nav-trigger {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .has-dropdown > a::after { float: right; margin-top: 6px; }
+
+  .dropdown {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: 0;
+    padding: 0;
+    max-width: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s var(--ease), padding 0.3s var(--ease);
+  }
+
+  .has-dropdown.products-open .dropdown {
+    max-height: 320px;
+    padding: 0 0 0 var(--space-4);
+  }
+
+  /* Top bar keeps only logo + burger; the CTAs live in the panel. */
+  .nav-actions .btn-pulse,
+  .nav-actions .btn-primary { display: none; }
+
+  .nav-cta-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line);
+  }
+
+  .nav-cta-mobile .btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: var(--space-2) var(--space-4); }
+}

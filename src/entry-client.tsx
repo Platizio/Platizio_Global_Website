@@ -8,6 +8,7 @@ import '../css/styles.css'
 // it must load after it. tokens -> base -> components.
 import '../Platizio_Global_Revamp/styles/tokens.css'
 import '../Platizio_Global_Revamp/styles/base.css'
+import '../Platizio_Global_Revamp/styles/chrome.css'
 import '../Platizio_Global_Revamp/styles/home-market.css'
 
 const container = document.getElementById('root')!

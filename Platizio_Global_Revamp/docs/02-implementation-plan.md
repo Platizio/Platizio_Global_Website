@@ -2,8 +2,59 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Phases 0–4 complete (2026-08-17) — Phase 5 (final verification) is
-next. Header/Footer design pass is outstanding.
+**Status:** Phases 0–4 and the chrome pass complete (2026-08-17) — Phase 5
+(final verification) is next.
+
+---
+
+## Chrome pass — header and footer ✅ COMPLETE (2026-08-17)
+
+`styles/chrome.css`. The page now opens with an ink band under the hero and
+closes with the ink footer, both carrying the same brand-gradient hairline, so
+the design reads as bookended rather than as a light page with a dark strip in
+it. Nav active state became a pill, matching the hover affordance instead of
+being an unrelated underline.
+
+### Four real bugs found, three of them pre-existing
+
+1. **Footer link hover was *less* legible than resting.** `--gold` is `#B94B12`,
+   a dark orange on a near-black footer: **3.64:1 hover versus 8.93:1 resting**.
+   Hovering a link made it harder to read. Now uses the on-dark accent at 7.5:1.
+2. **`.footer-contact-label` at `rgba(255,255,255,0.35)`** — captions on the
+   phone number and postal address, i.e. things people hunt for. Now 6.18:1.
+3. **The header overflowed the page between 769px and ~1030px.** The desktop nav
+   stops fitting around 1030 but only collapsed to the burger at 768, so small
+   laptops and landscape tablets scrolled sideways — measured 1010px of content
+   in a 981px viewport. Now collapses at 1080, giving ~50px of slack.
+4. **The slide-out panel used a hardcoded `top: 72px`** against a header that is
+   86px, and 69px once the CTAs hide. Now `position: absolute; top: 100%`
+   against the sticky header, so it is always flush whatever the bar measures.
+
+### One bug I introduced and caught
+
+A lone `@media (max-width: 1100px)` footer-column rule in this file **outranked
+`styles.css`'s 768px and 480px rules**, because it loads later at equal
+specificity. The footer stayed four columns at 375px and overflowed the page.
+A later, wider media query silently beats an earlier, narrower one — the
+breakpoints have to be restated all the way down.
+
+### Verified
+
+| Check | Result |
+|-------|--------|
+| Contrast, 11 header/footer pairs | **11 pass** |
+| Horizontal scroll at 375 / 981 / 1030 / 1100 / 1385 | **none** |
+| Menu open/close via the real React handler | **PASS** — flush under bar, fits viewport, closes fully offscreen, `aria-expanded` toggles |
+| Nav items reachable in panel | 10 links + 2 CTAs |
+| Other pages inherit the language | **6/6** — Bricolage headings, footer hairline, no overflow |
+| Build | **49 pages, no errors** |
+
+### Note on measurement
+
+Several readings were wrong because **the browser tab was not fronted** —
+background tabs throttle transitions, so `getComputedStyle` returned stale
+values and the menu appeared broken when it was not. Front the tab before
+measuring anything animated.
 
 > **Scope change, 2026-08-17.** Mid-Phase 2 the brief moved from "add sections in
 > the existing style" to a new design language across the site. See
