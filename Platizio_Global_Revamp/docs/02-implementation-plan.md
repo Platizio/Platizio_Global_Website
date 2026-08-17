@@ -2,8 +2,62 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Phases 0–4 and the chrome pass complete (2026-08-17) — Phase 5
-(final verification) is next.
+**Status:** ✅ **All phases complete (2026-08-17).** Outstanding items are external:
+production ViewTrade credentials, and rotation of the exposed UAT keys.
+
+---
+
+## Phase 5 — Verification ✅ COMPLETE (2026-08-17)
+
+### Acceptance criteria (from [`01-spec.md`](01-spec.md))
+
+| # | Criterion | Result |
+|---|-----------|--------|
+| 1 | Nine sections in order, nothing else | **PASS** |
+| 2 | Build completes, 49 pages prerender | **PASS** |
+| 3 | No hydration warning on `/` | **PASS** — clean tab, production bundle |
+| 4 | No layout shift on data fill | **PASS** — CLS **0.00724** ("good" is ≤0.1) |
+| 5 | Proxy fails → sections absent, page intact | **PASS** — no orphan skeletons, CTA and footer intact |
+| 6 | Delayed notice + not-advice disclaimer | **PASS** — both sections, both linking `/disclaimer` |
+| 7 | `/#why` scrolls from the footer | **PASS** — lands 90px down, clear of the 69px sticky header |
+| 8 | No credential anywhere in git | **PASS** — 6 commits × 6 secret values, plus `.env.local` and `Global_API` never tracked |
+| 9 | Correct at 360 / 768 / 1280 | **PASS** — also checked 900, 981, 1030, 1100, 1385 |
+
+### Accessibility
+
+- **53 focusable elements, all with a visible focus ring** and all matching
+  `:focus-visible`.
+- Skip link is the **first** tab stop, targets a real element, visible when
+  focused.
+- **Zero tab stops inside the marquee** — 16 scrolling items would otherwise be
+  16 dead stops.
+- No positive `tabindex`, no missing `alt`, no unnamed links or buttons.
+- **Reduced motion verified empirically** by flipping every
+  `prefers-reduced-motion` block to `all` at runtime: marquee **stops** rather
+  than freezing mid-travel, duplicate items hide (16 → 8), the row becomes
+  scrollable, the edge mask is removed.
+
+### Two bugs found and fixed in this phase
+
+1. **Heading levels skipped 3 → 5.** The footer used `<h5>` for column
+   headings straight after the page's `<h3>`s. Screen-reader users navigate by
+   heading, and the jump reads as missing structure. Now `<h3>`, visually
+   identical.
+2. **`.why-grid` rendered six columns between 640px and 960px.** `styles.css`
+   places `.feature-card` children on explicit six-column lines
+   (`grid-column: 1/3, 3/5, 5/7, 2/4, 4/6`) — a centred 3-then-2 arrangement
+   written for the old five-card `.feature-grid`. Because `.why-grid` reuses
+   `.feature-card`, those rules hijacked it at tablet widths: measured
+   `21px 21px 145.75px ×4` where two equal columns belonged. Cancelled with a
+   higher-specificity `grid-column: auto` scoped to `.why-grid`.
+
+### Methodology note
+
+Two separate readings during this phase were **wrong because of the measuring
+tool, not the code**: `:focus-visible` does not match programmatic `.focus()`
+(the focus rings were fine), and a background tab freezes style recalculation
+(the menu was fine). Verify the instrument before trusting a failure — and
+re-measure fronted, with real input, before changing anything.
 
 ---
 

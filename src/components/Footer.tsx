@@ -46,7 +46,7 @@ export default function Footer() {
             </div>
 
             <div className="footer-app">
-              <h5>Download Our App</h5>
+              <h3>Download Our App</h3>
               <div className="footer-app-badges">
                 <a
                   className="badge-ios"
@@ -83,7 +83,7 @@ export default function Footer() {
           </div>
 
           <div className="footer-col">
-            <h5>Platizio Global</h5>
+            <h3>Platizio Global</h3>
             <ul>
               <li><Link to="/about">About Us</Link></li>
               <li><Link to="/#why">Why Global Investing</Link></li>
@@ -91,7 +91,7 @@ export default function Footer() {
             </ul>
           </div>
           <div className="footer-col">
-            <h5>Products</h5>
+            <h3>Products</h3>
             <ul>
               <li><Link to="/products#us-stocks">US Stocks</Link></li>
               <li><Link to="/products#us-etfs">US ETFs</Link></li>
@@ -99,7 +99,7 @@ export default function Footer() {
             </ul>
           </div>
           <div className="footer-col">
-            <h5>Learn</h5>
+            <h3>Learn</h3>
             <ul>
               <li><Link to="/media#articles">Articles</Link></li>
               <li><Link to="/media#videos">Videos</Link></li>
@@ -107,7 +107,7 @@ export default function Footer() {
             </ul>
           </div>
           <div className="footer-col">
-            <h5>Support</h5>
+            <h3>Support</h3>
             <ul>
               <li><a href="#" onClick={(e) => { e.preventDefault(); openContact() }}>Contact Us</a></li>
               <li><Link to="/faqs">Help</Link></li>
@@ -115,7 +115,7 @@ export default function Footer() {
             </ul>
           </div>
           <div className="footer-col">
-            <h5>Contact Us On</h5>
+            <h3>Contact Us On</h3>
             <ul className="footer-contact-list">
               <li>
                 <span className="footer-contact-label">Call / WhatsApp</span>

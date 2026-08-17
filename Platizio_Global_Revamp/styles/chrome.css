@@ -141,11 +141,20 @@
   color: rgba(255, 255, 255, 0.62);
 }
 
-.footer-col h5 {
+/* h3, not h5.
+ *
+ * The footer used <h5> straight after the page's <h3>s, skipping two levels.
+ * Screen-reader users navigate by heading, and a jump from 3 to 5 reads as
+ * missing structure. The visual size is unchanged — these were never meant to
+ * look like page headings, they just needed the right rank. */
+.footer-col h3,
+.footer-app h3 {
   font-family: var(--font);
   font-size: var(--text-xs);
   font-weight: 600;
+  line-height: 1.4;
   letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.95);
   margin-bottom: var(--space-4);
 }
@@ -212,12 +221,7 @@
   transform: translateY(-2px);
 }
 
-.footer-app h5 {
-  font-family: var(--font);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-caps);
-  color: rgba(255, 255, 255, 0.95);
-}
+.footer-app h3 { margin-bottom: var(--space-3); }
 
 /* =========================================================
    3. Responsive

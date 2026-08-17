@@ -462,6 +462,20 @@ a.stock-card:hover {
   gap: var(--space-4);
 }
 
+/* styles.css places .feature-card children on explicit six-column lines
+ * between 640px and 960px (grid-column: 1/3, 3/5, 5/7, 2/4, 4/6) — a
+ * centred 3-then-2 arrangement written for the old five-card .feature-grid.
+ *
+ * .why-grid reuses .feature-card, so those rules hijacked it into six tracks
+ * at tablet widths: measured `21px 21px 145.75px x4` where two equal columns
+ * belonged. Explicit placement has to be cancelled inside this grid.
+ *
+ * Specificity beats the originals (0,3,0 against 0,2,0), and :nth-child(n)
+ * matches every card, so no per-index rule survives. */
+@media (max-width: 960px) {
+  .why-grid > .feature-card:nth-child(n) { grid-column: auto; }
+}
+
 .how-section { background: var(--surface-sunken); }
 
 /* =========================================================
