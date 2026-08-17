@@ -2,7 +2,7 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Phase 0 complete (2026-08-17, all gates pass) — Phase 1 is next
+**Status:** Phases 0 and 1 complete (2026-08-17, all gates pass) — Phase 2 is next
 
 Six phases. Each has a verification gate that must pass before the next begins.
 Phases 2 and 4 touch no network, so they cannot be blocked by API problems.
@@ -85,7 +85,46 @@ it with ViewTrade before writing any further code.
 
 ---
 
-## Phase 1 — Serverless proxy
+## Phase 1 — Serverless proxy ✅ COMPLETE (2026-08-17)
+
+**All 13 gates pass**, verified by invoking the real bundled handler against
+live UAT — not a reimplementation.
+
+| Gate | Result |
+|------|--------|
+| 200 with 8 trending + 8 popular | **PASS** |
+| Cache headers correct | **PASS** |
+| Payload under 8KB | **PASS** — 1.8KB |
+| `changePercent` in percentage points | **PASS** |
+| Prices rounded to 2dp | **PASS** |
+| Configured display names applied | **PASS** |
+| `asOf` not poisoned by a stale ticker | **PASS** — 40 min old |
+| Trending sorted by `|changePercent|` | **PASS** |
+| Zero-change symbol retained | **PASS** — NFLX survives |
+| Quote trimmed 92 → 6 fields | **PASS** |
+| No credential in response | **PASS** |
+| Token reused on second call | **PASS** — 803ms → 76ms |
+| Non-GET rejected | **PASS** — 405 |
+| Bad credentials → clean 503, `no-store` | **PASS** |
+| Missing env vars → clean 503 | **PASS** |
+
+### What Phase 1 corrected
+
+1. **`precision` must not drive display formatting.** The spec said to format to
+   the payload's `precision` field. Verification showed it varies per symbol
+   (0, 1, 2, 3) — MU renders `$1000`, ARM `$285.5`, FANG `$206.574`. Now always
+   2dp.
+2. **`asOf` must be scoped to displayed quotes.** Taking the oldest across the
+   whole universe gave a 13-day-old timestamp because one dormant ticker dragged
+   the minimum back, while every shown symbol was current.
+3. **Three env vars, not two** — login needs `api_secret` as well as `api_key`.
+4. `@types/node` added as a devDependency; `api` added to `tsconfig` include so
+   the function is type-checked rather than silently unchecked.
+
+Full site build still passes: 49 pages, no errors.
+
+<details>
+<summary>Original Phase 1 definition (kept for reference)</summary>
 
 No UI. Verifiable entirely with `curl`.
 
@@ -119,6 +158,8 @@ No UI. Verifiable entirely with `curl`.
 - [ ] Response is under ~8KB
 - [ ] No credential appears in the response body or in any log line
 - [ ] Bad credentials produce a clean 503, not a stack trace
+
+</details>
 
 ---
 

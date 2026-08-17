@@ -16,6 +16,6 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "Platizio_Global_Revamp"],
+  "include": ["src", "Platizio_Global_Revamp", "api"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -139,11 +139,26 @@ not a formatting nit.
 Ranking is unaffected — sorting by `Math.abs(changePercent)` gives the same order
 either way.
 
-### Field precision — **VERIFIED**
+### ⚠️ Field precision — do NOT trust `precision` — **VERIFIED**
 
-`lastPrice` is **not** pre-rounded: observed `307.217`, `226.021`, `1001.33`,
-`338`. The payload carries a `precision` field (2 for US equities) — use it, and
-format to a fixed 2 decimals. Never render `lastPrice` raw.
+`lastPrice` is **not** pre-rounded: observed `307.217`, `226.021`, `1001.33`.
+
+The payload carries a `precision` field, and an earlier draft of this document
+said to format with it. **That was wrong.** `precision` is exchange quote
+precision, not a display hint, and it varies per symbol:
+
+| Symbol | `precision` | `lastPrice` |
+|--------|-------------|-------------|
+| MU | 0 | `1000` |
+| ARM | 1 | `285.5` |
+| AAPL | 2 | `307.14` |
+| FANG | 3 | `206.574` |
+
+Honouring it puts `$1000`, `$285.5`, `$307.14` and `$206.574` in the same grid —
+which reads as broken formatting.
+
+**Rule: always format to a fixed 2 decimals.** US equities are quoted in cents,
+so 2dp is both correct and visually consistent. `precision` is ignored.
 
 ### Fields we consume — **VERIFIED**
 
@@ -240,7 +255,20 @@ Set in Vercel project settings. Never in the repo.
 | Variable | Purpose |
 |----------|---------|
 | `VIEWTRADE_BASE_URL` | `uma` service base URL |
-| `VIEWTRADE_API_KEY` | B2B api-keys login credential |
+| `VIEWTRADE_API_KEY` | `api_key` for B2B login |
+| `VIEWTRADE_API_SECRET` | `api_secret` for B2B login |
+
+Three, not two — the login body requires both key and secret.
+
+### ⚠️ `updateTime` staleness varies per symbol — **VERIFIED**
+
+Timestamps are per-symbol, and dormant tickers lag badly. Taking the oldest
+`updateTime` across the full ~100-symbol universe produced an `asOf` of
+**13 days old** while every displayed symbol was current to the minute — one
+inactive ticker poisoned the whole figure.
+
+**Rule: compute `asOf` only from the quotes actually rendered.** Within the
+displayed set the observed spread was ~18 minutes, which is honest to show.
 
 For local development use a `.env.local` file — already covered by `.gitignore`.
 
