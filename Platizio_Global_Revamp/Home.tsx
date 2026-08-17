@@ -6,7 +6,7 @@ import TrendingBanner from './components/TrendingBanner'
 import PopularStocks from './components/PopularStocks'
 import FeesTable from './components/FeesTable'
 import Regulations from './components/Regulations'
-import { MOCK_RESPONSE } from './data/mockQuotes'
+import { useMarketData } from './hooks/useMarketData'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -59,8 +59,9 @@ const HOW_STEPS = [
 ]
 
 export default function Home() {
-  // Phase 2: fixture data. Phase 3 replaces this with useMarketData().
-  const { trending, popular, asOf, delayed } = MOCK_RESPONSE
+  // null during SSR and on the client's first render, so both produce the same
+  // skeleton markup and hydration has nothing to disagree about.
+  const { trending, popular, asOf, delayed } = useMarketData()
 
   return (
     <>

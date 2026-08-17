@@ -2,8 +2,8 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Phases 0–2 complete, and Phase 4 folded into Phase 2 (2026-08-17) —
-Phase 3 (wire real data) is next
+**Status:** Phases 0–4 complete (2026-08-17) — Phase 5 (final verification) is
+next. Header/Footer design pass is outstanding.
 
 > **Scope change, 2026-08-17.** Mid-Phase 2 the brief moved from "add sections in
 > the existing style" to a new design language across the site. See
@@ -246,6 +246,40 @@ provable in isolation.
 
 ---
 
+## Phase 3 — Wire real data ✅ COMPLETE (2026-08-17)
+
+Home now runs on live ViewTrade data. `data/mockQuotes.ts` deleted.
+
+| Gate | Result |
+|------|--------|
+| Real prices render on `/` | **PASS** |
+| **Hydration warnings** | **none** — verified with `build:debug` (React dev bundles) against the prerendered HTML |
+| Prerendered HTML contains no prices | **PASS** — 54 skeleton markers, 0 prices, 0 disclosure |
+| Layout shift on data arrival | **0px** (Phase 2 construction holds) |
+| Proxy 503 → sections vanish | **PASS** — both removed, no orphaned skeletons, rest of page intact |
+| One fetch per page load | **PASS** — 3 in dev from StrictMode double-invoke, then zero; production ships one |
+| Abort on unmount | **PASS** — `ERR_ABORTED` on the superseded StrictMode fetch |
+| Ranking by absolute move | **PASS** — `MU +3.25%`, `ROST −3.12%`, `MRVL +2.78%` interleaved correctly |
+| Thousands grouping | **PASS** — `1,003.26` |
+| Disclosure with IST time | **PASS** — both sections |
+
+### Why hydration is safe by construction, not by luck
+
+`useEffect` never runs during `renderToString`, and React guarantees effects
+fire only after hydration commits. So even a warm proxy responding in 76ms
+cannot corrupt hydration: the effect that starts the fetch has not run yet.
+Server and client first render are both `null` → both render the skeleton.
+
+### Added: dev API middleware
+
+`vite.config.ts` gains a small plugin serving `api/quotes.ts` under
+`npm run dev`. Vite knows nothing about Vercel functions, so without it the
+local homepage has no data source and the market sections silently unmount —
+the one failure mode nobody notices, because it looks deliberate.
+
+<details>
+<summary>Original Phase 3 definition (kept for reference)</summary>
+
 ## Phase 3 — Wire real data
 
 **Files**
@@ -271,7 +305,19 @@ provable in isolation.
 - [ ] Proxy forced to 503 → both sections vanish cleanly, rest of page intact
 - [ ] `data/mockQuotes.ts` deleted
 
+</details>
+
 ---
+
+## Phase 4 — Assemble Home ✅ COMPLETE (folded into Phase 2)
+
+Home renders the nine specified sections in order. `src/pages/Home.tsx` is a
+one-line re-export of `Platizio_Global_Revamp/Home.tsx`. Promo video, YouTube
+block, guides and the standalone CTA band are confirmed absent from the built
+HTML. `id="why"` preserved.
+
+<details>
+<summary>Original Phase 4 definition (kept for reference)</summary>
 
 ## Phase 4 — Assemble Home
 
@@ -296,6 +342,8 @@ provable in isolation.
 - [ ] `npm run build` completes, all 49 pages prerender
 - [ ] Nine sections in the specified order, nothing else
 - [ ] `/#why` scrolls correctly from the footer
+
+</details>
 
 ---
 
