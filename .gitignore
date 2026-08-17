@@ -21,3 +21,8 @@ Thumbs.db
 
 # SSR bundle emitted by scripts/prerender.mjs
 .ssr
+
+# Local agent tooling state
+.claude-flow/
+.claude/proven-config.json
+.claude/.proven-config-version
