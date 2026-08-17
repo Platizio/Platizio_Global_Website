@@ -27,10 +27,22 @@ export function isBackendConfigured(): boolean {
   return backendConfig() !== null
 }
 
-/** Headers every anonymous call to an edge function needs. */
-export function anonHeaders(config: BackendConfig): Record<string, string> {
+/**
+ * Headers every anonymous call to an edge function needs.
+ *
+ * The Turnstile token is omitted rather than sent empty when there isn't one.
+ * `verifyTurnstile` distinguishes "no token" from "bad token" and only the
+ * former is allowed through while the captcha is unconfigured, so sending an
+ * empty string would turn a working form into a 403 the moment the secret is
+ * set.
+ */
+export function anonHeaders(
+  config: BackendConfig,
+  turnstileToken?: string | null,
+): Record<string, string> {
   return {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${config.key}`,
+    ...(turnstileToken ? { 'x-turnstile-token': turnstileToken } : {}),
   }
 }

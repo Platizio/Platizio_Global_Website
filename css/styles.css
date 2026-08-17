@@ -4637,6 +4637,15 @@ p {
 
 .sform-consent a { color: var(--gold); }
 
+/* Turnstile mounts its own iframe here. Only present when the widget is
+   configured, so this rule costs nothing when it is not. */
+.sform-captcha {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+  min-height: 65px;
+}
+
 .sform-actions {
   display: flex;
   align-items: center;

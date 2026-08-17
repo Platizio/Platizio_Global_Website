@@ -32,19 +32,23 @@ This plan therefore optimises for **activation**: get what exists into productio
 |---|---|---|
 | **A** — Merge and de-risk | **Done** | CI added and green. `npm run build` plus a job that replays every migration onto a clean Postgres and runs pgTAP. The replay passing is the drift proof §15 asked for. Vitest not yet added — the pgTAP suite covers what Phase B needed. |
 | **B** — Fix the intake defects | **Done** | B1 and B2 both fixed and covered by tests that insert real rows. |
-| **C** — Turn the lights on | **Blocked on you** | Needs `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` on Vercel and `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `MAIL_FROM`, `ALLOWED_ORIGINS`, `SITE_URL` on Supabase. Secrets, so not something to do from here. |
-| **D** — Contact form onto `contact_enquiries` | **Done** | RPC, `create-enquiry` function, consent record, modal switched over. Web3Forms kept as a fallback only until C lands. |
+| **C** — Turn the lights on | **Code done, secrets outstanding** | The client half of Turnstile now exists — `src/lib/useTurnstile.ts`, wired into both forms, sending `x-turnstile-token`. What remains is only the secret values, which have to be set by someone who holds them. |
+| **D** — Contact form onto `contact_enquiries` | **Done and live** | RPC, `create-enquiry` function, consent record, modal switched over. Web3Forms kept as a fallback only until C lands. |
 | **E** — Staff console | Not started | |
 | **F** — Customer status page | Not started | |
 
-Migrations `0028` and `0029` are committed but **have not been applied to the live project**. Applying schema changes to a production database for a regulated entity is a decision to take deliberately, not a side effect of a code change. When you want them:
+### Applied to the live project on 2026-08-17
 
-```
-npx supabase link --project-ref qtjnlkobvnhhgsnyufzv
-npx supabase db push          # applies 0028 and 0029
-npx supabase functions deploy create-enquiry
-npx supabase functions deploy create-ticket    # picks up the source whitelist
-```
+`0028` and `0029` are on `qtjnlkobvnhhgsnyufzv`; the project is at **29 migrations and 9 edge functions**, `create-ticket` at v4. Verified after the fact: the `tickets_source` constraint now admits `'chatbot'`, `create_support_ticket` reads `payload.source`, and `create_contact_enquiry` is granted to `service_role` only — it does **not** appear in the security advisor's list of functions callable by `authenticated`, which is how you can tell the `revoke … from public` actually bit. Advisors otherwise unchanged from the pre-change baseline.
+
+PR #3 merged as `21c08f68`, so `main` matches production again. That ordering matters: production briefly led `main`, and while it did, the claim in `config.toml` that the git history evidences what was live on which date was not true.
+
+### The remaining secrets
+
+On **Vercel**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_TURNSTILE_SITE_KEY`.
+On **Supabase** function secrets: `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `MAIL_FROM`, `ALLOWED_ORIGINS`, `SITE_URL`.
+
+The two Turnstile values are a pair. With neither set, both forms work and record `captcha_verified = false`. With both set, the captcha is enforced. **Setting only one breaks intake** — site key alone renders a widget the server ignores; secret alone 403s every submission, because verification demands a token the client would not be sending.
 
 ---
 
