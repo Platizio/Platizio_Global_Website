@@ -33,7 +33,7 @@ This plan therefore optimises for **activation**: get what exists into productio
 | **A** — Merge and de-risk | **Built, not on `main`** | CI exists and went green on this branch — `npm run build` plus a job replaying every migration onto a clean Postgres and running pgTAP. It is **not on `main`**, which has no `.github/` at all, so the default branch currently has no CI. Vitest still not added. |
 | **B** — Fix the intake defects | **Done** | B1 and B2 both fixed and covered by tests that insert real rows. |
 | **C** — Turn the lights on | **Code done, secrets outstanding** | The client half of Turnstile now exists — `src/lib/useTurnstile.ts`, wired into both forms, sending `x-turnstile-token`. What remains is only the secret values, which have to be set by someone who holds them. |
-| **D** — Contact form onto `contact_enquiries` | **Done and live** | RPC, `create-enquiry` function, consent record, modal switched over. Web3Forms kept as a fallback only until C lands. |
+| **D** — Contact form onto `contact_enquiries` | **Done** | RPC, `create-enquiry` function, consent record, modal switched over, and — added `0030` after a recheck on 2026-08-17 — the acknowledgement and internal alert that `0029` left unqueued. Web3Forms kept as a fallback only until C lands. |
 | **E** — Staff console | Not started | |
 | **F** — Customer status page | Not started | |
 
@@ -55,12 +55,50 @@ The drift is benign in behaviour — `0028` and `0029` are additive, nothing on 
 
 **Standing constraints for this work:** the live Supabase project is not to be modified, and nothing is to be merged to `main`. Development continues on `claude/frontend-review-backend-plan-4xdi5i`.
 
+### Recheck on 2026-08-17
+
+A pass over the whole backend against this plan, to close it out rather than trust the notes above.
+
+**One real defect found, and fixed in `0030`.** Every notification template declared in the `notifications_template` whitelist was queued by something — except the two `0027` added for enquiries. `0027` built `notifications.enquiry_id`, the `notifications_one_subject` constraint, the partial index and both template names, then stopped. `0029` added the write path and queued nothing. A contact enquiry therefore committed in silence: no acknowledgement to the enquirer, no alert to the team. It is the same shape of defect as B1 on the ticket path — a row that lands with nobody told — and Web3Forms was masking it, so it would have surfaced only when that fallback was retired. `0030` queues both inside the intake transaction, with 11 pgTAP assertions that all write real rows.
+
+The acknowledgement states office hours and **no response time**. That is load-bearing, not stylistic: enquiries are kept out of the ticket queue precisely because they carry no published SLA, and `0027` says `internal_follow_up_target_at` must never be quoted to an enquirer. A test asserts no `within N hours` phrasing reappears, because that regression would be invisible — the mail still sends and everything still passes.
+
+**Checked and found sound, no change needed:**
+
+- Every `staff_*` RPC carries an authorisation guard. Five appeared unguarded on a first pass; all five use `private.require_admin()`, which is stricter than `require_staff()`. `staff_whoami` guards on `auth.uid()` alone, which is correct — it has to be callable by any signed-in user to tell them who they are.
+- All nine edge functions are declared in `config.toml`, `create-enquiry` included.
+- `create_contact_enquiry` is still `service_role` only, with the revoke written `from public, anon, authenticated` — revoking only from the two named roles would leave Postgres's default `PUBLIC` grant in place and the function reachable by both.
+- `npm run build` passes: 50 pages prerendered, 49 in the sitemap, both prerender guards intact.
+
+**Known and deliberately not addressed here:**
+
+- No notification fires when a ticket is *created* — the first internal signal is `sla_internal_alert`, two hours before breach. A ticket can therefore sit unseen for most of its SLA window. This is what the plan has always described, not a regression, but it is worth a decision before real traffic arrives.
+- The Web3Forms key at `ContactModal.tsx:13` is in git history and in every shipped bundle. It needs rotating regardless of when the fallback is retired.
+
 ### The remaining secrets
 
-On **Vercel**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_TURNSTILE_SITE_KEY`.
-On **Supabase** function secrets: `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `MAIL_FROM`, `ALLOWED_ORIGINS`, `SITE_URL`.
+Earlier revisions of this section named two destinations. There are **three**, and the third is the one that decides whether any email is ever sent.
 
-The two Turnstile values are a pair. With neither set, both forms work and record `captcha_verified = false`. With both set, the captcha is enforced. **Setting only one breaks intake** — site key alone renders a widget the server ignores; secret alone 403s every submission, because verification demands a token the client would not be sending.
+| Where | Name | Required? |
+|---|---|---|
+| Vercel | `VITE_SUPABASE_URL` | yes — **set 2026-08-17** |
+| Vercel | `VITE_SUPABASE_ANON_KEY` | yes — **set 2026-08-17** |
+| Vercel | `VITE_TURNSTILE_SITE_KEY` | only if the captcha is enforced |
+| Supabase → function secrets | `TURNSTILE_SECRET_KEY` | only if the captcha is enforced |
+| Supabase → function secrets | `RESEND_API_KEY` | yes, for any email at all |
+| Supabase → function secrets | `MAIL_FROM` | yes, on a Resend-verified domain |
+| Supabase → function secrets | `ALLOWED_ORIGINS` | **no** — defaults cover the two live hosts, localhost and `*.vercel.app` by shape |
+| Supabase → function secrets | `SITE_URL` | **no** — defaults to `https://platizioglobal.com` |
+| Supabase → **Vault** | `project_url` | **yes — nothing sends without it** |
+| Supabase → **Vault** | `service_role_key` | **yes — nothing sends without it** |
+| Supabase → **Vault** | `sla_alert_email` | only for SLA warnings and enquiry alerts |
+| Supabase → **Vault** | `enquiry_alert_email` | optional; falls back to `sla_alert_email` |
+
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are injected into every edge function by the platform and must not be set by hand.
+
+**Why Vault is not optional.** Email is drained by `pg_cron`, which calls `private.invoke_edge_function('drain-outbox')`, which reads `project_url` and `service_role_key` **from Vault** to authenticate its own `pg_net` call (`0011_cron.sql:31-35`). Missing either and it logs `skipping drain-outbox — Vault secrets are not set` and returns. The result is a valid Resend key, a verified domain, and a queue that never drains — a failure that looks like Resend being broken and is not.
+
+The two Turnstile values are a pair. With neither set, both forms work and record `captcha_verified = false`. With both set, the captcha is enforced. **Setting only one breaks intake** — site key alone renders a widget the server ignores; secret alone 403s every submission, because verification demands a token the client would not be sending. Since the Turnstile client lives on this branch and not on `main`, the secret must be set **last**, after the code carrying the widget is deployed.
 
 ---
 
