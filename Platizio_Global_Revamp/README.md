@@ -16,6 +16,7 @@ this directory is one line in `tsconfig.json` and one import swap in
 | [`docs/03-viewtrade-api.md`](docs/03-viewtrade-api.md) | ViewTrade API reference — auth flow, endpoints, what does *not* exist |
 | [`docs/04-decisions.md`](docs/04-decisions.md) | Decision log — every choice made during design and why |
 | [`docs/05-deployment.md`](docs/05-deployment.md) | **Vercel environment variables** — required before this branch serves live data |
+| [`docs/06-pricing-spec.md`](docs/06-pricing-spec.md) | Pricing page revamp — spec for the cost calculator and gains comparator |
 
 ## Layout
 
