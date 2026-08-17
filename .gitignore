@@ -26,3 +26,13 @@ Thumbs.db
 .claude-flow/
 .claude/proven-config.json
 .claude/.proven-config-version
+
+# Credentials — defensive. The ViewTrade UAT keys live outside this repo
+# (Global_API/) and must stay there. These patterns exist so an accidental
+# copy-paste into the working tree cannot be committed.
+Global_API/
+**/credentials/
+*_Credentials.txt
+client-url-config.json
+*.pem
+*.key
