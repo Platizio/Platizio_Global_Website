@@ -20,7 +20,7 @@
 
 begin;
 
-select plan(11);
+select plan(12);
 
 select isnt_empty(
   $$ select 1 from public.enquiry_interests where id = 'us-stocks' $$,
