@@ -4,6 +4,11 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import '../css/styles.css'
+// Order matters: the revamp layer redefines tokens declared in styles.css, so
+// it must load after it. tokens -> base -> components.
+import '../Platizio_Global_Revamp/styles/tokens.css'
+import '../Platizio_Global_Revamp/styles/base.css'
+import '../Platizio_Global_Revamp/styles/home-market.css'
 
 const container = document.getElementById('root')!
 

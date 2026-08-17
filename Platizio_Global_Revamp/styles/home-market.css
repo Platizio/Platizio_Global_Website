@@ -1,0 +1,523 @@
+/* =========================================================
+   Home — market sections, fees, regulations
+   ========================================================= */
+
+/* =========================================================
+   1. Trending band  — the page's signature
+   =========================================================
+   A full-bleed dark band directly under the hero. It continues the hero's
+   ink instead of dropping straight to white, so the fold reads as one
+   surface, and the popular grid below then lands as a deliberate return to
+   light.
+
+   There is no pulsing "live" dot anywhere in here. The data is delayed, and
+   that indicator is the standard visual shorthand for claiming it isn't.
+   ========================================================= */
+
+.trending-band {
+  position: relative;
+  background: var(--ink-900);
+  padding: var(--space-6) 0 var(--space-5);
+  overflow: hidden;
+}
+
+/* Hairline of brand gradient along the top edge — the one piece of colour on
+   an otherwise monochrome band, tying it back to the accent. */
+.trending-band::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--gold-gradient-h);
+  opacity: 0.85;
+}
+
+.trending-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.trending-label {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 0;
+  line-height: 1;
+}
+
+/* The scope is not a caption. ViewTrade cannot rank the whole market, so the
+   universe has to be stated wherever the ranking is shown. */
+.trending-scope {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--accent-300);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid rgba(240, 137, 79, 0.32);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.trending-viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  /* Feather both edges so items enter and leave rather than being clipped. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* No `gap` here on purpose.
+ *
+ * Flex gap puts N-1 gaps between N items, but a -50% loop needs the two halves
+ * to tile uniformly, which takes N. With gap the duplicate set started half a
+ * gap late (measured: 16px on a 32px gap) and the ticker jumped once per
+ * cycle. Giving each item its own trailing space makes every item occupy
+ * exactly item+space, so half the track is exactly half the items. */
+.ticker-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: ticker-scroll 46s linear infinite;
+}
+
+/* Pause on hover and on keyboard focus, so a reader can actually read a row
+   rather than chase it. */
+.trending-viewport:hover .ticker-track,
+.trending-viewport:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker-track.is-static { animation: none; }
+
+@keyframes ticker-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  /* -50% because the item list is rendered twice; one full set of travel
+     lands exactly on the duplicate, so the loop has no visible seam. */
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  /* The track's inter-item spacing lives here — see .ticker-track. */
+  padding-right: var(--space-8);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.ticker-symbol {
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+.ticker-price { color: rgba(255, 255, 255, 0.62); }
+
+/* =========================================================
+   2. Change indicator
+   =========================================================
+   The arrow is load-bearing, not ornament: red/green is exactly the pair
+   deuteranopic readers cannot separate, so direction is carried by the
+   glyph and the sign as well as the hue (WCAG 1.4.1).
+   ========================================================= */
+
+.quote-change {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.quote-arrow {
+  width: 9px;
+  height: 9px;
+  flex: none;
+}
+
+.quote-change--inline { font-size: var(--text-sm); }
+.quote-change--inline.is-up { color: var(--gain-on-dark); }
+.quote-change--inline.is-down { color: var(--loss-on-dark); }
+.quote-change--inline.is-flat { color: rgba(255, 255, 255, 0.45); }
+
+.quote-change--chip {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.quote-change--chip.is-up { color: var(--gain); background: var(--gain-wash); }
+.quote-change--chip.is-down { color: var(--loss); background: var(--loss-wash); }
+/* Grey-on-grey: needs a step darker than the other chips to clear AA. */
+.quote-change--chip.is-flat { color: var(--gray-600); background: var(--gray-100); }
+
+/* =========================================================
+   3. Popular stocks grid
+   ========================================================= */
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.stock-card {
+  display: grid;
+  /* Explicit rows so the skeleton and the loaded card are the same height by
+     construction rather than by coincidence — nothing shifts on load. */
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+}
+
+a.stock-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.stock-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 24px;
+}
+
+/* Ticker leads the card: a grid of eight is scanned by symbol, not by
+   company name, and mono makes it unmistakably market data. */
+.stock-symbol {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink-800);
+}
+
+.stock-name {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  /* Company names arrive as "Pdd Holdings Inc Spon Ads Each Rep 4 Ord Shs".
+     One line, truncated — never allowed to reflow the card. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-price {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: var(--tracking-snug);
+  color: var(--ink-900);
+  align-self: end;
+}
+
+.stock-price::before {
+  content: '$';
+  font-size: 0.62em;
+  font-weight: 500;
+  color: var(--gray-500);
+  vertical-align: 0.42em;
+  margin-right: 0.1em;
+}
+
+.stock-abs {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+}
+
+/* --gray-400 measures ~2.9:1 on white. It is fine for borders and icons, never
+   for text, however supplementary the text feels. */
+.stock-currency { color: var(--gray-500); }
+
+/* =========================================================
+   4. Skeletons
+   =========================================================
+   Sized to the type they stand in for, so the swap to real data changes
+   pixels but never geometry.
+   ========================================================= */
+
+/* The skeleton is not separate markup sized to guess at the real thing — it is
+   the SAME element, with the same font, size and line-height, wearing a
+   shimmer. Geometry is therefore identical by construction.
+
+   An earlier version used fixed-pixel bars and the grid jumped 31px when data
+   landed, because hand-computed heights cannot track a fluid type scale. */
+.is-loading-text {
+  position: relative;
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Suppresses .stock-price's "$" prefix while loading. */
+.is-loading-text::before { content: none !important; }
+
+.is-loading-text::after {
+  content: '';
+  position: absolute;
+  top: 0.16em;
+  bottom: 0.16em;
+  left: 0;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 37%, var(--gray-100) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+
+/* Widths in em so they scale with the element's own type size. */
+.is-load-sym::after { width: 3.4em; }
+.is-load-price::after { width: 4.6em; }
+.is-load-chg::after { width: 3.6em; }
+.is-load-abs::after { width: 4.2em; }
+
+/* On the dark band a light-grey sweep would glow. */
+.trending-band .is-loading-text::after {
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.07) 25%,
+    rgba(255, 255, 255, 0.16) 37%,
+    rgba(255, 255, 255, 0.07) 63%);
+  background-size: 400% 100%;
+}
+
+@keyframes skeleton-sweep {
+  from { background-position: 100% 50%; }
+  to   { background-position: 0 50%; }
+}
+
+/* =========================================================
+   5. Market disclosure
+   ========================================================= */
+
+.market-note {
+  margin-top: var(--space-6);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--gray-500);
+  text-align: center;
+}
+
+.market-note a {
+  color: var(--gray-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--line-strong);
+}
+
+.market-note a:hover { color: var(--accent-500); text-decoration-color: currentColor; }
+
+/* 0.42 alpha measured 4.07:1 on the band. A risk disclosure is the last text
+   on the page that should be hard to read. */
+.market-note--dark {
+  margin-top: var(--space-4);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.market-note--dark a { color: rgba(255, 255, 255, 0.82); }
+.market-note--dark a:hover { color: var(--accent-300); }
+
+/* =========================================================
+   6. Fees
+   ========================================================= */
+
+.fees-section { background: var(--surface-sunken); }
+.fees-table { max-width: 780px; }
+
+/* The zero-cost rows are the argument this section is making. */
+.charge-val--free {
+  color: var(--gain);
+  font-weight: 600;
+}
+
+.fees-footnote {
+  max-width: 780px;
+  margin: var(--space-6) auto 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+.fees-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--accent-500);
+  white-space: nowrap;
+}
+
+.fees-link svg { width: 15px; height: 15px; transition: transform var(--t); }
+.fees-link:hover svg { transform: translateX(3px); }
+
+/* =========================================================
+   7. Regulations
+   ========================================================= */
+
+.regs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.regs-card {
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+}
+
+.regs-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.regs-card h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
+}
+
+.regs-card p {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--gray-500);
+}
+
+.regs-disclaimer {
+  max-width: 780px;
+  margin: var(--space-10) auto 0;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--gray-500);
+  text-align: center;
+}
+
+.regs-disclaimer a {
+  color: var(--gray-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.regs-disclaimer a:hover { color: var(--accent-500); }
+
+/* The page's only closing CTA — the standalone band was removed, so this
+   section carries the conversion point. */
+.regs-cta {
+  margin-top: var(--space-12);
+  padding: var(--space-12) var(--space-8);
+  text-align: center;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(120% 140% at 50% 0%, var(--ink-700) 0%, var(--ink-900) 62%);
+  color: var(--white);
+}
+
+.regs-cta h3 {
+  font-size: var(--text-3xl);
+  color: var(--white);
+  margin-bottom: var(--space-3);
+}
+
+.regs-cta p {
+  color: rgba(255, 255, 255, 0.66);
+  margin-bottom: var(--space-8);
+  font-size: var(--text-lg);
+}
+
+/* =========================================================
+   8. Why / How
+   =========================================================
+   The old grid was five across, which left cards too narrow to hold a real
+   sentence. Four gives each one room to make its point.
+   ========================================================= */
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.how-section { background: var(--surface-sunken); }
+
+/* =========================================================
+   9. Responsive
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .stock-grid,
+  .regs-grid,
+  .why-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 860px) {
+  .trending-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .trending-viewport { width: 100%; }
+}
+
+@media (max-width: 560px) {
+  .stock-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .stock-card { padding: var(--space-4); }
+  .stock-price { font-size: var(--text-xl); }
+  .regs-grid,
+  .why-grid { grid-template-columns: 1fr; }
+  .regs-cta { padding: var(--space-10) var(--space-5); }
+}
+
+/* =========================================================
+   9. Reduced motion
+   =========================================================
+   The global rule collapses animation duration to ~0, which would freeze the
+   marquee mid-travel and hide half the items. Stop it properly instead and
+   hand the reader a scrollable row.
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none !important;
+    transform: none !important;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: var(--space-2);
+  }
+
+  .trending-viewport {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* The duplicate set exists only to hide the loop seam; with no loop it is
+     just repeated content for a screen reader to trip over. */
+  .ticker-track > .ticker-item:nth-child(n + 9) { display: none; }
+
+  .skeleton-bar { animation: none !important; background: var(--gray-100); }
+}

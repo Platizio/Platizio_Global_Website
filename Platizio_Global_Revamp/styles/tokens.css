@@ -1,0 +1,167 @@
+/* =========================================================
+   Platizio Global — Design language, 2026 revamp
+   =========================================================
+
+   Loaded AFTER css/styles.css, so these values override the originals.
+   Every page already consumes --navy, --gold, --radius and friends, which
+   means the whole site inherits this evolution without touching its markup.
+
+   The brand is evolved, not replaced: navy and burnt-orange stay
+   recognisably Platizio. What changes is everything around them — real
+   surface depth instead of navy-on-white, a proper type scale, a spacing
+   rhythm, and motion that has an opinion.
+   ========================================================= */
+
+:root {
+  /* ---------------------------------------------------------------- ink
+     The old palette had one navy. Dark sections had no depth because there
+     was nothing to layer against. This is a scale: base for large fields,
+     raised for cards sitting on them, line for separation. */
+  --ink-950: #030D17;
+  --ink-900: #05131F;
+  --ink-850: #071B2D;
+  --ink-800: #0A2540;   /* the original brand navy — the anchor */
+  --ink-700: #103154;
+  --ink-600: #1A4269;
+  --ink-500: #2B587F;
+
+  /* Kept so existing rules keep working. */
+  --navy: var(--ink-800);
+  --navy-deep: var(--ink-900);
+  --navy-soft: var(--ink-700);
+
+  /* -------------------------------------------------------------- accent
+     Burnt orange, unchanged in hue. The gradient gains a longer ramp so it
+     reads as light falling across a surface rather than a two-stop fill. */
+  --accent-300: #F0894F;
+  --accent-400: #E2682A;
+  --accent-500: #B94B12;
+  --accent-600: #9A3D0D;
+  --accent-700: #7E3008;
+
+  --gold-light: var(--accent-400);
+  --gold: var(--accent-500);
+  --gold-deep: var(--accent-700);
+  --gold-gradient: linear-gradient(135deg, var(--accent-300) 0%, var(--accent-400) 32%, var(--accent-500) 68%, var(--accent-700) 100%);
+  --gold-gradient-h: linear-gradient(90deg, var(--accent-300) 0%, var(--accent-400) 32%, var(--accent-500) 68%, var(--accent-700) 100%);
+
+  /* ------------------------------------------------------ market signals
+     Gain/loss need FOUR values, not one, because they appear on both white
+     sections and the navy ticker band, and a colour legible on one is not
+     legible on the other.
+
+     Loss is a rose-red rather than a true red on purpose: a true red sits
+     too close to the burnt-orange brand accent, and a falling price must
+     never be mistaken for a brand element.
+
+     Colour is never the only signal — every change also carries a
+     directional glyph and a +/- sign (WCAG 1.4.1). */
+  --gain: #0E7C58;
+  --loss: #C81E43;
+  --gain-on-dark: #34D399;
+  --loss-on-dark: #FF7A93;
+  --gain-wash: rgba(14, 124, 88, 0.10);
+  --loss-wash: rgba(200, 30, 67, 0.10);
+  --emerald: var(--gain);
+
+  /* ------------------------------------------------------------ surfaces
+     Cool off-white, not cream. Warm cream with a serif is the house style of
+     every AI-generated finance page this year; this reads as instrument
+     precision instead. */
+  --white: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-sunken: #F5F8FA;
+  --surface-raised: #FFFFFF;
+
+  --gray-50: #F5F8FA;
+  --gray-100: #EBF0F5;
+  --gray-200: #DDE5ED;
+  --gray-300: #C3CFDB;
+  --gray-400: #8E9FB2;
+  /* Measured, not eyeballed: the obvious value here (#64798F) sits at 4.49:1
+     on white — AA is 4.5. It carries company names, section intros and the
+     risk disclaimer, so a hundredth of a point failed five places at once.
+     #607488 measures 4.83:1 and is visually indistinguishable. */
+  --gray-500: #607488;
+  --gray-600: #47596E;
+  --gray-700: #2E3F52;
+  --gray-800: #16283C;
+
+  /* Hairlines carry tone rather than being flat grey, so borders sit in the
+     palette instead of on top of it. */
+  --line: rgba(10, 37, 64, 0.09);
+  --line-strong: rgba(10, 37, 64, 0.16);
+  --line-on-dark: rgba(255, 255, 255, 0.12);
+  --line-on-dark-strong: rgba(255, 255, 255, 0.22);
+
+  /* ---------------------------------------------------------------- type */
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Fluid scale, ~1.25 ratio. clamp() means no breakpoint jumps. */
+  --text-xs: 0.78rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.075rem;
+  --text-xl: clamp(1.2rem, 0.6vw + 1.05rem, 1.35rem);
+  --text-2xl: clamp(1.45rem, 1vw + 1.2rem, 1.75rem);
+  /* The clamp FLOOR is the mobile size, not a safety net — a 2.75rem floor
+     put the h1 at 44px on a 375px screen, roughly eight characters a line.
+     Floors are set from what reads well at 360px and scale up from there. */
+  --text-3xl: clamp(1.6rem, 1.8vw + 1.2rem, 2.4rem);
+  --text-4xl: clamp(1.85rem, 3vw + 1.1rem, 3.15rem);
+  --text-5xl: clamp(2.2rem, 4.5vw + 1.2rem, 4.15rem);
+
+  --tracking-tight: -0.022em;
+  --tracking-snug: -0.012em;
+  --tracking-wide: 0.08em;
+  --tracking-caps: 0.15em;
+
+  /* ------------------------------------------------------------- spacing
+     4px base. Replaces the ad-hoc rem values scattered through the old
+     stylesheet so vertical rhythm is consistent across sections. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  --section-y: clamp(3.5rem, 6vw, 6rem);
+  --container: 1200px;
+
+  /* -------------------------------------------------------------- radius
+     Tightened from 12/18/24. Slightly crisper corners read as precision;
+     the old values were soft enough to feel consumer-app. */
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+
+  /* ----------------------------------------------------------- elevation
+     Layered rather than single-blur, and tinted with the ink so shadows
+     belong to the palette instead of greying the page. */
+  --shadow-sm: 0 1px 2px rgba(5, 19, 31, 0.05), 0 1px 3px rgba(5, 19, 31, 0.04);
+  --shadow-md: 0 2px 4px rgba(5, 19, 31, 0.04), 0 8px 20px rgba(5, 19, 31, 0.07);
+  --shadow-lg: 0 4px 8px rgba(5, 19, 31, 0.05), 0 18px 40px rgba(5, 19, 31, 0.10);
+  --shadow-xl: 0 8px 16px rgba(5, 19, 31, 0.06), 0 32px 70px rgba(5, 19, 31, 0.15);
+  --shadow-accent: 0 4px 14px rgba(185, 75, 18, 0.28), 0 12px 32px rgba(185, 75, 18, 0.18);
+
+  /* --------------------------------------------------------------- motion
+     One custom ease used everywhere. A slight overshoot-free curve that
+     starts fast and settles, so interface motion feels responsive rather
+     than animated. */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 0.14s var(--ease);
+  --t: 0.24s var(--ease);
+  --t-slow: 0.45s var(--ease-out);
+}

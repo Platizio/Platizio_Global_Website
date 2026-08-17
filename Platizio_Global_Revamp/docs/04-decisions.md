@@ -176,15 +176,74 @@ causes no layout shift.
 
 ## D9 — New styles go in their own file
 
-**Status:** Decided · **Type:** Preference
+**Status:** ~~Decided~~ **Superseded by [D11](#d11--a-new-design-language-applied-site-wide)** · **Type:** Preference
 
-`css/styles.css` is 3,969 lines. Adding ~400 more makes a known problem worse;
-refactoring it is out of scope for a Home revamp. New section styles go in
-`Platizio_Global_Revamp/styles/home-market.css`, reusing the existing design
-tokens.
+Original decision: reuse the existing design tokens unchanged and confine new
+styles to `home-market.css`.
 
-One new token is required: `--emerald` exists for gains, but **there is no red or
-loss colour anywhere in the codebase**.
+Superseded on 2026-08-17 when the brief changed from "add sections in the
+existing style" to a new look across the site. The file-isolation half of this
+decision survives; the reuse-tokens-unchanged half does not.
+
+---
+
+## D11 — A new design language, applied site-wide
+
+**Status:** Decided · **Type:** Preference (brief changed mid-implementation)
+
+The brief moved to *"elevate the design, more finesse, a complete new look"*,
+scoped to the whole site with the brand evolved rather than replaced.
+
+### How it reaches every page without touching them
+
+A token layer (`styles/tokens.css`) loads **after** `css/styles.css` and
+redefines the variables already in use — `--navy`, `--gold`, `--radius`,
+`--shadow-*` — while adding new ones. Every page already consumes those
+variables, so the whole site inherits the evolution with no markup change.
+`base.css` then restyles the shared primitives (`.btn`, `.feature-card`,
+`.pricing-table`, `.eyebrow`, headings) by targeting the same selectors the
+original stylesheet uses.
+
+### What changed
+
+- **Ink scale.** One flat navy became a seven-step scale, so dark surfaces can
+  layer instead of sitting flat against white.
+- **Type: three faces, three jobs.** Bricolage Grotesque for display, Inter for
+  body and UI, IBM Plex Mono for market data only. A ticker in mono with
+  tabular figures reads as market data on sight; that is the vernacular of the
+  subject, not decoration.
+- **Tabular numerals** on every comparable figure, so columns of prices stay in
+  vertical register instead of shimmering as values change.
+- **Fluid type scale** with clamp(), replacing fixed sizes.
+- **4px spacing scale**, replacing ad-hoc rem values.
+- **Tighter radii** (12/18/24 → 10/14/20) — crisper corners read as precision.
+- **Layered, ink-tinted shadows** instead of single-blur grey.
+- **The eyebrow got smaller.** It was 1.07rem — larger than the body text it
+  introduced, which inverted the hierarchy.
+
+### Deliberately avoided
+
+The three looks AI design converges on regardless of brief: cream background
+with high-contrast serif and terracotta; near-black with one acid accent;
+broadsheet hairlines with zero radius. The surface here is a **cool** off-white
+(`#F5F8FA`), not cream, and the accent is the brand's existing burnt-orange.
+
+### Signature
+
+The trending band: full-bleed ink under the hero, mono tabular figures, a
+brand-gradient hairline on its top edge. Boldness is spent there and the other
+three sections stay quiet.
+
+**Explicitly no pulsing "live" dot.** The data is delayed, and that indicator is
+the standard visual shorthand for claiming it is not.
+
+### Four market tokens, not one
+
+D9 called for a single loss colour. Four were needed:
+`--gain` / `--loss` for white sections and `--gain-on-dark` / `--loss-on-dark`
+for the ink band — a colour legible on one is not legible on the other. Loss is
+a rose-red rather than a true red so a falling price is never mistaken for the
+burnt-orange brand accent.
 
 ---
 

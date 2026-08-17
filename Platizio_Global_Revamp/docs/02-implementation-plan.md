@@ -2,7 +2,14 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Phases 0 and 1 complete (2026-08-17, all gates pass) — Phase 2 is next
+**Status:** Phases 0–2 complete, and Phase 4 folded into Phase 2 (2026-08-17) —
+Phase 3 (wire real data) is next
+
+> **Scope change, 2026-08-17.** Mid-Phase 2 the brief moved from "add sections in
+> the existing style" to a new design language across the site. See
+> [D11](04-decisions.md#d11--a-new-design-language-applied-site-wide).
+> Phase 4 (assembling Home) was pulled forward into Phase 2, because a new look
+> cannot be judged section by section — the page had to be seen whole.
 
 Six phases. Each has a verification gate that must pass before the next begins.
 Phases 2 and 4 touch no network, so they cannot be blocked by API problems.
@@ -163,6 +170,46 @@ No UI. Verifiable entirely with `curl`.
 
 ---
 
+## Phase 2 — Components + new design language ✅ COMPLETE (2026-08-17)
+
+Built against the fixture, verified in a real browser. Home is assembled and
+renders the nine sections; only the data source is still mock.
+
+### Measured gates
+
+| Gate | Result |
+|------|--------|
+| Layout shift, popular grid | **0px** (was 31px) |
+| Layout shift, popular card | **0px** (was 15.6px) |
+| Layout shift, ticker band | **0px** (was 6px) |
+| Marquee loop seam | **0px** (was 16px) |
+| Contrast, 17 text/background pairs | **17 pass** |
+| Horizontal overflow at 375 / 1265 | **none** |
+| Grid collapse 4 → 2 → 1 | **correct** |
+| Console errors | **none** |
+| Full build | **49 pages, no errors** |
+| Old sections removed from HTML | **confirmed** — promo video, YouTube, guides, CTA band all absent |
+
+### Three bugs the browser caught that review would not have
+
+1. **Layout shift of 31px.** Skeletons were fixed-pixel bars sized by hand to
+   match the type. Hand-computed heights cannot track a fluid `clamp()` scale.
+   Fixed by making the skeleton *the same elements* with the same typography,
+   wearing a shimmer — geometry is then identical by construction.
+2. **Marquee seam of 16px, exactly half the gap.** Flex `gap` puts N-1 gaps
+   between N items, but a -50% loop needs N to tile. The ticker jumped once per
+   46-second cycle. Fixed by moving inter-item spacing to `padding-right`.
+3. **`--gray-500` at 4.49:1 — AA is 4.5.** One token, one hundredth of a point,
+   five failing places: company names, section intros, regs body, disclaimer,
+   footnote. Also `--gray-400` at ~2.9:1 was being used for the currency code.
+
+Two further "failures" were bugs in the contrast checker itself — translucent
+and gradient backgrounds read as opaque. Worth remembering that a measurement
+tool needs verifying before its output is trusted.
+
+<details>
+<summary>Original Phase 2 definition (kept for reference)</summary>
+
 ## Phase 2 — Components against mock data
 
 No network. Build all four sections against a fixture so layout and states are
@@ -194,6 +241,8 @@ provable in isolation.
 - [ ] Skeleton and ready states are the same height — measured, not eyeballed
 - [ ] Gain/loss colours meet WCAG AA against their background
 - [ ] Correct at 360px, 768px, 1280px
+
+</details>
 
 ---
 
