@@ -2,7 +2,53 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Approved — implementation not started
+**Status:** ✅ Implemented and verified (2026-08-17)
+
+## Verification
+
+All ten acceptance criteria pass.
+
+| # | Criterion | Result |
+|---|-----------|--------|
+| 1 | Six sections in order | **PASS** |
+| 2 | Build, 49 pages prerender | **PASS** |
+| 3 | No hydration warning on `/pricing` | **PASS** |
+| 4 | The three worked examples compute exactly | **PASS** — in `lib/pricing.ts` *and* in the rendered UI |
+| 5 | $200 trade shows effective above 0.29% | **PASS** — 0.60%, with the minimum tag and callout |
+| 6 | Invalid input shows `—`, never `NaN` | **PASS** — empty and `"abc"` both |
+| 7 | Disclosures present, assumptions inline | **PASS** |
+| 8 | Brokerage rate in exactly one source file | **PASS** |
+| 9 | No horizontal scroll at 360 / 768 / 1280 | **PASS** — schedule rows stack on mobile |
+| 10 | WCAG AA on every text/background pair | **PASS** — 28 pairs checked, lowest 4.53 |
+
+**38 unit checks** on `lib/pricing.ts` cover the worked examples, the
+`roundHalfUp` cases, Indian digit grouping, and null-on-invalid-input.
+
+**SSR confirmed empirically:** the prerendered `dist/pricing/index.html`
+already contains the computed default breakdown — `$2.90`, `$0.52`, `$0.05`,
+`$3.47`, `0.35%`, plus the gains defaults and the TCS worked example — and
+contains no `NaN`. The page is correct before JavaScript loads.
+
+### What implementation changed
+
+**AC8 initially failed.** Deriving `FEE_ROWS` from `RATES` was not enough — the
+rate was still typed literally in three rendered places: the headline figure,
+the calculator's callout copy, and the `TRADING_CHARGES` display strings inside
+the rates module itself. That last one is the instructive case: a "single source
+of truth" module can still contradict itself if its display strings are written
+by hand three lines from the numbers they describe. All are now derived.
+
+**A `pct()` helper was added** for rendering fractions as percentages. Today's
+rates all multiply cleanly, so this fixed no live bug — but `fraction * 100` is
+fragile, and a future rate of 0.07 would render as `7.000000000000001%`.
+
+### Note on measurement
+
+Programmatic `.focus()` does not match `:focus-visible`, so an automated sweep
+reported the preset buttons as having no focus indicator. Driving focus with a
+real `Tab` keypress showed a 2px accent outline, exactly as intended. The same
+artifact appeared during the Home revamp. **Verify the instrument before
+"fixing" what it reports** — the code was correct both times.
 
 ## Goal
 

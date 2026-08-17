@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { RATES, FREE_ITEMS, pct } from '../data/pricingRates'
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -7,18 +8,22 @@ const ArrowIcon = () => (
 )
 
 /**
- * Highlights only. /pricing stays the source of truth for every number, so a
- * rate is never maintained in two places — change it there and this page keeps
- * pointing at it.
+ * Highlights only. /pricing carries the full schedule.
  *
- * `free: true` marks the rows worth reading first. It drives emphasis, not a
- * different meaning.
+ * Every figure here is derived from data/pricingRates.ts rather than typed
+ * again. This table used to hard-code "0.29% per trade, minimum $1"; once the
+ * pricing calculators existed, three files stated the brokerage rate
+ * independently and would eventually have disagreed.
+ *
+ * `free: true` marks the rows worth reading first — emphasis, not meaning.
  */
 const FEE_ROWS: { head: string; value: string; free?: boolean }[] = [
-  { head: 'Account opening', value: '$0', free: true },
-  { head: 'KYC and profile verification', value: '$0', free: true },
+  ...FREE_ITEMS.slice(0, 2).map((f) => ({ head: f.label, value: f.value, free: true })),
   { head: 'Live prices and TradingView charts', value: 'Free', free: true },
-  { head: 'Brokerage', value: '0.29% per trade, minimum $1' },
+  {
+    head: 'Brokerage',
+    value: `${pct(RATES.brokeragePct)} per trade, minimum $${RATES.brokerageMinUsd}`,
+  },
   { head: 'Exchange and regulatory fees', value: 'Charged at cost' },
 ]
 

@@ -10,6 +10,7 @@ import '../Platizio_Global_Revamp/styles/tokens.css'
 import '../Platizio_Global_Revamp/styles/base.css'
 import '../Platizio_Global_Revamp/styles/chrome.css'
 import '../Platizio_Global_Revamp/styles/home-market.css'
+import '../Platizio_Global_Revamp/styles/pricing.css'
 
 const container = document.getElementById('root')!
 
