@@ -67,6 +67,8 @@ export interface TicketDraft {
   priority: 'LOW' | 'NORMAL' | 'URGENT'
   breadcrumb: string[]
   files: File[]
+  /** Null when Turnstile is not configured, which the server allows. */
+  turnstileToken?: string | null
 }
 
 export interface CallbackDraft {
@@ -129,7 +131,11 @@ export async function submitTicket(draft: TicketDraft): Promise<SubmitOutcome> {
   try {
     const response = await fetch(`${settings.url}${CREATE_PATH}`, {
       method: 'POST',
-      headers: anonHeaders(settings),
+      // Only this call is captcha-gated. finalize-ticket authorises on the
+      // idempotency key instead, and re-solving a challenge between the two
+      // halves of one submission would be a challenge the customer never asked
+      // for.
+      headers: anonHeaders(settings, draft.turnstileToken),
       body: JSON.stringify({
         idempotencyKey,
         fullName: draft.fullName,

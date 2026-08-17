@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAppContext } from '../context/AppContext'
 import { anonHeaders, backendConfig } from '../lib/backend'
+import { useTurnstile } from '../lib/useTurnstile'
 
 interface FormState {
   fullName: string
@@ -67,6 +68,7 @@ export default function ContactModal() {
   const [error, setError]         = useState('')
   // Empty on the fallback path, which produces no reference at all.
   const [reference, setReference] = useState('')
+  const turnstile = useTurnstile()
   const nameRef = useRef<HTMLInputElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const lastFocusedRef = useRef<HTMLElement | null>(null)
@@ -152,7 +154,7 @@ export default function ContactModal() {
       if (settings) {
         const res = await fetch(`${settings.url}${ENQUIRY_PATH}`, {
           method: 'POST',
-          headers: anonHeaders(settings),
+          headers: anonHeaders(settings, turnstile.getToken()),
           body: JSON.stringify({
             // Two clicks on a slow connection are one enquiry, not two. The RPC
             // reads back the first row rather than creating a second.
@@ -173,6 +175,8 @@ export default function ContactModal() {
         const data = await res.json().catch(() => ({}))
         if (!res.ok) {
           setError(data?.error ?? 'We could not send that enquiry. Please try again in a moment.')
+          // Single-use token; a retry needs a fresh challenge.
+          turnstile.reset()
           return
         }
         setReference(data?.enquiryRef ?? '')
@@ -269,6 +273,13 @@ export default function ContactModal() {
                   </span>
                 </label>
               </div>
+              {/* Absent entirely until VITE_TURNSTILE_SITE_KEY is set. */}
+              {turnstile.enabled && (
+                <div
+                  ref={turnstile.containerRef}
+                  style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.9rem' }}
+                />
+              )}
               {error && <p role="alert" style={{ color: '#B94B12', fontSize: '0.9rem', marginBottom: '0.75rem', textAlign: 'center' }}>{error}</p>}
               <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', justifyContent: 'center' }} disabled={sending}>
                 {sending ? 'Sending…' : 'Submit Enquiry'}

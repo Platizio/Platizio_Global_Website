@@ -8,6 +8,7 @@ import {
   submitTicket,
   type SubmitOutcome,
 } from '../../lib/supportChat'
+import { useTurnstile } from '../../lib/useTurnstile'
 import type { EscalationContext } from './useAssistant'
 
 /**
@@ -58,6 +59,7 @@ export default function RequestForm({
   const [errors, setErrors] = useState<Errors>({})
   const [sending, setSending] = useState(false)
   const [failure, setFailure] = useState('')
+  const turnstile = useTurnstile()
   const [files, setFiles] = useState<File[]>([])
   const [fileError, setFileError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -150,6 +152,7 @@ export default function RequestForm({
           priority: context.priority,
           breadcrumb: context.breadcrumb,
           files,
+          turnstileToken: turnstile.getToken(),
         })
       : await submitCallback({
           fullName: fullName.trim(),
@@ -163,6 +166,10 @@ export default function RequestForm({
     setSending(false)
     if (outcome.kind === 'failed') {
       setFailure(outcome.message)
+      // Turnstile tokens are single-use. Without this the retry sends a spent
+      // token and fails a second time for a different reason than the first,
+      // which is a maddening thing to debug from the customer's side.
+      turnstile.reset()
       return
     }
     onDone(outcome)
@@ -325,6 +332,12 @@ export default function RequestForm({
         </label>
       </div>
       {error('consent')}
+
+      {/*
+        Renders nothing at all when VITE_TURNSTILE_SITE_KEY is unset, so the
+        form keeps its current layout until the captcha is configured.
+      */}
+      {turnstile.enabled && <div className="sform-captcha" ref={turnstile.containerRef} />}
 
       {failure && <p className="sform-error is-block" role="alert">{failure}</p>}
 
