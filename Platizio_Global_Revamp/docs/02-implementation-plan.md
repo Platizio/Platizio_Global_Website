@@ -2,14 +2,47 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Not started — Phase 0 is next
+**Status:** Phase 0 complete (2026-08-17, all gates pass) — Phase 1 is next
 
 Six phases. Each has a verification gate that must pass before the next begins.
 Phases 2 and 4 touch no network, so they cannot be blocked by API problems.
 
 ---
 
-## Phase 0 — API spike ⚠️ GATES EVERYTHING
+## Phase 0 — API spike ✅ COMPLETE (2026-08-17)
+
+**All five gates passed.** Run against live UAT; spike code was throwaway and
+lived in the scratchpad, never in the repo.
+
+| Gate | Result |
+|------|--------|
+| 1 · B2B api-key login returns usable token | **PASS** — HTTP 201, token at the documented path |
+| 2 · Single-symbol quote returns 200 + array | **PASS** |
+| 3 · 25-symbol batch in one call | **PASS** — 25/25 in 39ms |
+| 4 · Required fields present | **PASS** — all 10, of 92 returned |
+| 5 · Values sane | **PASS** |
+
+### What the spike changed
+
+1. **`changePercent` is a fraction, not a percentage.** Must be `×100` for
+   display. Verified exactly across 14/15 symbols. See
+   [`03-viewtrade-api.md`](03-viewtrade-api.md).
+2. **`change: 0` is real data** (NFLX). Truthiness checks would silently discard
+   it — use `!= null`.
+3. **`lastPrice` is not pre-rounded** (`307.217`, `1001.33`). Format to the
+   payload's `precision` field.
+4. **`companyName` is uppercase** and **`updateTime` is US Eastern**, not IST.
+5. Login returns **201**, and `access_expires_at` is **unix seconds** — ×1000
+   before comparing to `Date.now()`.
+6. Auth and quotes share the `uma` host — one base-URL env var suffices.
+
+Batching at 39ms for 25 symbols means the full Nasdaq-100 is 4 parallel calls,
+comfortably inside one serverless invocation.
+
+---
+
+<details>
+<summary>Original Phase 0 definition (kept for reference)</summary>
 
 **Throwaway code. Nothing else starts until this passes.**
 
@@ -47,6 +80,8 @@ accordingly. **Stop and raise this** — it changes the spec.
 
 **If B2B login fails:** the whole live-data approach is blocked. Stop and raise
 it with ViewTrade before writing any further code.
+
+</details>
 
 ---
 
@@ -191,8 +226,10 @@ Against the acceptance criteria in [`01-spec.md`](01-spec.md).
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| API shape differs from docs | **High** — nothing verified | High | Phase 0 gates everything |
-| Batching unsupported | Medium | High | Shrink universe, relabel section |
+| ~~API shape differs from docs~~ | ~~High~~ | — | **Retired** — verified in Phase 0 |
+| ~~Batching unsupported~~ | ~~Medium~~ | — | **Retired** — 25/25 in one call, 39ms |
+| `changePercent` rendered unscaled | **High** if unguarded | **High** — 100× understatement | Convert once in the proxy, never in components. Unit-test the formatter. |
+| Truthiness check drops `change: 0` | Medium | Medium | `!= null` checks only; NFLX is the regression case |
 | Hydration mismatch | Medium | Medium | Skeleton-first; Phase 3 gate |
 | UAT-only credentials | **Certain** | High | Build and demo on UAT; production keys needed to launch |
 | ViewTrade rate limits | Unknown | Medium | 60s CDN cache means one upstream call per minute total |

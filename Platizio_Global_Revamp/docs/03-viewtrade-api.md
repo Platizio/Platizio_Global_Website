@@ -5,10 +5,9 @@
 **Environment:** UAT / staging only
 **Reviewed for this revamp:** 2026-08-17
 
-> ⚠️ **Nothing here is response-verified.** ViewTrade's own extraction notes
-> state: *"No API calls were made. Nothing is response-verified against UAT."*
-> Every field below comes from their documentation. Phase 0 of the plan exists
-> to confirm it.
+> ✅ **Verified against live UAT on 2026-08-17.** The catalogue was documentation
+> only; the Phase 0 spike ran real calls. All five gates passed. Sections below
+> marked **VERIFIED** reflect observed responses, not documentation.
 
 ---
 
@@ -50,14 +49,19 @@ Every market-data endpoint requires authentication. `Symbol Details` is
 **An anonymous homepage visitor has no such token.** This is why the browser
 cannot call ViewTrade directly, and why the serverless proxy exists.
 
-### Machine-to-machine login — the path we use
+### Machine-to-machine login — **VERIFIED**
 
 ```http
 POST {uma}/uma/api/v1/auth/b2b/login/api-keys
 Content-Type: application/json
+
+{ "api_key": "…", "api_secret": "…" }
 ```
 
-`authType: none` — the API key itself is the credential.
+`authType: none` — the API key itself is the credential. Returns **201** (not
+200) on success. The token arrives at the documented path
+`api_keys_login.tokens.access_token`, and `access_expires_at` is a **unix
+seconds** integer — multiply by 1000 before comparing to `Date.now()`.
 
 Response:
 
@@ -93,18 +97,57 @@ Authorization: Bearer <access_token>
 
 `authType: uma`. Returns an **array**.
 
-### Batching
+### Batching — **VERIFIED**
 
-Documented as `symbol` (singular) in the parameter table but
-`"symbols": "AAPL"` in the example, with an array response. The parallel ETF
-endpoint documents `symbols` explicitly as *"Comma-separated symbols"*.
+Confirmed working. A single call with 25 comma-separated symbols returned all
+25 quotes in **39ms**. The parameter is `symbols` (plural), despite the
+catalogue's parameter table saying `symbol`.
 
-**Batching is therefore near-certain but unproven — Phase 0 step 4 confirms it.**
-The plan batches 25 symbols per call.
+```
+GET /aes/api/quotes/equity?symbols=AAPL,MSFT,NVDA,…   → 200, array of 25
+```
 
-### Fields we consume
+At this speed the full Nasdaq-100 is 4 parallel calls, comfortably inside a
+serverless invocation.
 
-The payload has ~60 fields. We use these and discard the rest:
+---
+
+## ⚠️ `changePercent` is a FRACTION, not a percentage — **VERIFIED**
+
+**The single most important finding of the spike.** Rendering this value
+directly as a percentage understates every move by 100×.
+
+Observed for AAPL:
+
+```jsonc
+{
+  "lastPrice":      307.217,
+  "change":           1.2875,
+  "yesterdayClose": 305.93,
+  "changePercent":    0.00420848   // ← 0.42%, NOT 0.0042%
+}
+```
+
+`changePercent === change / yesterdayClose` held **exactly** across 14 of 15
+sampled symbols. The fifteenth was NFLX with `change: 0`, where the identity is
+0/0 — consistent, not an exception.
+
+**Rule: always `changePercent * 100` for display.** A card reading `+0.004%`
+instead of `+0.42%` on a regulated broker's homepage is a factual misstatement,
+not a formatting nit.
+
+Ranking is unaffected — sorting by `Math.abs(changePercent)` gives the same order
+either way.
+
+### Field precision — **VERIFIED**
+
+`lastPrice` is **not** pre-rounded: observed `307.217`, `226.021`, `1001.33`,
+`338`. The payload carries a `precision` field (2 for US equities) — use it, and
+format to a fixed 2 decimals. Never render `lastPrice` raw.
+
+### Fields we consume — **VERIFIED**
+
+92 fields are returned. We use these ten and discard the rest:
 
 | Field | Type | Use |
 |-------|------|-----|
@@ -118,12 +161,43 @@ The payload has ~60 fields. We use these and discard the rest:
 | `notPermissioned` | boolean | **Filter out when true** |
 | `notFound` | boolean | **Filter out when true** |
 | `updateTime` | string | Source of `asOf` |
+| `yesterdayClose` | number | Denominator behind `changePercent` |
+| `precision` | number | Decimal places for price formatting (2 for US equities) |
 
-### Delayed data
+Observed values, all confirmed present and correctly typed:
+`symbol: "AAPL"`, `companyName: "APPLE INC"`, `currency: "USD"`,
+`delayed: true`, `notPermissioned: false`, `notFound: false`,
+`updateTime: "2026-08-17T05:19:10.234-0400"`.
 
-The sample response carries `"delayed": true, "source": "Delay"`. This is
-delayed market data and must be labelled as such — see the compliance section of
-[`01-spec.md`](01-spec.md).
+**`companyName` is uppercase** (`"APPLE INC"`, `"ALPHABET INC"`). Either apply
+CSS `text-transform` or keep display names in `POPULAR_8` rather than using the
+API's casing directly.
+
+**`updateTime` is US Eastern** (`-0400`). The delayed-prices line renders IST, so
+convert — do not assume the offset.
+
+### Edge cases — **VERIFIED**
+
+| Case | Observed | Handling |
+|------|----------|----------|
+| Zero-change symbol | NFLX: `change: 0, changePercent: 0` | Valid data, not missing. Must not be filtered or treated as falsy. |
+| Null price / percent | None in 25 symbols | Still guard — UAT is not production. |
+| Mixed currencies | All `USD` | Guard anyway; the field exists for a reason. |
+| `notPermissioned` / `notFound` | None across 25 | Filter path is unproven — keep it, and log if it ever fires. |
+
+⚠️ `change: 0` is a real trap: `if (!quote.changePercent)` would discard NFLX.
+Use explicit `!= null` checks, never truthiness.
+
+### Delayed data — **VERIFIED**
+
+All 25 quotes returned `delayed: true`. This is delayed market data and must be
+labelled as such — see the compliance section of [`01-spec.md`](01-spec.md).
+
+### Note on UAT values
+
+Staging prices are not real market data (MU at $1001, NVDA at $226). Fine for
+integration work, but **do not use UAT output to sanity-check whether the numbers
+look right** — only whether the plumbing works.
 
 ---
 
@@ -142,14 +216,17 @@ delayed market data and must be labelled as such — see the compliance section 
 
 ## Service base URLs
 
-The catalogue uses `*.example.com` placeholders. Real UAT hosts are in
+The catalogue uses `*.example.com` placeholders. Real hosts are in
 `Global_API/credentials/client-url-config.json`.
 
-| Key | Used for |
-|-----|----------|
-| `uma` | Auth + quotes — **the only one this revamp needs** |
-| `mdp` | Market data aggregation / Polygon passthrough |
-| `middleware` | Insight, ETF, analyst data |
+| Key | UAT host | Used for |
+|-----|----------|----------|
+| `uma` | `https://user-auth-gateway-staging.viewtrade.in` | Auth + quotes — **the only one this revamp needs** |
+| `mdp` | same host as `uma` | Aggregation / Polygon passthrough |
+| `middleware` | `https://middleware-staging.viewtrade.in` | Insight, ETF, analyst data |
+
+Both auth and quotes are on the `uma` host, so **one base-URL env var covers
+everything this revamp does**.
 
 Configured as **one environment variable** for the `uma` base URL. Nothing else
 is needed.
