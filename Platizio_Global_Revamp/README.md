@@ -17,6 +17,7 @@ this directory is one line in `tsconfig.json` and one import swap in
 | [`docs/04-decisions.md`](docs/04-decisions.md) | Decision log — every choice made during design and why |
 | [`docs/05-deployment.md`](docs/05-deployment.md) | **Vercel environment variables** — required before this branch serves live data |
 | [`docs/06-pricing-spec.md`](docs/06-pricing-spec.md) | Pricing page revamp — spec for the cost calculator and gains comparator |
+| [`docs/07-about-spec.md`](docs/07-about-spec.md) | About page revamp — spec for the team grid and sourced structure section |
 
 ## Layout
 
