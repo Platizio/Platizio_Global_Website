@@ -11,7 +11,7 @@ Layout agreed from an interactive wireframe before any code was written; the
 
 | # | Section | Notes |
 |---|---------|-------|
-| 1 | News rail | Live US-market headlines, horizontally scrollable, directly under the header |
+| 1 | News marquee | Live US-market headlines, auto-scrolling, full-bleed, directly under the header |
 | 2 | Video | Feature left, three-item list right, **Watch more** under the list. **50/50** |
 | 3 | Blog + Articles | Blog coming-soon left; five articles + View all right |
 | 4 | Newsletter | Email capture |
@@ -85,6 +85,25 @@ links**. The seeds are Platizio's own published explainers for exactly that
 reason. On a regulated intermediary's site, an invented market headline with a
 plausible source is not a placeholder — it is a false statement of fact.
 
+### Presentation
+
+An editorial marquee, not a card rail: headlines set large in the display face,
+scrolling continuously right to left, source in small caps beneath. Full-bleed,
+so it reads as a band rather than a boxed widget, with the `Markets` label
+pinned left on the band ground and the headlines passing behind it.
+
+**Seamless loop.** The list renders twice and the keyframe travels -50%, so one
+pass lands exactly on the duplicate. Inter-item spacing is `padding-right` on
+each item, **never a flex `gap`** — gap puts N-1 gaps between N items, so a -50%
+loop lands half a gap short and jumps once per cycle. Measured seam error: 0px.
+
+**The duplicate pass is `aria-hidden` with `tabIndex -1`.** Without that a screen
+reader reads every headline twice and the tab order carries sixteen stops for
+eight stories. Verified: 6 tabbable headlines for 6 stories.
+
+**Pauses on hover and on keyboard focus** — a reader has to be able to stop it,
+and a link must not slide away from someone tabbing to it.
+
 ### Rendering
 
 The curated list is the **initial render on both server and client**, so the
@@ -97,8 +116,20 @@ swap**.
 
 ## Video
 
-Feature is `VIDEOS[0]`; the list is `VIDEOS[1..3]`. The array is already
-newest-first.
+Chosen editorially in [`data/mediaVideos.ts`](../data/mediaVideos.ts), not by
+date — the newest upload is often a 30-second short, and a first-time visitor
+should meet the introduction to Platizio Global instead.
+
+| Slot | Video |
+|------|-------|
+| Feature | Introducing Platizio Global — Your Gateway to International Investing |
+| List 1 | Why Indian Investors Need Global Investing |
+| List 2 | Global ETFs: Markets, Sectors and Themes in One Investment |
+| List 3 | How Tax Works in Global Investing |
+
+A configured id missing from `src/videos.ts` is skipped and the slot refilled
+from the newest remaining videos, so a deleted upload thins the list rather than
+blanking the section.
 
 Cards **link out to YouTube rather than embedding an iframe.** An embed loads
 Google's player and its cookies for every visitor on page load, whether or not
@@ -151,7 +182,10 @@ an address works.
 | Watch more sits below the list | **PASS** |
 | Feature and side columns balance | **PASS** — 485px each |
 | News rail scrollable | **PASS** |
-| Live swap, no layout shift | **PASS** — rail 153px before and after |
+| Marquee seam | **PASS** — 0px error, 64s loop |
+| Duplicate pass hidden from a11y tree | **PASS** — 6 tab stops for 6 stories |
+| Pauses on keyboard focus | **PASS** |
+| Full-bleed band | **PASS** |
 | Live items open in a new tab safely | **PASS** — `target=_blank` + `rel=noopener` |
 | Fallback when key absent | **PASS** — 200, curated, internal links |
 | `/api/subscribe` with no provider | **PASS** — 503, never claims success |

@@ -6,6 +6,7 @@
 import type { Article } from '../../src/articles/types'
 import type { Video } from '../../src/videos'
 import type { NewsItem } from '../data/mediaNews'
+import { FEATURE_VIDEO_ID, SIDE_VIDEO_IDS } from '../data/mediaVideos'
 
 /** How many articles the panel lists before "View all". */
 export const ARTICLE_COUNT = 5
@@ -31,10 +32,38 @@ export function selectTopArticles(all: readonly Article[], count = ARTICLE_COUNT
   return [...featured, ...rest].slice(0, count)
 }
 
-/** Feature video plus the side list. VIDEOS is already newest-first. */
+/**
+ * Feature video plus the side list, chosen editorially rather than by date.
+ *
+ * The newest upload is often a 30-second short; a first-time visitor should
+ * meet the introduction to Platizio Global instead. See data/mediaVideos.ts.
+ *
+ * Any configured id that is missing from the catalogue is skipped and the slot
+ * refilled from the newest remaining videos, so a deleted upload thins the list
+ * rather than blanking the section.
+ */
 export function selectVideos(all: readonly Video[]): { feature: Video | null; side: Video[] } {
   if (!all.length) return { feature: null, side: [] }
-  return { feature: all[0], side: all.slice(1, 1 + SIDE_VIDEO_COUNT) }
+
+  const byId = new Map(all.map((v) => [v.id, v]))
+  const feature = byId.get(FEATURE_VIDEO_ID) ?? all[0]
+
+  const side: Video[] = []
+  for (const id of SIDE_VIDEO_IDS) {
+    const video = byId.get(id)
+    if (video && video.id !== feature.id) side.push(video)
+  }
+
+  // Backfill only if a configured id went missing.
+  if (side.length < SIDE_VIDEO_COUNT) {
+    const used = new Set([feature.id, ...side.map((v) => v.id)])
+    for (const v of all) {
+      if (side.length >= SIDE_VIDEO_COUNT) break
+      if (!used.has(v.id)) { side.push(v); used.add(v.id) }
+    }
+  }
+
+  return { feature, side: side.slice(0, SIDE_VIDEO_COUNT) }
 }
 
 /** Newest first. Guards against a hand-edited file being out of order. */

@@ -15,15 +15,45 @@ interface RailItem {
 const SEED: RailItem[] = sortNews(NEWS).slice(0, 8).map((n: NewsItem) => ({ ...n }))
 
 /**
- * The scrolling news rail, directly under the header.
+ * One headline in the marquee.
  *
- * Renders the curated list immediately — server and client produce identical
- * markup, so there is no skeleton and nothing to mismatch — then swaps in live
- * US-market headlines once /api/news answers. If that request fails, or the
- * news quota is exhausted, the curated items simply stay. The rail is never
- * empty and never shifts height, because every card is clamped to two lines.
+ * `aria-hidden` marks the duplicated pass, which exists only so the loop has no
+ * visible seam. Without it a screen reader reads every headline twice and the
+ * tab order carries sixteen stops for eight stories.
+ */
+function Headline({ item, clone }: { item: RailItem; clone?: boolean }) {
+  const inner = (
+    <>
+      <span className="nh-text">{item.headline}</span>
+      <span className="nh-meta">
+        <span className="nh-source">{item.kind}</span>
+        <time className="nh-date" dateTime={item.date}>{formatNewsDate(item.date)}</time>
+      </span>
+    </>
+  )
+
+  const props = {
+    className: 'news-headline-item',
+    ...(clone ? { 'aria-hidden': true, tabIndex: -1 } : {}),
+  }
+
+  return item.external ? (
+    <a {...props} href={item.href} target="_blank" rel="noopener noreferrer">{inner}</a>
+  ) : (
+    <Link {...props} to={item.href}>{inner}</Link>
+  )
+}
+
+/**
+ * The news marquee, directly under the header.
  *
- * Live items open in a new tab; curated ones are internal routes.
+ * Headlines set large in the display face, scrolling continuously, with the
+ * source beneath in small caps — a front page rather than a widget.
+ *
+ * Renders the curated list immediately, identically on server and client, so
+ * there is no skeleton and nothing to mismatch; live US-market headlines swap
+ * in once /api/news answers. If that fails, or the search quota runs out, the
+ * curated items simply stay. The band is never empty.
  */
 export default function NewsRail() {
   const [items, setItems] = useState<RailItem[]>(SEED)
@@ -34,16 +64,11 @@ export default function NewsRail() {
     fetch('/api/news', { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
       .then((payload: { items?: RailItem[] }) => {
-        if (Array.isArray(payload?.items) && payload.items.length >= 4) {
-          setItems(payload.items)
-        }
+        if (Array.isArray(payload?.items) && payload.items.length >= 4) setItems(payload.items)
       })
-      .catch((err: Error) => {
-        // An abort is this component unmounting, not a failure — and either
-        // way the curated seed is already on screen, so there is nothing to
-        // recover and nothing to tell the reader.
-        if (err.name !== 'AbortError') return
-      })
+      // Failure needs no handling: the curated seed is already on screen, so
+      // there is nothing to recover and nothing to tell the reader.
+      .catch(() => {})
 
     return () => controller.abort()
   }, [])
@@ -52,37 +77,18 @@ export default function NewsRail() {
 
   return (
     <section className="news-band" aria-label="Latest US market news">
-      <div className="container news-band-inner">
-        {/* A label for the rail, not a document heading. As an <h2> it sat
-            above the page <h1> and inverted the outline; aria-label on the
-            section carries the same meaning without entering it. */}
+      <div className="news-band-inner">
         <p className="news-band-label">
+          <span className="news-band-dot" aria-hidden="true" />
           Markets
-          <span className="news-band-hint" aria-hidden="true">scroll →</span>
         </p>
 
-        <ul className="news-rail">
-          {items.map((item) => {
-            const inner = (
-              <>
-                <span className="news-kind">{item.kind}</span>
-                <span className="news-headline">{item.headline}</span>
-                <time className="news-date" dateTime={item.date}>{formatNewsDate(item.date)}</time>
-              </>
-            )
-            return (
-              <li className="news-item" key={item.href}>
-                {item.external ? (
-                  <a className="news-card" href={item.href} target="_blank" rel="noopener noreferrer">
-                    {inner}
-                  </a>
-                ) : (
-                  <Link className="news-card" to={item.href}>{inner}</Link>
-                )}
-              </li>
-            )
-          })}
-        </ul>
+        <div className="news-marquee">
+          <div className="news-track">
+            {items.map((item) => <Headline item={item} key={item.href} />)}
+            {items.map((item) => <Headline item={item} clone key={`dup-${item.href}`} />)}
+          </div>
+        </div>
       </div>
     </section>
   )
