@@ -36,3 +36,6 @@ Global_API/
 client-url-config.json
 *.pem
 *.key
+
+# TypeScript incremental build info
+*.tsbuildinfo
