@@ -132,7 +132,8 @@
    2. Video
    ========================================================= */
 
-.media-hero { padding-top: var(--space-12); }
+/* First section on the page now that the hero is gone. */
+.video-section { padding-top: var(--space-16); }
 
 .video-showcase {
   display: grid;

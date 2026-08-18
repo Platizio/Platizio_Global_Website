@@ -1,5 +1,4 @@
 import SEO, { breadcrumbSchema } from '../../src/components/SEO'
-import { Link } from 'react-router-dom'
 import NewsRail from '../components/NewsRail'
 import VideoShowcase from '../components/VideoShowcase'
 import MediaPanels from '../components/MediaPanels'
@@ -18,27 +17,13 @@ export default function Media() {
       {/* ===== 1. NEWS RAIL — sits directly under the header ===== */}
       <NewsRail />
 
-      {/* ===== 2. PAGE HERO ===== */}
-      <section className="page-hero media-hero">
-        <div className="container">
-          <div className="breadcrumb">
-            <Link to="/">Home</Link><span>/</span><span>Media</span>
-          </div>
-          <h1>Learn before you invest</h1>
-          <p>
-            Everything we publish on global investing — videos, explainers and guides,
-            written for Indian investors.
-          </p>
-        </div>
-      </section>
-
-      {/* ===== 3. VIDEO ===== */}
+      {/* ===== 2. VIDEO ===== */}
       <VideoShowcase />
 
-      {/* ===== 4. BLOG + ARTICLES ===== */}
+      {/* ===== 3. BLOG + ARTICLES ===== */}
       <MediaPanels />
 
-      {/* ===== 5. NEWSLETTER ===== */}
+      {/* ===== 4. NEWSLETTER ===== */}
       <NewsletterSignup />
     </>
   )

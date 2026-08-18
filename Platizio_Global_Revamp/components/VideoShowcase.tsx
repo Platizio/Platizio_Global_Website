@@ -34,8 +34,8 @@ export default function VideoShowcase() {
     <section className="section video-section" aria-labelledby="video-heading">
       <div className="container">
         <div className="section-header reveal">
-          <span className="eyebrow">Watch</span>
-          <h2 id="video-heading">Global investing, explained</h2>
+          <span className="eyebrow">Videos</span>
+          <h1 id="video-heading">Global investing, explained</h1>
           <p>Short videos on routes, taxes, ETFs and currency — from the Platizio Global channel.</p>
         </div>
 

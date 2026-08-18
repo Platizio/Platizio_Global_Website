@@ -11,12 +11,18 @@ Layout agreed from an interactive wireframe before any code was written; the
 
 | # | Section | Notes |
 |---|---------|-------|
-| 1 | News rail | Live US-market headlines, horizontally scrollable, above the hero |
-| 2 | Page hero | |
-| 3 | Video | Feature left, three-item list right, **Watch more** under the list. **50/50** |
-| 4 | Blog + Articles | Blog coming-soon left; five articles + View all right |
-| 5 | Newsletter | Email capture |
-| 6 | Footer | Existing |
+| 1 | News rail | Live US-market headlines, horizontally scrollable, directly under the header |
+| 2 | Video | Feature left, three-item list right, **Watch more** under the list. **50/50** |
+| 3 | Blog + Articles | Blog coming-soon left; five articles + View all right |
+| 4 | Newsletter | Email capture |
+| 5 | Footer | Existing |
+
+**No page hero.** One was added during the first build and removed on review as
+not useful — it restated the page title above content that already explains
+itself. The original layout never had one. Consequences handled: the video
+section heading became the page `<h1>`, and the news rail label was demoted from
+`<h2>` to a `<p>` with `aria-label` on the section, because as a heading it sat
+above the `<h1>` and inverted the outline.
 
 ---
 
@@ -140,7 +146,7 @@ an address works.
 |-------|--------|
 | Build, 49 pages prerender | **PASS** |
 | No hydration warning on `/media` | **PASS** — console clean |
-| Section order | **PASS** — rail → hero → video → panels → newsletter |
+| Section order | **PASS** — rail → video → panels → newsletter |
 | Video split at desktop | **PASS** — 564/564, exactly 50/50 |
 | Watch more sits below the list | **PASS** |
 | Feature and side columns balance | **PASS** — 485px each |

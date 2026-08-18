@@ -51,12 +51,15 @@ export default function NewsRail() {
   if (!items.length) return null
 
   return (
-    <section className="news-band" aria-labelledby="news-band-heading">
+    <section className="news-band" aria-label="Latest US market news">
       <div className="container news-band-inner">
-        <h2 className="news-band-label" id="news-band-heading">
+        {/* A label for the rail, not a document heading. As an <h2> it sat
+            above the page <h1> and inverted the outline; aria-label on the
+            section carries the same meaning without entering it. */}
+        <p className="news-band-label">
           Markets
           <span className="news-band-hint" aria-hidden="true">scroll →</span>
-        </h2>
+        </p>
 
         <ul className="news-rail">
           {items.map((item) => {
