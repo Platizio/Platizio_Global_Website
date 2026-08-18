@@ -2,7 +2,41 @@
 
 **Branch:** `Platizio_Global_Revamp`
 **Date:** 2026-08-17
-**Status:** Approved — implementation not started
+**Status:** Implemented and verified (2026-08-17)
+
+## Verification
+
+All ten acceptance criteria pass.
+
+| # | Criterion | Result |
+|---|-----------|--------|
+| 1 | Six sections in order | **PASS** |
+| 2 | Build, 49 pages prerender | **PASS** |
+| 3 | No hydration warning on /about | **PASS** — console completely clean |
+| 4 | Eight members visible simultaneously at 1024px+ | **PASS** — 4x2 grid, no carousel, no setInterval |
+| 5 | Every regulatory claim traces to its source | **PASS** — all four verified verbatim before writing |
+| 6 | SIPC limitation shares a sentence with the amount | **PASS** |
+| 7 | TeamCarousel.tsx deleted, nothing imports it | **PASS** |
+| 8 | Failed photo shows initials | **PASS** — error event hides the image, `AB` revealed |
+| 9 | No horizontal scroll at 360 / 768 / 1280 | **PASS** |
+| 10 | WCAG AA on every text/background pair | **PASS** — 16 pairs |
+
+Prerendered `dist/about/index.html` contains all eight names, the full SIPC
+sentence, and no carousel markup. Six routes re-checked for regressions after
+the carousel deletion: all render, none scroll horizontally.
+
+### Two measurement artifacts, not defects
+
+The contrast checker reported the hero subtitle at ratio 1. `.page-hero` paints
+a gradient, which `backgroundColor` reports as transparent. Measured against the
+gradient’s actual stops it is **15.54:1 and 13.21:1**. The same artifact appeared
+on Home’s CTA band.
+
+The founder block stayed two-column at a reported 768px despite a 780px
+breakpoint — media queries match the full viewport including the scrollbar,
+while `clientWidth` excludes it. Measured at that width the text column is
+314px and every line still fits, so the layout was left alone rather than
+“fixed”.
 
 ## Goal
 

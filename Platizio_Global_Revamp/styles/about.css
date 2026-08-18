@@ -1,0 +1,270 @@
+/* =========================================================
+   About page
+   ========================================================= */
+
+/* =========================================================
+   1. Why we exist
+   ========================================================= */
+
+.why-exist-body {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.why-exist-body p {
+  font-size: var(--text-lg);
+  line-height: 1.7;
+  color: var(--gray-600);
+}
+
+.why-exist-body p + p { margin-top: var(--space-5); }
+
+.why-exist-lineage {
+  margin-top: var(--space-8) !important;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-base) !important;
+  color: var(--gray-500) !important;
+}
+
+.why-exist-lineage strong { color: var(--ink-800); }
+
+/* =========================================================
+   2. Founder
+   =========================================================
+   Editorial rather than a card in a row. On a page answering "who is behind
+   my money", the person answering it should not be a 300px tile.
+   ========================================================= */
+
+.founder-section { background: var(--surface-sunken); }
+
+.founder {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--space-10);
+  align-items: center;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.founder-photo-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--ink-800);
+}
+
+/* A thin accent edge along the base, echoing the band and footer hairlines. */
+.founder-photo-wrap::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: var(--gold-gradient-h);
+}
+
+.founder-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.founder-info h3 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-1);
+}
+
+.founder-title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--accent-600);
+}
+
+.founder-credential {
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  color: var(--gray-500);
+}
+
+.founder-creds {
+  list-style: none;
+  margin-top: var(--space-6);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.founder-creds li {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--gray-600);
+}
+
+.cred-check {
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  color: var(--gain);
+}
+
+/* =========================================================
+   3. Team grid
+   =========================================================
+   Replaces a 3D autoplay carousel that showed about one person at a time.
+   ========================================================= */
+
+.team-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+.team-card { text-align: left; }
+
+.team-photo-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  /* Also the initials backdrop when a photo fails. */
+  background: linear-gradient(150deg, var(--ink-700), var(--ink-900));
+  display: grid;
+  place-items: center;
+  transition: transform var(--t), box-shadow var(--t);
+}
+
+.team-card:hover .team-photo-wrap {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Sits beneath the photo. Revealed only if the image removes itself on error,
+   so a missing file shows "AP" rather than a broken-image icon. */
+.team-initials {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  letter-spacing: var(--tracking-snug);
+  color: rgba(255, 255, 255, 0.55);
+  user-select: none;
+}
+
+.team-photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.team-name {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-800);
+}
+
+.team-role {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--gray-500);
+}
+
+/* =========================================================
+   4. Structure
+   ========================================================= */
+
+.structure-section { background: var(--surface-sunken); }
+
+.structure-list {
+  max-width: 780px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.structure-item {
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.structure-item dt {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: var(--tracking-snug);
+  color: var(--ink-800);
+  margin-bottom: var(--space-3);
+}
+
+.structure-item dd {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--gray-600);
+}
+
+.structure-item dd strong { color: var(--ink-800); font-weight: 600; }
+
+.structure-note {
+  max-width: 780px;
+  margin: var(--space-8) auto 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+.structure-note a {
+  color: var(--gray-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.structure-note a:hover { color: var(--accent-500); }
+
+.about-cta-section { padding-top: 0; }
+
+/* =========================================================
+   5. Responsive
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .team-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 780px) {
+  .founder {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    text-align: center;
+  }
+  .founder-photo-wrap { max-width: 240px; margin: 0 auto; }
+  .founder-creds li { text-align: left; }
+}
+
+@media (max-width: 620px) {
+  .team-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+  .founder { padding: var(--space-5); }
+  .structure-item { padding: var(--space-5); }
+  .why-exist-body p { font-size: var(--text-base); }
+}
