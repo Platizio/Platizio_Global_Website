@@ -14,8 +14,20 @@ const ArrowIcon = () => (
   </svg>
 )
 
-/** YouTube serves these directly; no API key and no embed needed. */
-const thumb = (id: string) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`
+/**
+ * YouTube thumbnail URLs. No API key and no embed needed.
+ *
+ * NOT hqdefault: that is 480x360, i.e. 4:3 with black letterbox bars top and
+ * bottom for a 16:9 video. Cropping the bars by scaling the image up also
+ * crops the sides, which cut the first and last word off every title card.
+ *
+ * maxresdefault (1280x720) and mqdefault (320x180) are both natively 16:9, so
+ * they need no cropping at all. maxres is not guaranteed to exist for every
+ * upload - all nine currently do - so the feature image falls back to mq if it
+ * 404s.
+ */
+const thumbMax = (id: string) => `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+const thumbMq = (id: string) => `https://img.youtube.com/vi/${id}/mqdefault.jpg`
 
 /**
  * Feature video on the left, three more as a thumbnail-and-title list on the
@@ -47,7 +59,20 @@ export default function VideoShowcase() {
             rel="noopener noreferrer"
           >
             <span className="video-feature-thumb">
-              <img src={thumb(feature.id)} alt="" width={480} height={360} loading="lazy" />
+              <img
+                src={thumbMax(feature.id)}
+                alt=""
+                width={1280}
+                height={720}
+                loading="lazy"
+                onError={(e) => {
+                  // One shot only, or a missing mq would loop forever.
+                  const img = e.currentTarget
+                  if (img.dataset.fallback) return
+                  img.dataset.fallback = "1"
+                  img.src = thumbMq(feature.id)
+                }}
+              />
               <span className="video-play" aria-hidden="true"><PlayIcon /></span>
             </span>
             <span className="video-feature-body">
@@ -63,7 +88,7 @@ export default function VideoShowcase() {
                 <li key={v.id}>
                   <a className="video-row" href={v.url} target="_blank" rel="noopener noreferrer">
                     <span className="video-row-thumb">
-                      <img src={thumb(v.id)} alt="" width={160} height={120} loading="lazy" />
+                      <img src={thumbMq(v.id)} alt="" width={320} height={180} loading="lazy" />
                       <span className="video-play is-small" aria-hidden="true"><PlayIcon /></span>
                     </span>
                     <span className="video-row-body">

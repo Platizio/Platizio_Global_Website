@@ -135,8 +135,24 @@ Cards **link out to YouTube rather than embedding an iframe.** An embed loads
 Google's player and its cookies for every visitor on page load, whether or not
 they press play. A linked thumbnail avoids that and keeps the page light.
 
-`hqdefault.jpg` is 4:3 with letterbox bars; the thumbnails are `object-fit:
-cover` and scaled 1.34× to crop them off.
+### Thumbnail source matters
+
+**Do not use `hqdefault.jpg`.** It is 480x360 — 4:3 with black letterbox bars
+top and bottom for a 16:9 video. The first build hid those bars by scaling the
+image 1.34x, but `scale()` grows from the centre, so it cropped the sides too
+and cut the first and last word off every title card ("INVEST BEYOND BORDERS"
+rendered as "IVEST EYOND ORDERS").
+
+| Source | Size | Aspect |
+|--------|------|--------|
+| `hqdefault` | 480x360 | 4:3, letterboxed — **avoid** |
+| `mqdefault` | 320x180 | 16:9, always available |
+| `maxresdefault` | 1280x720 | 16:9, not guaranteed |
+
+Feature uses `maxresdefault` with a one-shot `onError` fallback to `mqdefault`;
+the side list uses `mqdefault`, which is ample for a 132px-wide thumbnail. No
+scaling anywhere. Verified: 0% cropping on all four images, source and
+container both exactly 1.7778.
 
 ---
 

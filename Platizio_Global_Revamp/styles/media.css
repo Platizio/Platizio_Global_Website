@@ -226,14 +226,15 @@
   aspect-ratio: 16 / 9;
 }
 
-/* hqdefault is 4:3 with letterbox bars; scaling up crops them off. */
+/* Sources are natively 16:9 (maxresdefault / mqdefault), so no scaling is
+   needed. The previous scale(1.34) existed to hide hqdefault letterbox bars and
+   cropped the sides too, cutting the first and last word off every title card. */
 .video-feature-thumb img,
 .video-row-thumb img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.34);
 }
 
 .video-play {
