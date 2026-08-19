@@ -554,7 +554,7 @@
 
 .newsletter-status a { color: rgba(255, 255, 255, 0.9); text-decoration: underline; text-underline-offset: 2px; }
 .newsletter-status a:hover { color: var(--accent-300); }
-.newsletter-status.is-error { color: #FFB3C1; }
+.newsletter-status.is-error { color: var(--loss-on-dark); }
 .newsletter-status.is-done { color: var(--gain-on-dark); }
 
 /* =========================================================

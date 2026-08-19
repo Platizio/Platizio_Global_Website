@@ -43,7 +43,7 @@ export default function VideoShowcase() {
   if (!feature) return null
 
   return (
-    <section className="section video-section" aria-labelledby="video-heading">
+    <section className="section video-section" id="videos" aria-labelledby="video-heading">
       <div className="container">
         <div className="section-header reveal">
           <span className="eyebrow">Videos</span>

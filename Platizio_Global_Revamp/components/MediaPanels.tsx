@@ -45,7 +45,7 @@ export default function MediaPanels() {
           </section>
 
           {/* ------------------------------------------------ articles */}
-          <section className="media-panel panel-articles reveal" aria-labelledby="articles-heading">
+          <section className="media-panel panel-articles reveal" id="articles" aria-labelledby="articles-heading">
             <div className="panel-head">
               <h3 id="articles-heading">Articles</h3>
               <span className="panel-count">{ARTICLES.length} published</span>
