@@ -15,6 +15,19 @@ export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
 export const ALLOWED_MIME = ['application/pdf', 'image/png', 'image/jpeg'] as const
 export const PRIORITIES = ['LOW', 'NORMAL', 'URGENT'] as const
 
+/**
+ * What a browser is allowed to claim about where its request came from.
+ *
+ * Deliberately narrower than the database constraint, which also permits
+ * 'email', 'phone' and 'staff'. Those three describe a request a staff member
+ * logged on someone else's behalf, and nothing reaching this endpoint is one of
+ * them — this is the public intake path and it is reached with the anon key,
+ * which ships in the site bundle. Accepting 'staff' here would let anyone forge
+ * a ticket that reads as though an agent raised it, which is exactly the sort
+ * of row an audit is supposed to be able to trust.
+ */
+export const CLIENT_SOURCES = ['web', 'chatbot'] as const
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -35,6 +48,7 @@ export interface TicketIntent {
   categoryId: string
   subcategoryId: string
   priority: string
+  source: string
   subject: string
   description: string
   consent: { text: string; version: string; url: string }
@@ -141,6 +155,15 @@ export function parseTicketIntent(raw: unknown): TicketIntent {
     throw new ValidationError('That urgency level is not one we recognise.')
   }
 
+  // Absent means the plain web form, which is what every caller predating the
+  // guided assistant sends. An unrecognised value is refused rather than
+  // coerced to 'web': silently rewriting it is how the old behaviour hid this
+  // bug for as long as it did.
+  const source = str(body.source).toLowerCase() || 'web'
+  if (!CLIENT_SOURCES.includes(source as typeof CLIENT_SOURCES[number])) {
+    throw new ValidationError('That request source is not one we recognise.')
+  }
+
   const subject = bounded(str(body.subject), 'The subject', 4, 200)
   const description = bounded(str(body.description), 'The description', 20, 5000)
 
@@ -158,10 +181,88 @@ export function parseTicketIntent(raw: unknown): TicketIntent {
     categoryId,
     subcategoryId,
     priority,
+    source,
     subject,
     description,
     consent: { text: consentText, version: consentVersion, url: consentUrl },
     attachments: parseAttachments(body.attachments),
+  }
+}
+
+export interface EnquiryIntent {
+  idempotencyKey: string
+  fullName: string
+  email: string
+  phoneRaw: string
+  phoneDigits: string
+  interestId: string | null
+  message: string | null
+  consent: { text: string; version: string; url: string }
+}
+
+/**
+ * The enquiry form's payload.
+ *
+ * Bounds match the CHECK constraints in 0027 exactly, for the same reason the
+ * ticket bounds match 0003 and 0006: the database is the backstop, never the
+ * error surface. A constraint violation reaching a customer is a 500 and a lost
+ * enquiry; a refusal here is a sentence they can act on.
+ *
+ * Note what is *not* validated here — `interestId` is checked for shape only.
+ * Whether that id exists is settled against `enquiry_interests` inside the RPC,
+ * which cannot drift out of step with the seed the way a copy in this file
+ * would. An unknown interest is dropped there rather than refused, because the
+ * dropdown is optional and routing metadata; losing it costs the team a
+ * routing hint, and refusing over it would cost them the enquiry.
+ */
+export function parseEnquiryIntent(raw: unknown): EnquiryIntent {
+  if (typeof raw !== 'object' || raw === null) {
+    throw new ValidationError('The request body was not readable.')
+  }
+  const body = raw as Record<string, unknown>
+
+  const idempotencyKey = str(body.idempotencyKey)
+  if (!UUID_RE.test(idempotencyKey)) {
+    throw new ValidationError('The request identifier was missing or unreadable.')
+  }
+
+  const fullName = bounded(str(body.fullName), 'Your name', 2, 120)
+
+  const email = str(body.email).toLowerCase()
+  if (!EMAIL_RE.test(email) || [...email].length > 254) {
+    throw new ValidationError('Please enter a valid email address.')
+  }
+
+  const phoneRaw = bounded(str(body.phone), 'Your contact number', 8, 32)
+  const phoneDigits = phoneRaw.replace(/\D/g, '')
+  if (phoneDigits.length < 8 || phoneDigits.length > 15) {
+    throw new ValidationError('Please enter a valid contact number.')
+  }
+
+  const interestRaw = str(body.interestId)
+  if (interestRaw && !SLUG_RE.test(interestRaw)) {
+    throw new ValidationError('That interest is not one we recognise.')
+  }
+
+  const messageRaw = str(body.message)
+  if ([...messageRaw].length > 5000) {
+    throw new ValidationError('That message is too long (limit 5000 characters).')
+  }
+
+  const consentRaw = (body.consent ?? {}) as Record<string, unknown>
+  const consentText = bounded(str(consentRaw.text), 'The consent statement', 20, 2000)
+  const consentVersion = bounded(str(consentRaw.version), 'The policy version', 1, 40)
+  const consentUrl = str(consentRaw.url) || 'https://platizioglobal.com/privacy'
+
+  return {
+    idempotencyKey,
+    fullName,
+    email,
+    phoneRaw,
+    phoneDigits,
+    interestId: interestRaw || null,
+    message: messageRaw || null,
+    consent: { text: consentText, version: consentVersion, url: consentUrl },
   }
 }
 

@@ -2608,6 +2608,58 @@ p {
   height: 18px;
 }
 
+.footer-app {
+  margin-top: 1.75rem;
+}
+
+.footer-app h5 {
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
+}
+
+.footer-app-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.footer-app-badges a {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+  transition: var(--t);
+}
+
+/* Widths keep both badges at the same rendered height (~42px) despite
+   their different aspect ratios; the img scales inside them. */
+.footer-app-badges .badge-ios {
+  width: 126px;
+}
+
+.footer-app-badges .badge-android {
+  width: 142px;
+}
+
+.footer-app-badges a:hover {
+  transform: translateY(-2px);
+}
+
+.footer-app-badges a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.footer-app-badges img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .footer-col h5 {
   color: var(--white);
   font-size: 0.85rem;
@@ -4584,6 +4636,15 @@ p {
 }
 
 .sform-consent a { color: var(--gold); }
+
+/* Turnstile mounts its own iframe here. Only present when the widget is
+   configured, so this rule costs nothing when it is not. */
+.sform-captcha {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+  min-height: 65px;
+}
 
 .sform-actions {
   display: flex;

@@ -1,4 +1,7 @@
 import { SUPPORT_EMAIL } from '../siteConfig'
+import { anonHeaders, backendConfig, isBackendConfigured } from './backend'
+
+export { isBackendConfigured }
 
 /**
  * Submitting a request from the assistant.
@@ -64,6 +67,8 @@ export interface TicketDraft {
   priority: 'LOW' | 'NORMAL' | 'URGENT'
   breadcrumb: string[]
   files: File[]
+  /** Null when Turnstile is not configured, which the server allows. */
+  turnstileToken?: string | null
 }
 
 export interface CallbackDraft {
@@ -86,15 +91,7 @@ export type SubmitOutcome =
   | { kind: 'drafted'; attachmentsPending?: number }
   | { kind: 'failed'; message: string }
 
-function config() {
-  const url = import.meta.env.VITE_SUPABASE_URL
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY
-  return url && key ? { url, key } : null
-}
-
-export function isBackendConfigured(): boolean {
-  return config() !== null
-}
+const config = backendConfig
 
 function trail(breadcrumb: string[]): string {
   return breadcrumb.length > 0 ? breadcrumb.join(' > ') : 'Not specified'
@@ -134,10 +131,11 @@ export async function submitTicket(draft: TicketDraft): Promise<SubmitOutcome> {
   try {
     const response = await fetch(`${settings.url}${CREATE_PATH}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${settings.key}`,
-      },
+      // Only this call is captcha-gated. finalize-ticket authorises on the
+      // idempotency key instead, and re-solving a challenge between the two
+      // halves of one submission would be a challenge the customer never asked
+      // for.
+      headers: anonHeaders(settings, draft.turnstileToken),
       body: JSON.stringify({
         idempotencyKey,
         fullName: draft.fullName,
@@ -172,13 +170,9 @@ export async function submitTicket(draft: TicketDraft): Promise<SubmitOutcome> {
       return { kind: 'failed', message: body?.error ?? 'We could not log that request.' }
     }
 
-    // No files: the ticket is complete as it stands.
-    if (draft.files.length === 0) {
-      return { kind: 'raised', reference: body.ticketRef }
-    }
-
     // The server hands back one signed upload URL per accepted attachment,
-    // keyed by its index in the array we just sent.
+    // keyed by its index in the array we just sent. Empty when there were no
+    // files, in which case the Promise.all below resolves immediately.
     const uploads: Array<{ index: number; signedUrl: string; filename: string }> =
       body.uploads ?? []
 
@@ -198,14 +192,22 @@ export async function submitTicket(draft: TicketDraft): Promise<SubmitOutcome> {
       }),
     )
 
-    // Verifies each uploaded file's actual bytes and attaches the verdicts to
-    // the ticket. The ticket exists either way; this only settles attachments.
+    // Always called, including when there was nothing to upload.
+    //
+    // finalize-ticket is not only about attachments. It is where
+    // finalize_support_ticket stamps `finalized_at` and queues the
+    // acknowledgement email — and `create_support_ticket` queues nothing at
+    // all. Returning early when `files` was empty, which this did until now,
+    // left every ticket raised without a file unfinalized and the customer
+    // unacknowledged. That is most tickets.
+    //
+    // Safe to call unconditionally: `finalized_at` is set with
+    // `coalesce(finalized_at, now())` and the notification insert is
+    // `on conflict (dedupe_key) do nothing` against `ack:<ticket id>`, so a
+    // repeat call settles nothing twice and sends nothing twice.
     const finalize = await fetch(`${settings.url}${FINALIZE_PATH}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${settings.key}`,
-      },
+      headers: anonHeaders(settings),
       body: JSON.stringify({ ticketId: body.ticketId, idempotencyKey }),
     })
 
