@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import SEO, { breadcrumbSchema, faqSchema } from '../components/SEO'
 import { TRADING_PLATFORM_URL } from '../constants'
-import { ALL_FAQS, FAQ_SECTIONS } from '../content/faqs'
+import { ALL_FAQS, FAQ_SECTIONS, FEATURED_FAQS } from '../content/faqs'
 
 const PlusIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
@@ -20,6 +20,9 @@ const ChevronIcon = () => (
 export default function FAQs() {
   const [openSectionId, setOpenSectionId] = useState<string | null>(null)
   const [openItemId, setOpenItemId] = useState<string | null>(null)
+  // Featured questions repeat items that also live inside a section, so they
+  // track their own open state — otherwise opening one here would open its twin.
+  const [openFeaturedId, setOpenFeaturedId] = useState<string | null>(null)
   const { openContact } = useAppContext()
   const { hash } = useLocation()
 
@@ -40,6 +43,8 @@ export default function FAQs() {
   }
 
   const toggleItem = (id: string) => setOpenItemId((prev) => (prev === id ? null : id))
+
+  const toggleFeatured = (id: string) => setOpenFeaturedId((prev) => (prev === id ? null : id))
 
   return (
     <>
@@ -66,6 +71,37 @@ export default function FAQs() {
       {/* ===== FAQs ===== */}
       <section className="section">
         <div className="container" style={{ maxWidth: 880 }}>
+
+          {/* Featured questions — the ones support is asked most often, so a
+              visitor does not have to open eleven sections to find them. */}
+          <div className="faq-featured">
+            <h2 className="faq-featured-title">Featured questions</h2>
+            <div className="faq-list">
+              {FEATURED_FAQS.map(({ id, q, a, sectionId, sectionTitle }) => (
+                <div className={`faq-item${openFeaturedId === id ? ' open' : ''}`} key={id}>
+                  <button
+                    className="faq-q"
+                    onClick={() => toggleFeatured(id)}
+                    aria-expanded={openFeaturedId === id}
+                  >
+                    {q}
+                    <span className="ico"><PlusIcon /></span>
+                  </button>
+                  <div className="faq-a">
+                    <div className="faq-a-clip">
+                      <div>
+                        {a}
+                        <p className="faq-featured-jump">
+                          <Link to={`/faqs#${sectionId}`}>More in {sectionTitle}</Link>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {FAQ_SECTIONS.map(({ id, num, title, note, items, readMore }) => (
             <div className={`faq-section${openSectionId === id ? ' section-open' : ''}`} id={id} key={id}>
 

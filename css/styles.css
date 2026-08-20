@@ -2271,6 +2271,29 @@ p {
   background: var(--gray-50);
 }
 
+/* Featured questions — the shortlist above the numbered sections. */
+.faq-featured {
+  margin-bottom: 2.25rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.faq-featured-title {
+  margin-bottom: 1rem;
+  font-size: 1.35rem;
+  color: var(--navy);
+}
+
+.faq-featured-jump {
+  margin-top: 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.faq-featured-jump a::after {
+  content: ' \2192';
+}
+
 .faq-list {
   display: flex;
   flex-direction: column;

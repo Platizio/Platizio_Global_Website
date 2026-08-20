@@ -55,7 +55,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
       },
       {
         id: 'gs-5',
-        q: 'What are the steps to open an account and complete KYC?',
+        q: 'What are the steps to open a Platizio Global account and complete KYC?',
         a: (
           <span>
             <ol style={{ paddingLeft: '1.25rem', margin: '0.5rem 0' }}>
@@ -137,7 +137,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
     items: [
       {
         id: 'fa-1',
-        q: 'How do I add money to my account?',
+        q: 'How do I add funds to my Platizio Global Trading Account?',
         a: 'You fund your US brokerage account by remitting money from your Indian bank account under the LRS. From within the platform you can select your bank, download the net-banking remittance instructions, and initiate the transfer. Funds are converted from INR to USD by your bank and credited to your brokerage account.',
       },
       {
@@ -454,7 +454,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
     items: [
       {
         id: 'ma-1',
-        q: 'How do I update my email, mobile number, or login method?',
+        q: 'How do I update my email address, mobile number, or login method?',
         a: 'You can update your login email and mobile number from the Profile / Login & Security section of the platform. Changes are confirmed using an OTP for your security.',
       },
       {
@@ -505,7 +505,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
     items: [
       {
         id: 'sp-1',
-        q: 'How do I contact Platizio support?',
+        q: 'How do I contact Platizio Global for support?',
         a: <span>You can reach us by email at <a href="mailto:supportglobal@platizio.com">supportglobal@platizio.com</a> or call / WhatsApp at <a href="tel:+919289837100">+91 92898 37100</a>. We will respond within 24 hours on business days and your query shall be resolved within 1-5 days.</span>,
       },
       {
@@ -566,3 +566,18 @@ export const FAQ_BY_ID = new Map<string, FaqAnswer>(
     ])
   )
 )
+
+/**
+ * The questions support is asked most often, surfaced at the top of /faqs so a
+ * visitor does not have to guess which of the eleven sections holds them.
+ *
+ * Ids, not copies: the answer text lives once, in FAQ_SECTIONS above.
+ */
+export const FEATURED_FAQ_IDS = ['gs-5', 'fa-1', 'ma-4', 'ma-1', 'sp-1', 'ma-5'] as const
+
+export const FEATURED_FAQS: FaqAnswer[] = FEATURED_FAQ_IDS.flatMap((id) => {
+  const faq = FAQ_BY_ID.get(id)
+  // A featured id that no longer resolves means an item was renamed or removed;
+  // drop it rather than render an empty accordion row.
+  return faq ? [faq] : []
+})
