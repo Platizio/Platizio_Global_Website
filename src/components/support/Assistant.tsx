@@ -197,13 +197,13 @@ export default function Assistant() {
                   })}
 
                   <div className="assistant-verdict">
-                    <p className="assistant-verdict-q" id="assistant-verdict">Did that answer it?</p>
+                    <p className="assistant-verdict-q" id="assistant-verdict">Are you satisfied?</p>
                     <div className="assistant-options" role="group" aria-labelledby="assistant-verdict">
                       <button type="button" className="assistant-option is-affirm" onClick={markResolved}>
-                        Yes, that’s it
+                        Yes, satisfied
                       </button>
                       <button type="button" className="assistant-option" onClick={requestEscalation}>
-                        No, I need a person
+                        No, need further support
                       </button>
                     </div>
                   </div>
