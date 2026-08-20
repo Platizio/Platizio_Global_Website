@@ -391,7 +391,9 @@ p {
   transform: translateY(0);
 }
 
-.dropdown a {
+/* Needs to out-specify `.nav-links a:not(.btn)`, which sets display:inline-block
+   and would otherwise keep the title and description on the same line. */
+.nav-links .dropdown a {
   display: flex;
   flex-direction: column;
   padding: 0.65rem 0.85rem;
@@ -403,11 +405,14 @@ p {
 }
 
 .dropdown a strong {
+  display: block;
   color: var(--navy);
   font-weight: 600;
 }
 
 .dropdown a span {
+  display: block;
+  margin-top: 0.15rem;
   font-size: 0.82rem;
   color: var(--gray-500);
 }
