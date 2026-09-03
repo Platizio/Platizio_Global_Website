@@ -1,0 +1,1755 @@
+/* =========================================================
+   Platizio Support Console
+   =========================================================
+
+   A working surface, not a marketing page. The rules that follow optimise for
+   an agent who has this open for eight hours: high information density, one
+   colour language for state that never changes meaning between screens, and no
+   motion that has to finish before you can act.
+
+   Light theme only. Dark mode is a real request but a half-done one is worse
+   than none, and every state colour below would need re-picking for contrast.
+   ========================================================= */
+
+@import './tokens.css';
+
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gray-800);
+  background: var(--gray-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Themed browser surfaces, copied from /help's reasoning: selection, caret and
+   scrollbars ship with defaults belonging to no design system, and inside a
+   branded panel they read as a seam. */
+::selection {
+  background: rgba(185, 75, 18, 0.16);
+  color: var(--navy-deep);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+  background-clip: content-box;
+}
+
+/* The one authored moment, lifted from .assistant-step. A view settles into
+   place once; children do not each animate in, because that "reads as
+   fidgeting rather than as progress". */
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settle {
+  animation: settle 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The marketing site's focus convention, kept verbatim. Someone who tabs
+   through both should not have to learn two. */
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Shell ────────────────────────────────────────────────────────────────── */
+
+/*
+   The track sizes to the sidebar rather than being set directly, and the
+   sidebar's own `width` is what animates.
+
+   Transitioning `grid-template-columns` would also work, and is arguably the
+   more direct expression — but animatable grid tracks are a late addition
+   (Chrome 107, Firefox 66, Safari 16), whereas `width` has interpolated
+   everywhere for twenty years. For a two-value toggle there is nothing to gain
+   from the newer property.
+*/
+.shell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-w);
+  transition: width var(--t);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--navy);
+  color: var(--gray-300);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: var(--topbar-h);
+  padding: 0 18px;
+  color: var(--white);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex: 0 0 auto;
+}
+
+.sidebar-brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-deep));
+  flex: 0 0 auto;
+}
+
+.sidebar-brand-sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gray-400);
+  letter-spacing: 0.02em;
+}
+
+.sidebar-nav {
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+}
+
+.sidebar-section {
+  padding: 14px 8px 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--gray-300);
+  font-weight: 500;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-item.is-active {
+  background: rgba(226, 104, 42, 0.16);
+  color: var(--white);
+  box-shadow: inset 2px 0 0 var(--gold-light);
+}
+
+.nav-item-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.nav-item-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-item-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.nav-item-count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.nav-item-count.is-alert {
+  background: var(--danger);
+  color: var(--white);
+}
+
+.sidebar-foot {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  color: var(--gray-500);
+  flex: 0 0 auto;
+}
+
+/* ── Collapsed rail ───────────────────────────────────────────────────────── */
+
+.is-collapsed .sidebar {
+  width: var(--sidebar-w-collapsed);
+}
+
+.rail-toggle {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--gray-400);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.rail-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+
+/*
+   Stacked, not side by side, and `margin-left` reset — both are load-bearing.
+   `justify-content: center` alone does nothing here: .rail-toggle carries
+   `margin-left: auto`, and an auto margin absorbs all free space before
+   justify-content ever sees it, so the mark was pushed hard against the left
+   edge. The row also could not hold them side by side — 22px mark + 10px gap +
+   24px toggle is 56px inside a 40px content box, so it overflowed as well.
+   Stacking gives each its own centred line inside the 56px square.
+*/
+.is-collapsed .sidebar-brand {
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+}
+
+.is-collapsed .rail-toggle {
+  margin-left: 0;
+  width: 20px;
+  height: 16px;
+  font-size: 12px;
+}
+
+/* The brand wordmark, the section headings and the nav labels all go. The
+   toggle stays: a rail you cannot get back out of is a trap. */
+.is-collapsed .sidebar-brand-text,
+.is-collapsed .sidebar-section,
+.is-collapsed .nav-item-label,
+.is-collapsed .sidebar-foot {
+  display: none;
+}
+
+.is-collapsed .nav-item {
+  justify-content: center;
+  padding: 9px 0;
+  position: relative;
+}
+
+/* A count cannot be read at 56px, and a truncated one is worse than none —
+   "12" rendered as "1" is actively wrong. It becomes a presence indicator. */
+.is-collapsed .nav-item-count {
+  position: absolute;
+  top: 5px;
+  right: 9px;
+  min-width: 0;
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 0;
+  color: transparent;
+  overflow: hidden;
+}
+
+/* ── Top bar ──────────────────────────────────────────────────────────────── */
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.topbar-search {
+  flex: 1 1 auto;
+  max-width: 420px;
+}
+
+.topbar-search input {
+  width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.topbar-search input:focus {
+  background: var(--white);
+  border-color: var(--gray-300);
+}
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.whoami {
+  text-align: right;
+  line-height: 1.25;
+}
+
+.whoami-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.whoami-roles {
+  font-size: 11px;
+  color: var(--gray-500);
+}
+
+.content {
+  padding: 20px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.page-head h1 {
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.page-head p {
+  color: var(--gray-500);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.page-head-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+
+/* Panels, exactly as /help builds them: 1.5px border, --radius-lg, white. The
+   live page carries no rules, gradients or accent edges on its surfaces — the
+   border and the corner are the whole treatment. */
+.card {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Elevation is the only thing that ranks one panel above another on /help: the
+   assistant carries --shadow-lg, the FAQ browser beside it carries none, and
+   the stylesheet says why — "without that the two read as interchangeable cards
+   and nothing says which is the point of the page". */
+.card.is-primary-panel {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Panel bar ────────────────────────────────────────────────────────────── */
+/*
+   .assistant-bar: navy, white text, and a steady emerald dot. The dot says the
+   desk is live. The live stylesheet is explicit that it must not pulse —
+   "a blinking dot on a support panel reads as an alert" — and the same holds
+   on a screen where genuine alerts are red and mean a breached deadline.
+*/
+.panel-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 18px;
+  background: var(--navy);
+  color: var(--white);
+}
+
+.panel-bar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: var(--emerald-ring);
+  flex: 0 0 auto;
+}
+
+.panel-bar-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.panel-bar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.card-head h2 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.card-head-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-note {
+  padding: 10px 16px;
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+/* ── Stat tiles ───────────────────────────────────────────────────────────── */
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* The site's signature card: a 3px burnt-orange rule across the top edge.
+   Used on the stat tiles and the ticket action header only — on all forty-odd
+   cards it stops being a signature and becomes wallpaper. */
+.tile {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  color: inherit;
+  transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: var(--gold-gradient-h);
+}
+
+/* The gradient-washed square from .feature-icon. Empty by design — it is a
+   colour field, not an icon slot; giving each tile a different glyph would be
+   decoration competing with the number it sits above. */
+.tile-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(185, 75, 18, 0.15), rgba(185, 75, 18, 0.05));
+  margin-bottom: 9px;
+}
+
+a.tile:hover {
+  text-decoration: none;
+  border-color: var(--navy);
+  background: var(--gray-50);
+  box-shadow: var(--shadow-md);
+}
+
+.tile-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.tile-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile-hint {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.tile.is-danger .tile-value {
+  color: var(--danger);
+}
+.tile.is-warn .tile-value {
+  color: var(--warn);
+}
+.tile.is-ok .tile-value {
+  color: var(--ok);
+}
+
+/* ── Chips ────────────────────────────────────────────────────────────────── */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.chip-neutral {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border-color: var(--gray-200);
+}
+.chip-muted {
+  background: transparent;
+  color: var(--gray-500);
+  border-color: var(--gray-200);
+}
+.chip-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: #f3cfc8;
+}
+.chip-warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-color: #f0e0bd;
+}
+.chip-ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+  border-color: #bbe9d5;
+}
+.chip-info {
+  background: var(--info-bg);
+  color: var(--info);
+  border-color: #cfdefb;
+}
+.chip-accent {
+  background: #fdf1ea;
+  color: var(--gold-deep);
+  border-color: #f4d5c2;
+}
+
+.chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+/* The site's .eyebrow: uppercase, widely tracked, in the deep accent. It is
+   what separates one band of the page from the next without a rule or a box. */
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin: 24px 0 10px;
+}
+
+.eyebrow:first-child {
+  margin-top: 0;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  /* .assistant-option, at desk scale. The site sets min-height 44px for touch;
+     this is a mouse-and-keyboard tool, so the pill, the 1.5px border, the
+     weight and every state below are kept and only the height comes down. */
+  height: 34px;
+  padding: 0 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-full);
+  background: var(--white);
+  color: var(--gray-800);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--t-fast), color var(--t-fast), transform var(--t-fast),
+    box-shadow var(--t-fast);
+}
+
+/* Navy, not grey. This is the site's hover and it is what makes a control read
+   as a control rather than as a link. */
+.btn:hover:not(:disabled) {
+  border-color: var(--navy);
+  color: var(--navy);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Tactile press, lifted verbatim: "reads as a physical control rather than a
+   link". */
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* .assistant-option.is-primary. On /help this is the button that raises a
+   ticket and it is the only gradient on the page — no glow, no lift, just
+   shadow-md on hover. One per screen here for the same reason. */
+.btn-primary {
+  background: var(--gold-gradient);
+  border-color: transparent;
+  color: var(--white);
+  font-weight: 600;
+  box-shadow: var(--gold-glow);
+}
+.btn-primary:hover:not(:disabled) {
+  color: var(--white);
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(185, 75, 18, 0.42);
+}
+
+/* .assistant-option.is-affirm — the "yes, that solved it" answer. Used here for
+   anything that confirms rather than commits. */
+.btn-affirm {
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #047857;
+}
+.btn-affirm:hover:not(:disabled) {
+  border-color: var(--emerald);
+  color: #047857;
+}
+
+.btn-navy {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}
+.btn-navy:hover:not(:disabled) {
+  background: var(--navy-deep);
+  border-color: var(--navy-deep);
+}
+
+.btn-danger {
+  background: var(--white);
+  border-color: #e6b6ac;
+  color: var(--danger);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--gray-600);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--gray-100);
+  border-color: transparent;
+}
+
+.btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+/* ── Filter bar ───────────────────────────────────────────────────────────── */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.filters label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filters select,
+.filters input[type='search'],
+.filters input[type='text'] {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.filters .spacer {
+  margin-left: auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 8px 12px 0;
+  border-bottom: 1px solid var(--gray-200);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--gray-600);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--gray-800);
+}
+
+.tab.is-active {
+  color: var(--gold-deep);
+  border-bottom-color: var(--gold);
+}
+
+.tab-count {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--gray-500);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table.data th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--gray-50);
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+
+table.data td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+
+/* .assistant-result, as a table row. /help has no tables, but it does have a
+   list of clickable records — the FAQ search results — and this is that row:
+   gray-50 on hover with a 4px nudge. The site uses transform rather than
+   padding for the nudge because "nudging via padding relayouts the whole list
+   on every hover", which matters more on a hundred-row queue than on five
+   search results. */
+table.data tbody tr {
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+
+table.data tbody tr:hover {
+  background: var(--gray-50);
+  transform: translateX(4px);
+}
+
+table.data tbody tr:focus-visible {
+  background: var(--gray-50);
+  outline: 3px solid var(--gold);
+  outline-offset: -3px;
+}
+
+.cell-ref {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+  white-space: nowrap;
+}
+
+/* .assistant-result-headline / .assistant-result-trail. Navy at 550, with the
+   secondary line a step down in size and grey — the same two-line record the
+   site uses for a search hit. */
+.cell-subject {
+  font-weight: 550;
+  color: var(--navy);
+  line-height: 1.45;
+  max-width: 380px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-sub {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--gray-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cell-muted {
+  color: var(--gray-500);
+}
+
+/* ── Pagination ───────────────────────────────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--gray-200);
+  font-size: 12.5px;
+  color: var(--gray-600);
+}
+
+.pagination .spacer {
+  margin-left: auto;
+}
+
+/* ── Empty / loading / error ──────────────────────────────────────────────── */
+
+.empty {
+  padding: 44px 20px;
+  text-align: center;
+  color: var(--gray-500);
+}
+
+.empty h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-bottom: 4px;
+}
+
+.empty p {
+  font-size: 13px;
+  max-width: 42ch;
+  margin: 0 auto;
+}
+
+.skeleton {
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--gray-100), var(--gray-200), var(--gray-100));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite linear;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 14px;
+  border: 1px solid;
+}
+
+.banner-danger {
+  background: var(--danger-bg);
+  border-color: #f0cec6;
+  color: #8c2313;
+}
+.banner-warn {
+  background: var(--warn-bg);
+  border-color: #eeddb8;
+  color: #7a4a06;
+}
+.banner-info {
+  background: var(--info-bg);
+  border-color: #cddcfa;
+  color: #1a3f9e;
+}
+
+.banner .btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* ── Detail layout ────────────────────────────────────────────────────────── */
+
+/* ── Ticket action header ─────────────────────────────────────────────────── */
+/*
+   Everything an agent DOES lives here, and it does not scroll away. The reason
+   is specific to this screen: a ticket can carry a grievance whose statutory
+   clocks are shorter and harder than the ticket's own, and in the previous
+   layout those clocks were the third and fourth rail cards down.
+*/
+
+/* The panel that ranks above everything else on the screen: the accent rule
+   plus the elevation /help uses to say which surface is the point of the page. */
+.thead {
+  position: sticky;
+  top: var(--topbar-h);
+  z-index: 10;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.thead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: var(--gold-gradient-h);
+}
+
+.thead-crumb {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 2px;
+}
+
+.thead-ref {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--gray-600);
+}
+
+/* .assistant-question: 1.35rem, navy, -0.01em, balanced. Not the homepage's
+   -0.02em display treatment — /help sets its headings as questions, at a
+   readable weight, and that is what a ticket subject is. */
+.thead h1 {
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  text-wrap: balance;
+  margin-bottom: 10px;
+}
+
+.thead-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.thead-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+/* Two boxes on an ordinary ticket, four when a grievance exists. */
+.sla-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.sla-box {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 9px 11px;
+}
+
+.sla-box-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.sla-box-value {
+  margin-top: 4px;
+}
+
+.sla-box-due {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 3px;
+}
+
+@media (max-width: 1100px) {
+  .thead {
+    position: static;
+  }
+}
+
+.detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 198px;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.detail-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.detail-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: calc(var(--topbar-h) + 20px);
+}
+
+.meta-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 7px 12px;
+  font-size: 12.5px;
+}
+
+.meta-list dt {
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+
+.meta-list dd {
+  text-align: right;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* ── Message thread ───────────────────────────────────────────────────────── */
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.msg {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: var(--white);
+}
+
+.msg-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+}
+
+.msg-author {
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+.msg-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13.5px;
+}
+
+.msg-CUSTOMER {
+  background: var(--gray-50);
+}
+
+/* An internal note is the one message on this screen that must never be
+   mistaken for something the customer can see. It gets a colour, a border and
+   a label, not just one of the three. */
+.msg-internal {
+  background: var(--warn-bg);
+  border-color: #eeddb8;
+  border-left: 3px solid var(--warn);
+}
+
+.msg-SYSTEM {
+  background: var(--gray-50);
+  border-style: dashed;
+  color: var(--gray-600);
+}
+
+/* ── Composer ─────────────────────────────────────────────────────────────── */
+
+.composer {
+  border-top: 1px solid var(--gray-200);
+  padding: 14px 16px;
+  background: var(--gray-50);
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.composer textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  resize: vertical;
+  font-size: 13.5px;
+}
+
+.composer-modes {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  background: var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  width: fit-content;
+}
+
+.composer-mode {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+
+.composer-mode.is-active {
+  background: var(--white);
+  color: var(--gray-800);
+  box-shadow: var(--shadow-sm);
+}
+
+.composer-mode.is-active.is-internal {
+  background: var(--warn);
+  color: var(--white);
+}
+
+.composer-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.composer-foot .spacer {
+  margin-left: auto;
+}
+
+.composer-hint {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+/* ── Forms ────────────────────────────────────────────────────────────────── */
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 4px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.field-hint {
+  color: var(--gray-500);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Dialog ───────────────────────────────────────────────────────────────── */
+
+.dialog-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(6, 26, 48, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dialog {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: min(520px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dialog-head {
+  padding: 16px 20px 0;
+}
+
+.dialog-head h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dialog-body {
+  padding: 12px 20px;
+  font-size: 13.5px;
+  color: var(--gray-700);
+}
+
+.dialog-foot {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px 20px 18px;
+}
+
+/* ── Toasts ───────────────────────────────────────────────────────────────── */
+
+.toasts {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 380px;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+}
+
+.toast-error {
+  background: #8c2313;
+}
+
+.toast-ok {
+  background: #065f46;
+}
+
+.toast button {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Login ────────────────────────────────────────────────────────────────── */
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--navy);
+  padding: 20px;
+}
+
+.login-card {
+  width: min(400px, 100%);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 28px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.login-brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-deep));
+}
+
+.login-brand strong {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.login-brand span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.login h1 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.login-lede {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-bottom: 18px;
+}
+
+.login .btn {
+  width: 100%;
+  height: 38px;
+  margin-top: 4px;
+}
+
+.login-foot {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-200);
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+/* ── Utility ──────────────────────────────────────────────────────────────── */
+
+/* Pushes whatever follows it to the far end of a flex row. Used in message
+   headers, card heads and toolbars, so it is defined once rather than scoped
+   to each of them. */
+.spacer {
+  margin-left: auto;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.muted {
+  color: var(--gray-500);
+}
+
+.small {
+  font-size: 12px;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* ── Dashboard: partition and attention ───────────────────────────────────── */
+/*
+   Two columns: the counts on the left, the work on the right. The counts are a
+   partition and the list is items, so there is deliberately nothing to add up
+   across the gap between them.
+*/
+
+.dash-split {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .dash-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.bars {
+  padding: 6px 8px;
+}
+
+.bar-row {
+  display: block;
+  padding: 8px;
+  border-radius: var(--radius);
+  color: inherit;
+  transition: background var(--t-fast);
+}
+
+a.bar-row:hover {
+  text-decoration: none;
+  background: var(--gray-50);
+}
+
+.bar-top {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--gray-700);
+}
+
+.bar-count {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+/* An empty bucket is greyed rather than hidden. Hiding it made the layout jump
+   as counts crossed zero, and a partition with holes stops reading as one. */
+.bar-row.is-zero {
+  opacity: 0.55;
+}
+
+.bar-track {
+  display: block;
+  height: 6px;
+  margin-top: 6px;
+  border-radius: var(--radius-full);
+  background: var(--gray-100);
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--gray-300);
+}
+
+/* Bar colour carries no state meaning, so red, amber and green are unavailable:
+   they already mean breached, caution and met throughout the console, and a
+   status is not a state. The accent marks what nobody has opened; the waiting
+   buckets get a muted sand that is deliberately NOT --warn. */
+.bar-row.tone-new .bar-fill {
+  background: var(--gold-gradient);
+}
+
+.bar-row.tone-waiting .bar-fill {
+  background: #e7c99a;
+}
+
+.attn-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.attn-row:last-child {
+  border-bottom: 0;
+}
+
+/* The kind prefix. Three different things share one list, and without this the
+   rows are ambiguous the moment a ticket and an enquiry sit side by side. */
+.attn-kind {
+  flex: none;
+  width: 62px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+/* Only where the source was truncated. The accent says it goes somewhere;
+   the grey above says it is just a label. */
+a.attn-kind {
+  color: var(--gold-deep);
+}
+
+a.attn-kind:hover {
+  text-decoration: underline;
+}
+
+.attn-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.attn-body a {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.attn-meta {
+  display: block;
+  font-size: 11.5px;
+  color: var(--gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

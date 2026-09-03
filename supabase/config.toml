@@ -40,7 +40,16 @@ file_size_limit = "5MiB"
 [auth]
 enabled = true
 site_url = "https://platizioglobal.com"
-additional_redirect_urls = ["http://localhost:5173"]
+# The console lives on its own subdomain and its own Vercel project, so the
+# invitation links invite-staff mints land there rather than on site_url.
+# Both the deployed origin and the local dev port have to be listed, and this
+# file has to be mirrored in the dashboard's Auth → URL configuration — the
+# hosted project does not read it.
+additional_redirect_urls = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://admin.platizioglobal.com",
+]
 jwt_expiry = 3600
 enable_signup = false
 

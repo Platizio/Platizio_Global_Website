@@ -30,3 +30,6 @@ Thumbs.db
 
 # SSR bundle emitted by scripts/prerender.mjs
 .ssr
+
+# Visual brainstorming sessions (mockups, server state)
+.superpowers/

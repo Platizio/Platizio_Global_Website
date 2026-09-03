@@ -1,0 +1,97 @@
+/* =========================================================
+   Platizio — brand tokens
+   =========================================================
+
+   Mirrored from ../../../css/styles.css (the marketing site's design system).
+
+   A deliberate copy, not an import. This app deploys as its own Vercel project
+   rooted at admin/, so a relative import reaching outside that root would build
+   locally and fail on Vercel. The values below change roughly never; when they
+   do, they change in both places.
+
+   Only the brand layer is copied. Everything the console actually looks like
+   lives in console.css, because a data desk and a marketing page want opposite
+   things from spacing, density and contrast.
+   ========================================================= */
+
+:root {
+  /* Brand */
+  --navy: #0a2540;
+  --navy-deep: #061a30;
+  --navy-soft: #14365e;
+
+  /* The accent is a warm burnt-orange; the "gold" names are kept for
+     continuity with the marketing stylesheet rather than accuracy. */
+  --gold-light: #e2682a;
+  --gold: #b94b12;
+  --gold-deep: #7e3008;
+
+  /* The accent, in the two forms the marketing site uses it.
+     `--gold-gradient` fills the primary button; `--gold-gradient-h` draws the
+     3px rule across the top of a tile, which is the site's signature card move
+     (css/styles.css, .feature-card::before). It still never carries state —
+     state is the red/amber/green/blue family below. */
+  --gold-gradient: linear-gradient(135deg, #e2682a 0%, #b94b12 50%, #7e3008 100%);
+  --gold-gradient-h: linear-gradient(90deg, #e2682a 0%, #b94b12 50%, #7e3008 100%);
+  --gold-glow: 0 5px 14px rgba(185, 75, 18, 0.35);
+
+  /* The assistant's status dot: steady, never pulsing. The live stylesheet is
+     explicit about why — "a blinking dot on a support panel reads as an alert". */
+  --emerald-ring: 0 0 0 3px rgba(16, 185, 129, 0.2);
+
+  /* The accent halo under the spine's current step. */
+  --gold-ring: 0 0 0 3px rgba(185, 75, 18, 0.14);
+
+  --emerald: #10b981;
+
+  /* Neutrals */
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+
+  /* Console-only semantics. The marketing site never needed a "this is late"
+     colour; a support desk needs three of them and they must not be invented
+     twice. */
+  --danger: #c2321b;
+  --danger-bg: #fdf0ee;
+  --warn: #a1620a;
+  --warn-bg: #fdf6e7;
+  --ok: #047857;
+  --ok-bg: #ecfdf5;
+  --info: #1d4ed8;
+  --info-bg: #eff6ff;
+
+  /* Shape */
+  --radius-sm: 6px;
+  --radius: 10px;
+  /* 18px, matching --radius-lg on the live site. Every panel on /help — the
+     assistant shell and the FAQ browser beside it — uses this one corner, so
+     the console does too. There is no separate card radius. */
+  --radius-lg: 18px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(10, 37, 64, 0.06);
+  --shadow-md: 0 4px 16px rgba(10, 37, 64, 0.08);
+  --shadow-lg: 0 16px 40px rgba(10, 37, 64, 0.14);
+
+  /* Motion */
+  --t-fast: 0.12s ease;
+  --t: 0.2s ease;
+
+  /* Type */
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Layout */
+  --sidebar-w: 232px;
+  --sidebar-w-collapsed: 56px;
+  --topbar-h: 56px;
+}

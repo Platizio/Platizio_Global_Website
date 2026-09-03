@@ -58,6 +58,33 @@ jobs:
           echo "pages: $(find dist -name '*.html' | wc -l)"
           echo "sitemap urls: $(grep -c '<loc>' dist/sitemap.xml || echo 0)"
 
+  # The staff console. A separate app with its own package.json and its own
+  # Vercel project, so it needs its own job — the marketing build above never
+  # touches admin/ and would go green with the console entirely broken.
+  #
+  # `npm run build` there is tsc followed by vite build. Same reasoning as
+  # above: there are no unit tests, so the typecheck is the safety net, and it
+  # is the one that catches an RPC wrapper drifting from the SQL projection it
+  # mirrors.
+  console:
+    name: Console build and typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run build
+
   database:
     name: Database tests
     runs-on: ubuntu-latest

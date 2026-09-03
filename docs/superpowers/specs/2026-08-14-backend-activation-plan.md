@@ -34,7 +34,7 @@ This plan therefore optimises for **activation**: get what exists into productio
 | **B** — Fix the intake defects | **Done** | B1 and B2 both fixed and covered by tests that insert real rows. |
 | **C** — Turn the lights on | **Code done, secrets outstanding** | The client half of Turnstile now exists — `src/lib/useTurnstile.ts`, wired into both forms, sending `x-turnstile-token`. What remains is only the secret values, which have to be set by someone who holds them. |
 | **D** — Contact form onto `contact_enquiries` | **Done** | RPC, `create-enquiry` function, consent record, modal switched over, and — added `0030` after a recheck on 2026-08-17 — the acknowledgement and internal alert that `0029` left unqueued. Web3Forms kept as a fallback only until C lands. |
-| **E** — Staff console | Not started | |
+| **E** — Staff console | **Built, unverified against a database** | A separate Vite app in `admin/`, deployed as its own Vercel project on `admin.platizioglobal.com`. Covers the ticket queue and detail, the grievance workflow, the enquiry inbox, staff administration, the holiday calendar and the outbox. Migration `0031` adds the RPCs that did not exist: the enquiry desk had none at all, complaints could not be listed, and the outbox had no staff-facing read. Typecheck and build pass; `supabase db reset` and `supabase test db` have **not** been run — the machine this was written on has no Docker. |
 | **F** — Customer status page | Not started | |
 
 ### Applied to the live project on 2026-08-17
@@ -190,7 +190,7 @@ The `private` schema is deliberately excluded from PostgREST so internal helpers
 
 ### What is genuinely not built
 
-- No staff UI whatsoever — 21 RPCs with no client
+- ~~No staff UI whatsoever — 21 RPCs with no client~~ — built in `admin/`; see Phase E above
 - No customer status page — `request-status-link` and `lookup-status` are live but unreachable
 - No write path to `contact_enquiries` — migration 0027 built the table, enum, ref generator and seeds, but there is no RPC and no edge function that inserts
 - `callback_requests`, `support_nodes`, `faq_articles`/`faq_chunks`, `chat_*`, `chat_escalation_grants`, `support-chat` — all designed in `docs/superpowers/specs/2026-08-13-help-centre-design.md`, none built
