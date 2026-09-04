@@ -19,12 +19,16 @@
 
 name: CI
 
-# Push is limited to main on purpose. A branch with an open PR would otherwise
-# match both triggers and run the whole workflow twice for one commit, which is
-# what happened on the first run of this file.
+# Push is limited to the production branches on purpose. A feature branch with
+# an open PR would otherwise match both triggers and run the whole workflow
+# twice for one commit, which is what happened on the first run of this file.
+#
+# admin-dashboard is listed because it IS a production branch: the console's
+# Vercel project deploys from it directly, with no PR in between. Without the
+# push trigger a broken push would deploy unchecked.
 on:
   push:
-    branches: [main]
+    branches: [main, admin-dashboard]
   pull_request:
 
 # A second push to the same branch makes the first run irrelevant.

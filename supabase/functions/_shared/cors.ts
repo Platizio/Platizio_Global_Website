@@ -9,10 +9,17 @@
 // ALLOWED_ORIGINS (comma-separated) overrides the defaults, which is how a
 // Vercel preview deployment gets added without a code change.
 
+// The console's origin is here too. Every other console call goes through
+// PostgREST, which has no origin check — this list only gates the edge
+// functions, and of those the console invokes only staff-attachment. Leaving
+// the subdomain out breaks attachment downloads alone, silently, with a CORS
+// error in the browser console and nothing in the UI.
 const DEFAULT_ORIGINS = [
   'https://platizioglobal.com',
   'https://www.platizioglobal.com',
+  'https://admin.platizioglobal.com',
   'http://localhost:5173',
+  'http://localhost:5174',
 ]
 
 function allowlist(): string[] {

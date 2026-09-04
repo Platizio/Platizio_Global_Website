@@ -87,9 +87,26 @@ screen are the two things to restore; the spec records what each involved.
 
 ## Deploying
 
-A second Vercel project, **Root Directory `admin`**, with `VITE_SUPABASE_URL` and
-`VITE_SUPABASE_ANON_KEY` set on it. `vercel.json` here rewrites every path to `index.html` and
-sends `X-Robots-Tag: noindex, nofollow` plus `X-Frame-Options: DENY`.
+Live at `https://admin.platizioglobal.com`, from a second Vercel project on the same repository:
+
+| Setting | Value |
+|---|---|
+| Root Directory | `admin` |
+| Framework | Vite |
+| **Production Branch** | **`admin-dashboard`** — not `main` |
+| Environment variables | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (same values as the marketing site) |
+| Domain | `admin.platizioglobal.com`, DNS `CNAME admin → cname.vercel-dns.com` |
+
+Every push to `admin-dashboard` is a production deploy. `vercel.json` here rewrites every path to
+`index.html` and sends `X-Robots-Tag: noindex, nofollow` plus `X-Frame-Options: DENY`.
+
+The landing page is the login page by construction: every screen sits behind `RequireAuth`, which
+sends anyone without a session to `/login` and carries the requested path through so a bookmarked
+ticket survives the round trip. A signed-in account that is not staff is bounced back out.
+
+**The branch is not `main`, and that has a cost.** Changes to shared files — `supabase/` and
+`.github/` in particular — land on one branch and not the other until somebody merges them across.
+The marketing site deploys from `main`; nothing does that merge for you.
 
 Two settings live outside this repo and both can break things quietly:
 
