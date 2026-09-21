@@ -10,6 +10,7 @@ const TEAM: Member[] = [
   { name: 'Aanyaa Bhardwaj', role: 'Social Media Executive', image: '/team/aanyaa-bhardwaj.jpg' },
   { name: 'Aayush Sharma', role: 'Product Software Developer', image: '/team/aayush-sharma.jpg' },
   { name: 'Anuj Pal', role: 'Senior Financial Market Analyst', image: '/team/anuj-pal.jpg' },
+  { name: 'Deepansh Mishra', role: 'Product Software Developer', image: '/team/Deepansh_Mishra.jpg' },
   { name: 'Deepika Agarwal', role: 'Financial Market Analyst', image: '/team/deepika-agarwal.jpg' },
   { name: 'Kartik Vishnani', role: 'Financial Market Analyst', image: '/team/kartik-vishnani.jpg' },
   { name: 'Kavya Khatri', role: 'Social Media Executive', image: '/team/kavya-khatri.jpg' },
