@@ -184,7 +184,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
       {
         id: 'fa-9',
         q: 'What is the minimum amount I can fund my account with?',
-        a: 'The minimum funding amount is USD 100 for deposits made through our integrated partner banks using the seamless funding journey.'
+        a: 'The minimum funding amount is USD 100 for deposits made through our integrated partner banks using the seamless funding journey.',
       },
     ],
   },

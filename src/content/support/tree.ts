@@ -113,6 +113,7 @@ export const SUPPORT_TREE: SupportTreeNode[] = [
         prompt: 'What would you like to know?',
         children: [
           { id: 'funding-how', label: 'How to add money', answers: ['fa-1'] },
+          { id: 'funding-minimum', label: 'The minimum amount I can add', answers: ['fa-9'] },
           { id: 'funding-limit', label: 'How much I can send in a year', answers: ['fa-3'] },
           { id: 'funding-methods', label: 'Can I use UPI, a forex card or Wise?', answers: ['fa-8'] },
         ],
