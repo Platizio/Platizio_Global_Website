@@ -181,6 +181,11 @@ export const FAQ_SECTIONS: FaqSection[] = [
         q: 'Can I add money via UPI, a forex card, or services like Wise / Western Union?',
         a: 'No. LRS investment remittances must be made through a bank under the prescribed purpose code (overseas portfolio investment). UPI, forex cards, and money-transfer services such as Wise or Western Union cannot be used for this purpose. The remittance must come from your own bank account.',
       },
+      {
+        id: 'fa-9',
+        q: 'What is the minimum amount I can fund my account with?',
+        a: 'The minimum funding amount is USD 100 for deposits made through our integrated partner banks using the seamless funding journey.'
+      },
     ],
   },
   {
